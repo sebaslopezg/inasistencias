@@ -8,7 +8,7 @@ class Inasistencias extends Controllers{
 
 
         $data['page_title'] = "Página de inasistencias";
-        $data['page_id_name'] = "inasistencias";
+        $data['page_name'] = "inasistencias";
         $this->views->getView($this,"inasistencias", $data);
     }
 }

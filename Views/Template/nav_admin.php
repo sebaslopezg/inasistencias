@@ -4,7 +4,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
       
       <li class="nav-item">
-        <a class="nav-link <?= $data['page_id_name'] != 'dashboard' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/dashboard">
+        <a class="nav-link <?= $data['page_name'] != 'dashboard' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/dashboard">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -12,7 +12,7 @@
       
       <!-- Pagina Inasistencias -->
       <li class="nav-item">
-        <a class="nav-link <?= $data['page_id_name'] != 'inasistencias' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/inasistencias">
+        <a class="nav-link <?= $data['page_name'] != 'inasistencias' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/inasistencias">
           <i class="bi bi-person-x"></i>
           <span>Inasistencias</span>
         </a>
@@ -20,7 +20,7 @@
       
       <!-- Pagina de usuarios -->
       <li class="nav-item">
-        <a class="nav-link <?= $data['page_id_name'] != 'usuarios' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/usuarios">
+        <a class="nav-link <?= $data['page_name'] != 'usuarios' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/usuarios">
           <i class="bi bi-people"></i>
           <span>Usuarios</span>
         </a>
@@ -28,7 +28,7 @@
       
       <!-- Pagina de ingresos -->
       <li class="nav-item">
-        <a class="nav-link <?= $data['page_id_name'] != 'ingresos' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/ingresos">
+        <a class="nav-link <?= $data['page_name'] != 'ingresos' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/ingresos">
           <i class="bi bi-journal-plus"></i>
           <span>Ingresos</span>
         </a>

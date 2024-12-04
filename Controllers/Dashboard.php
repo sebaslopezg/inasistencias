@@ -7,7 +7,7 @@ class Dashboard extends Controllers{
     public function dashboard(){
 
         $data['page_title'] = "Página de dashboard";
-        $data['page_id_name'] = "dashboard";
+        $data['page_name'] = "dashboard";
         $this->views->getView($this,"dashboard", $data);
     }
 }

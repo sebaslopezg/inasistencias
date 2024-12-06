@@ -8,7 +8,7 @@
       </div>
       <div class="modal-body">
         <form id="frmCrearUsuario" method="POST">
-
+            <input type="hidden" name="id" value="0">
             <div class="row">
                 <div class="mb-3 col-6">
                     <label for="txtNombre" class="form-label">Nombre(s)</label>

@@ -6,6 +6,19 @@ class UsuariosModel extends Mysql{
         parent::__construct();
     }
 
+    public function selectUsuarios(){
+        $sql = "SELECT idUsuarios AS ID, CONCAT(u.nombre, ' ', u.apellido) AS nombre_completo, u.documento, u.telefono, u.correo, u.rol, u.status FROM usuario u WHERE u.status > 0";
+        $request = $this->select_all($sql);
+        return $request;
+    }
+
+    public function selectUsuariosById(int $idUsuario){
+        $this->idUsuario = $idUsuario;
+        $sql = "SELECT idUsuarios AS ID, u.nombre, u.apellido, u.documento, u.telefono, u.genero, u.correo, u.codigo, u.rol, u.status FROM usuario u WHERE u.status > 0 AND idUsuarios = {$this->idUsuario}";
+        $request = $this->select($sql);
+        return $request;
+    }
+
     public function insertUsuario(string $strNombre, string $strApellido, int $intDocumento, int $intTelefono, int $intGenero, string $strEmail, string $strCodigo, string $strRol, string $strFirma){
         $this->strNombre = $strNombre;
         $this->strApellido = $strApellido;
@@ -25,8 +38,8 @@ class UsuariosModel extends Mysql{
         if (!empty($request)) {
             $respuesta = 'exist';
         }else{
-            $query_insert = "INSERT INTO usuario VALUES(?,?,?,?,?,?,?,?,?,?,?)";
-            $arrData = array($this->strNombre, $this->strApellido, $this->intDocumento, $this->intTelefono, $this->intGenero, $this->strEmail, $this->strCodigo, $this->password, $this->strFirma, $this->strRol, 0);
+            $query_insert = "INSERT INTO usuario(nombre, apellido, documento , telefono, genero, correo, codigo, firma, rol, password, status) VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+            $arrData = array($this->strNombre, $this->strApellido, $this->intDocumento, $this->intTelefono, $this->intGenero, $this->strEmail, $this->strCodigo, $this->strFirma, $this->strRol, $this->password, 1);
             $reques_insert = $this->insert($query_insert, $arrData);
             $respuesta = $reques_insert;
         }

@@ -14,6 +14,16 @@ getModal('usuariosModal', $data);
     </div>
 
 
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Datatables</h5>
+
+        <table id="tablaUsuarios" class="table">
+        </table>
+
+      </div>
+    </div>
+
 
 
 

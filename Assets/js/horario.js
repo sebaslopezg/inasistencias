@@ -33,7 +33,6 @@ const celdas = [
 let fileStatus = {}
 let ficha = null
 
-
 input.addEventListener('change', () => {
     fileStatus = {
         code: 0,
@@ -56,66 +55,12 @@ input.addEventListener('change', () => {
                 fntSearchFicha(rows)
                 if (fntCheckStatus()) {
                     fntSearchHorarios(rows)  
-                    fntPrintHorario(horario)
+                    fntPrintHorario()
                 }
             })
         }
     }
 })
-
-//fecha, hora inicio, hora fin, contenido
-function fntPrintHorario(data){
-
-    let table = document.createElement('table')
-    let thead = document.createElement('thead')
-    let tbody = document.createElement('tbody')
-    let th = document.createElement('th')
-    let tr = document.createElement('tr')
-
-    table.classList.add('table')
-
-    let node = document.createTextNode('Fecha')
-    th = document.createElement('th')
-    th.appendChild(node)
-    tr.appendChild(th)
-    
-
-    node = document.createTextNode('Hora inicio')
-    th = document.createElement('th')
-    th.appendChild(node)
-    tr.appendChild(th)
-
-    node = document.createTextNode('Hora fin')
-    th = document.createElement('th')
-    th.appendChild(node)
-    tr.appendChild(th)
-
-    node = document.createTextNode('contenido')
-    th = document.createElement('th')
-    th.appendChild(node)
-    tr.appendChild(th)
-
-    thead.appendChild(tr)
-    table.appendChild(thead)
-    table.appendChild(tbody)
-
-    //console.log(Object.entries(horario))
-
-    Object.entries(horario).forEach(row =>{
-        dataRow = row[1]
-
-        tbody.innerHTML += `
-        <tr>
-            <td>${dataRow.fecha}</td>
-            <td>${dataRow.horaInicio}</td>
-            <td>${dataRow.horaFin}</td>
-            <td>${dataRow.contenido}</td>
-        </tr>
-        `
-        
-    })
-    display.appendChild(table)
-}
 
 function fntCheckStatus(){
     let response
@@ -246,4 +191,58 @@ function fntCompareMounths(data){
     })
 
     return respuesta
+}
+
+
+function fntPrintHorario(){
+
+    let table = document.createElement('table')
+    let thead = document.createElement('thead')
+    let tbody = document.createElement('tbody')
+    let th = document.createElement('th')
+    let tr = document.createElement('tr')
+
+    table.classList.add('table')
+
+    let node = document.createTextNode('Fecha')
+    th = document.createElement('th')
+    th.appendChild(node)
+    tr.appendChild(th)
+    
+
+    node = document.createTextNode('Hora inicio')
+    th = document.createElement('th')
+    th.appendChild(node)
+    tr.appendChild(th)
+
+    node = document.createTextNode('Hora fin')
+    th = document.createElement('th')
+    th.appendChild(node)
+    tr.appendChild(th)
+
+    node = document.createTextNode('contenido')
+    th = document.createElement('th')
+    th.appendChild(node)
+    tr.appendChild(th)
+
+    thead.appendChild(tr)
+    table.appendChild(thead)
+    table.appendChild(tbody)
+
+    //console.log(Object.entries(horario))
+
+    Object.entries(horario).forEach(row =>{
+        dataRow = row[1]
+
+        tbody.innerHTML += `
+        <tr>
+            <td>${dataRow.fecha}</td>
+            <td>${dataRow.horaInicio}</td>
+            <td>${dataRow.horaFin}</td>
+            <td>${dataRow.contenido}</td>
+        </tr>
+        `
+        
+    })
+    display.appendChild(table)
 }

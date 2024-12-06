@@ -17,6 +17,14 @@
           <span>Inasistencias</span>
         </a>
       </li>
+
+      <!-- Pagina Gestion de horarios -->
+      <li class="nav-item">
+        <a class="nav-link <?= $data['page_name'] != 'horario' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/horario">
+          <i class="bi bi-person-x"></i>
+          <span>Horario</span>
+        </a>
+      </li>
       
       <!-- Pagina de usuarios -->
       <li class="nav-item">

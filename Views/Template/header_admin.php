@@ -10,21 +10,22 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="assets/img/favicon.png" rel="icon">
-  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="<?= media() ?>/img/favicon.png" rel="icon">
+  <link href="<?= media() ?>/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
-  <link href="assets/vendor/sweetalert/sweetalert2.min.css" rel="stylesheet">
+  <link href="<?= media() ?>/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="<?= media() ?>/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="<?= media() ?>/vendor/simple-datatables/style.css" rel="stylesheet">
+  <link href="<?= media() ?>/vendor/sweetalert/sweetalert2.min.css" rel="stylesheet">
+  <link href="<?= media() ?>/vendor/datatables.min.css">
 
   <!-- Template Main CSS File -->
-  <link href="assets/css/style.css" rel="stylesheet">
+  <link href="<?= media() ?>/css/style.css" rel="stylesheet">
 
   <!-- =======================================================
   * Template Name: NiceAdmin

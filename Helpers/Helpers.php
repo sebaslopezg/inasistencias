@@ -60,7 +60,7 @@ function strClean($strCadena){
     $string = str_ireplace("[","",$string);
     $string = str_ireplace("]","",$string);
     $string = str_ireplace("==","",$string);
-    $string = filter_var($string, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $string = filter_var($string, FILTER_SANITIZE_SPECIAL_CHARS);
     return $string;
 }
 

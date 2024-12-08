@@ -7,5 +7,5 @@
   <div id="display"></div>
 
   </main><!-- End #main -->
-  <script src="https://unpkg.com/read-excel-file@5.x/bundle/read-excel-file.min.js"></script>
+  <script src="<?= media() ?>/vendor/read-excel-file/read-excel-file.min.js"></script>
   <?php footer_admin($data); ?>

@@ -10,6 +10,7 @@ const frmGenero = document.querySelector('#genero')
 const frmEmail = document.querySelector('#txtEmail')
 const frmCodigo = document.querySelector('#txtCodigo')
 const frmIdUsuario = document.querySelector('#idUsuario')
+const frmUserStatus = document.querySelector('#userStatus')
 
 let tablaUsuarios = document.querySelector('#tablaUsuarios')
 
@@ -43,7 +44,7 @@ document.addEventListener('click', (e)=>{
                             text: data.msg,
                             icon: data.status ? "success" : 'error'
                         })
-                        loadTable()
+                        tablaUsuarios.api().ajax.reload(function(){})
                     })
                 } 
             })
@@ -55,7 +56,7 @@ document.addEventListener('click', (e)=>{
             .then((data) => {
                 if (data.status) {
                     data = data.data
-                    console.log(data)
+                    //console.log(data)
                     frmNombre.value = data.nombre
                     frmApellido.value = data.apellido
                     frmDocumento.value = data.documento
@@ -64,14 +65,18 @@ document.addEventListener('click', (e)=>{
                     frmEmail.value = data.correo
                     frmCodigo.value = data.codigo
                     frmIdUsuario.value = data.id
+                    frmUserStatus.value = data.status
+
                     frmDocumento.setAttribute('readonly','')
                     $('#crearUsuarioModal').modal('show')
+                    optionStatus(true)
                 }else{
                     Swal.fire({
                         title: "Error",
                         text: data.msg,
                         icon: "error"
-                      });
+                    });
+                    tablaUsuarios.api().ajax.reload(function(){})
                 }
             })
         }
@@ -81,6 +86,7 @@ document.addEventListener('click', (e)=>{
 
 btnCrearUsuario.addEventListener('click', ()=>{
     clearForm()
+    optionStatus(false)
     $('#crearUsuarioModal').modal('show')
 })
 
@@ -95,7 +101,7 @@ frmCrearUsuario.addEventListener('submit', (e)=>{
     .then((data) =>{
         if (data.status) {
             Swal.fire({
-                title: "Usuario Registrado",
+                title: "Registro Usuarios",
                 text: data.msg,
                 icon: "success"
               });
@@ -112,10 +118,31 @@ frmCrearUsuario.addEventListener('submit', (e)=>{
     })
 })
 
-
-
 function loadTable(){
-    //tablaUsuarios.innerHTML = "";
+
+    tablaUsuarios = $('#tablaUsuarios').dataTable({
+        "language": {
+            "url": `${base_url}/Assets/vendor/datatables/dataTables_es.json`
+        },
+        "ajax":{
+            "url": " "+base_url+"/usuarios/getUsarios",
+            "dataSrc":""
+        },
+        "columns":[
+            {"data":"nombre_completo"},
+            {"data":"documento"},
+            {"data":"telefono"},
+            {"data":"correo"},
+            {"data":"rol"},
+            {"data":"status"},
+            {"data":"accion"},
+        ],
+        "responsive": "true",
+        "iDisplayLength": 10,
+        "order":[[0, "asc"]]
+    }) 
+
+    /*
     fetch(base_url + '/usuarios/getUsarios')
     .then((res) => res.json())
     .then((data) => {
@@ -155,7 +182,7 @@ function loadTable(){
         
         tablaUsuarios.innerHTML = tabla;
 
-    })
+    }) */
 }
 
 function clearForm(){
@@ -168,4 +195,14 @@ function clearForm(){
     frmCodigo.value= ""
     frmIdUsuario.value = "0"
     frmDocumento.removeAttribute('readonly')
+}
+
+function optionStatus(mode){
+    let userStatus = document.getElementById('userStatusZone')
+
+    if(mode) {
+        userStatus.style.display = 'block'
+    }else{
+        userStatus.style.display = 'none'
+    }
 }

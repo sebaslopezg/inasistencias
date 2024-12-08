@@ -60,6 +60,7 @@ class Usuarios extends Controllers{
             'genero', 
             'txtEmail',
             'txtCodigo',
+            'userStatus'
         ];
 
         if (check_post($arrPosts)) {
@@ -71,6 +72,7 @@ class Usuarios extends Controllers{
             $intGenero = intval(strClean($_POST['genero']));
             $strEmail = strtolower(strClean($_POST['txtEmail']));
             $strCodigo = strClean($_POST['txtCodigo']);
+            $intStatus = intval(strClean($_POST['userStatus']));
             $strFirma = "";
             $strRol = "APRENDIZ";
             $intIdUsuario = intval(strClean($_POST['idUsuario']));
@@ -90,6 +92,11 @@ class Usuarios extends Controllers{
                     );
                     $option = 1;
                 }else{
+                    if ($intStatus == 1) {
+                        $intStatus = 2;
+                    }else{
+                        $intStatus = 1;
+                    }
                     $insert = $this->model->updateUsuario(
                         $intIdUsuario,
                         $strNombre,
@@ -100,7 +107,8 @@ class Usuarios extends Controllers{
                         $strEmail,
                         $strCodigo,
                         $strRol,
-                        $strFirma
+                        $strFirma,
+                        $intStatus
                     );
                     $option = 2;
                 }

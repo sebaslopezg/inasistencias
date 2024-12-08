@@ -59,6 +59,13 @@
                 <label for="txtNombre" class="form-label">Firma</label>
                 <input class="form-control" type="file" id="firma">
             </div>
+            <div id="userStatusZone" class="mb-3">
+                <label for="genero" class="form-label">Estado</label>
+                <select class="form-control" name="userStatus" id="userStatus">
+                    <option value="0">Inactivo</option>
+                    <option value="1">Activo</option>
+                </select>
+            </div>
             
         
       </div>

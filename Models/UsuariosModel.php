@@ -47,7 +47,7 @@ class UsuariosModel extends Mysql{
         return $respuesta;
     }
 
-    public function updateUsuario(int $idUsuario, string $strNombre, string $strApellido, int $intDocumento, int $intTelefono, int $intGenero, string $strEmail, string $strCodigo, string $strRol, string $strFirma){
+    public function updateUsuario(int $idUsuario, string $strNombre, string $strApellido, int $intDocumento, int $intTelefono, int $intGenero, string $strEmail, string $strCodigo, string $strRol, string $strFirma, int $status){
         $this->strNombre = $strNombre;
         $this->strApellido = $strApellido;
         $this->intDocumento = $intDocumento;
@@ -58,6 +58,7 @@ class UsuariosModel extends Mysql{
         $this->strFirma = $strFirma;
         $this->strRol = $strRol;
         $this->idUduario = $idUsuario;
+        $this->intStatus = $status;
 
         $sql = "SELECT * FROM usuario WHERE (documento = '{$this->intDocumento}' AND codigo = '{$this->strCodigo}' AND idUsuarios != {$this->idUduario})";
 
@@ -66,7 +67,7 @@ class UsuariosModel extends Mysql{
         if (!empty($request)) {
             $respuesta = 'exist';
         }else{
-            $query_insert = "UPDATE usuario SET nombre = ?, apellido = ?, telefono = ?, genero = ?, correo = ?, codigo = ?, firma = ?, rol = ? WHERE status > 0 AND idUsuarios = {$this->idUduario}";
+            $query_insert = "UPDATE usuario SET nombre = ?, apellido = ?, telefono = ?, genero = ?, correo = ?, codigo = ?, firma = ?, rol = ?, status = ? WHERE status > 0 AND idUsuarios = {$this->idUduario}";
             $arrData = array(
                 $this->strNombre,
                 $this->strApellido,
@@ -75,7 +76,8 @@ class UsuariosModel extends Mysql{
                 $this->strEmail,
                 $this->strCodigo,
                 $this->strFirma,
-                $this->strRol
+                $this->strRol,
+                $this->intStatus
             );
             $reques_insert = $this->update($query_insert, $arrData);
             $respuesta = $reques_insert;

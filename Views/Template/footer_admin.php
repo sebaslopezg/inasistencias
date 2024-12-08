@@ -18,7 +18,7 @@
   </script>
   <script src="<?= media() ?>/vendor/jquery/jquery-3.7.1.min.js"></script>
   <script src="<?= media() ?>/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="<?= media() ?>/vendor/simple-datatables/simple-datatables.js"></script>
+  
   <script src="<?= media() ?>/vendor/tinymce/tinymce.min.js"></script>
   <script src="<?= media() ?>/vendor/sweetalert/sweetalert2.all.min.js"></script>
   <script src="<?= media() ?>/vendor/datatables/datatables.min.js"></script>
@@ -27,6 +27,8 @@
   <script src="assets/vendor/chart.js/chart.umd.js"></script>
   <script src="assets/vendor/echarts/echarts.min.js"></script>
   <script src="assets/vendor/quill/quill.js"></script> 
+  
+  <script src="<?= media() ?>/vendor/simple-datatables/simple-datatables.js"></script>
   
   <script src="assets/vendor/php-email-form/validate.js"></script> -->
 

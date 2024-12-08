@@ -21,7 +21,32 @@ document.addEventListener('click', (e)=>{
         let id = e.target.closest('button').getAttribute('data-id')
 
         if (action == 'delete') {
-            //elimino
+            Swal.fire({
+                title:"Eliminar usuario",
+                text:"¿Está seguro de eliminar el usuario?",
+                icon: "warning",
+                showDenyButton: true,
+                confirmButtonText: "Sí",
+                denyButtonText: `Cancelar`
+            }).then((result)=>{
+                 if (result.isConfirmed) {
+                    let frmData = new FormData()
+                    frmData.append('idUsuario', id)
+                    fetch(base_url + '/usuarios/deleteUsuario',{
+                        method: "POST",
+                        body: frmData,
+                    })
+                    .then((res)=>res.json())
+                    .then((data)=>{
+                        Swal.fire({
+                            title: data.status ? 'Correcto' : 'Error',
+                            text: data.msg,
+                            icon: data.status ? "success" : 'error'
+                        })
+                        loadTable()
+                    })
+                } 
+            })
         }
 
         if (action == 'edit') {

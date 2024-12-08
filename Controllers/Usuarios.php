@@ -135,7 +135,7 @@ class Usuarios extends Controllers{
 
     function deleteUsuario(){
         if ($_POST) {
-            $intIdUsuario = intval($_POST['']);
+            $intIdUsuario = intval($_POST['idUsuario']);
             $requestDelete = $this->model->deleteUsuario($intIdUsuario);
 
             if ($requestDelete) {
@@ -148,5 +148,5 @@ class Usuarios extends Controllers{
         }
         die();
     }
-    }
+    
 }

@@ -59,7 +59,7 @@ class Usuarios extends Controllers{
             'txtTelefono', 
             'genero', 
             'txtEmail',
-            'txtCodigo'
+            'txtCodigo',
         ];
 
         if (check_post($arrPosts)) {
@@ -73,15 +73,56 @@ class Usuarios extends Controllers{
             $strCodigo = strClean($_POST['txtCodigo']);
             $strFirma = "";
             $strRol = "APRENDIZ";
+            $intIdUsuario = intval(strClean($_POST['idUsuario']));
 
-            $insert = $this->model->insertUsuario($strNombre, $strApellido, $intDocumento, $intTelefono, $intGenero, $strEmail, $strCodigo, $strRol, $strFirma);
+            try {
+                if ($intIdUsuario == 0 || $intIdUsuario == "" || $intIdUsuario == "0") {
+                    $insert = $this->model->insertUsuario(
+                        $strNombre, 
+                        $strApellido, 
+                        $intDocumento, 
+                        $intTelefono, 
+                        $intGenero, 
+                        $strEmail, 
+                        $strCodigo, 
+                        $strRol, 
+                        $strFirma
+                    );
+                    $option = 1;
+                }else{
+                    $insert = $this->model->updateUsuario(
+                        $intIdUsuario,
+                        $strNombre,
+                        $strApellido,
+                        $intDocumento,
+                        $intTelefono,
+                        $intGenero,
+                        $strEmail,
+                        $strCodigo,
+                        $strRol,
+                        $strFirma
+                    );
+                    $option = 2;
+                }
 
-            if (intval($insert) > 0) {
-                $arrResponse = array('status' => true, 'msg' => 'Usuario insertado correctamente');
-            }else if($insert == 'exist'){
-                $arrResponse = array('status' => false, 'msg' => 'Ya existe un usuario con el mismo documento');
-            }else{
-                $arrResponse = array('status' => false, 'msg' => 'Error al insertar');
+                if (intval($insert) > 0) {
+
+                    if ($option == 1) {
+                        $arrResponse = array('status' => true, 'msg' => 'Usuario insertado correctamente');
+                    }
+
+                    if ($option == 2) {
+                        $arrResponse = array('status' => true, 'msg' => 'Usuario actualizado correctamente');
+                    }
+                    
+                }else if($insert == 'exist'){
+                    $arrResponse = array('status' => false, 'msg' => 'Ya existe un usuario con el mismo documento');
+                }else{
+                    $arrResponse = array('status' => false, 'msg' => 'Error al insertar');
+                }
+
+            } catch (\Throwable $th) {
+                $arrResponse = array('status' => false, 'msg' => "Error desconocido: $th");
             }
 
         }else{
@@ -90,5 +131,22 @@ class Usuarios extends Controllers{
 
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
         
+    }
+
+    function deleteUsuario(){
+        if ($_POST) {
+            $intIdUsuario = intval($_POST['']);
+            $requestDelete = $this->model->deleteUsuario($intIdUsuario);
+
+            if ($requestDelete) {
+                $arrResponse = array('status' => true, 'msg' => 'Se ha eliminado el usuario');
+            }else{
+                $arrResponse = array('status' => false, 'msg' => 'Error al eliminar el usuario');
+            }
+
+            echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
+        }
+        die();
+    }
     }
 }

@@ -9,6 +9,7 @@ const frmTelefono = document.querySelector('#txtTelefono')
 const frmGenero = document.querySelector('#genero')
 const frmEmail = document.querySelector('#txtEmail')
 const frmCodigo = document.querySelector('#txtCodigo')
+const frmIdUsuario = document.querySelector('#idUsuario')
 
 let tablaUsuarios = document.querySelector('#tablaUsuarios')
 
@@ -18,7 +19,6 @@ document.addEventListener('click', (e)=>{
     try{
         let action = e.target.closest('button').getAttribute('data-action')
         let id = e.target.closest('button').getAttribute('data-id')
-        console.log(action)
 
         if (action == 'delete') {
             //elimino
@@ -30,6 +30,7 @@ document.addEventListener('click', (e)=>{
             .then((data) => {
                 if (data.status) {
                     data = data.data
+                    console.log(data)
                     frmNombre.value = data.nombre
                     frmApellido.value = data.apellido
                     frmDocumento.value = data.documento
@@ -37,6 +38,8 @@ document.addEventListener('click', (e)=>{
                     frmGenero.value = data.genero
                     frmEmail.value = data.correo
                     frmCodigo.value = data.codigo
+                    frmIdUsuario.value = data.id
+                    frmDocumento.setAttribute('readonly','')
                     $('#crearUsuarioModal').modal('show')
                 }else{
                     Swal.fire({
@@ -58,7 +61,6 @@ btnCrearUsuario.addEventListener('click', ()=>{
 
 frmCrearUsuario.addEventListener('submit', (e)=>{
     e.preventDefault()
-    console.log('asdsad')
     let frmUsuarios = new FormData(frmCrearUsuario)
     fetch(base_url + '/usuarios/setUsuario', {
         method:'POST',
@@ -66,7 +68,6 @@ frmCrearUsuario.addEventListener('submit', (e)=>{
     })
     .then((res) => res.json())
     .then((data) =>{
-        console.log(data)
         if (data.status) {
             Swal.fire({
                 title: "Usuario Registrado",
@@ -90,13 +91,11 @@ frmCrearUsuario.addEventListener('submit', (e)=>{
 
 function loadTable(){
     //tablaUsuarios.innerHTML = "";
-    console.log(tablaUsuarios)
     fetch(base_url + '/usuarios/getUsarios')
     .then((res) => res.json())
     .then((data) => {
         let html = ""
         data.forEach(row => {
-            console.log(row)
             html += `
             <tr>
                 <td>${row.nombre_completo}</td>
@@ -142,4 +141,6 @@ function clearForm(){
     frmGenero.value= "0"
     frmEmail.value= ""
     frmCodigo.value= ""
+    frmIdUsuario.value = "0"
+    frmDocumento.removeAttribute('readonly')
 }

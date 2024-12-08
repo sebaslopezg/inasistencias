@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-12-2024 a las 13:56:45
+-- Tiempo de generación: 07-12-2024 a las 12:31:17
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -117,15 +117,15 @@ CREATE TABLE `notificaciones` (
 CREATE TABLE `usuario` (
   `idUsuarios` int(11) NOT NULL,
   `nombre` varchar(45) NOT NULL,
-  `documento` bigint(20) NOT NULL,
-  `firma` varchar(100) DEFAULT NULL,
   `apellido` varchar(50) NOT NULL,
-  `rol` varchar(45) NOT NULL,
-  `genero` varchar(50) NOT NULL,
+  `documento` bigint(20) NOT NULL,
   `telefono` varchar(20) NOT NULL,
+  `genero` int(11) NOT NULL,
   `correo` varchar(300) NOT NULL,
-  `password` varchar(100) NOT NULL,
   `codigo` varchar(45) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  `firma` varchar(100) DEFAULT NULL,
+  `rol` varchar(45) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 

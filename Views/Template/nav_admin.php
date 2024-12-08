@@ -25,6 +25,30 @@
           <span>Horario</span>
         </a>
       </li>
+
+      <!-- Pagina Gestion de Fichas -->
+      <li class="nav-item">
+        <a class="nav-link <?= $data['page_name'] != '' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/">
+          <i class="bi bi-person-x"></i>
+          <span>Fichas</span>
+        </a>
+      </li>
+
+      <!-- Pagina Gestion de Excusas -->
+      <li class="nav-item">
+        <a class="nav-link <?= $data['page_name'] != '' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/">
+          <i class="bi bi-person-x"></i>
+          <span>Excusas</span>
+        </a>
+      </li>
+
+      <!-- Pagina Gestion de Excusas -->
+      <li class="nav-item">
+        <a class="nav-link <?= $data['page_name'] != '' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/">
+          <i class="bi bi-person-x"></i>
+          <span>Exepciones</span>
+        </a>
+      </li>
       
       <!-- Pagina de usuarios -->
       <li class="nav-item">

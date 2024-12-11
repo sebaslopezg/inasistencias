@@ -32,7 +32,7 @@ document.addEventListener("click", (e) => {
         if (result.isConfirmed) {
           let frmData = new FormData();
           frmData.append("idFicha", id);
-          fetch(base_url + "/fichas/deleteUsuario", {
+          fetch(base_url + "/fichas/deleteFicha", {
             method: "POST",
             body: frmData
           })
@@ -43,7 +43,7 @@ document.addEventListener("click", (e) => {
                 text: data.msg,
                 icon: data.status ? "success" : "error"
               });
-              tablaUsuarios.api().ajax.reload(function () {});
+              tablaFicha.api().ajax.reload(function () {});
             });
         }
       });
@@ -56,10 +56,10 @@ document.addEventListener("click", (e) => {
           if (data.status) {
             data = data.data;
             console.log(data);
+            frmNumeroFicha.disabled = true;
             frmNombre.value = data.nombre;
             frmNumeroFicha.value = data.numeroFicha;
             frmIdFicha.value = data.id;
-            frmUserStatus.value = data.status;
             $("#crearFichaModal").modal("show");
             optionStatus(true);
           } else {
@@ -79,6 +79,7 @@ document.addEventListener("click", (e) => {
 });
 
 btnCrearFicha.addEventListener("click", () => {
+  frmNumeroFicha.disabled = false;
   clearForm();
   optionStatus(false);
   $("#crearFichaModal").modal("show");
@@ -104,11 +105,7 @@ btnAcccionUsuarioVolver.addEventListener("click", () => {
 
 frmCrearFicha.addEventListener("submit", (e) => {
   e.preventDefault();
-  let frmFicha = new FormData();
-  frmFicha.append("txtNombre",frmNombre.value)
-  frmFicha.append("txtNumeroFicha",frmNumeroFicha.value)
-  frmFicha.append("txtIdFicha",frmUserStatus.value)
-  frmFicha.append("userStatus",frmIdFicha.value)
+  let frmFicha = new FormData(frmCrearFicha);
   fetch(base_url + "/fichas/setFicha", {
     method: "POST",
     body: frmFicha
@@ -121,8 +118,8 @@ frmCrearFicha.addEventListener("submit", (e) => {
           text: data.msg,
           icon: "success"
         });
-        window.location.reload();
         $("#crearFichaModal").modal("hide");
+        tablaFicha.api().ajax.reload(function () {});
         clearForm();
       } else {
         Swal.fire({

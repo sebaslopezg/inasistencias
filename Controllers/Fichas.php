@@ -113,9 +113,7 @@ class Fichas extends Controllers
                 } else {
                     if ($intStatus == 0) {
                         $intStatus = 1;
-                    } else {
-                        $intStatus = 1;
-                    }
+                    } 
                     $insert = $this->model->updateFicha(
                         $strNombre,
                         $intIdFicha,

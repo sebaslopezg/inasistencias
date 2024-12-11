@@ -7,7 +7,7 @@ getModal('fichasModal', $data);
         <h1>
             <?= $data['page_title'] ?>
             <button type="button" id="btnCrearFicha" class="btn btn-primary" style="display: none;">
-            <i class="bi bi-plus-lg"></i> Crear Ficha
+                <i class="bi bi-plus-lg"></i> Crear Ficha
             </button>
             <button type="button" id="btnAccion" class="btn btn-primary">
                 <i class="bi bi-arrow-return-right"></i> Gestion de Fichas
@@ -38,24 +38,57 @@ getModal('fichasModal', $data);
         </div>
     </div>
     <div class="card" id="cardTablaEditar" style="display: none;">
-        <div class="card-header bg bg-dark text-white">
-            <h4 class="subTitle" style="text-align: center ;"> Modificar Fichas </h4>
-        </div>
         <div class="card-body">
-            <table id="tablaFichas" class="table">
-                <thead>
-                    <tr>
-                        <th>Nombre de Ficha</th>
-                        <th>Numero de Ficha</th>
-                        <th>Estado</th>
-                        <th>Accion</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <h5 class="card-title"></h5>
+            <!-- Slides with fade transition -->
+            <button class="btn btn- mb-2" data-bs-target="#carouselExampleFade" data-bs-slide="prev" style="background-color: black; color:white "><i class="bi bi-arrow-left"></i> Atras </button>
+            <button class="btn btn- mb-2 " data-bs-target="#carouselExampleFade" data-bs-slide="next" style="background-color: black; color:white; ">Siguiente <i class="bi bi-arrow-right"></i></button>
+            <div id="carouselExampleFade" class="carousel slide carousel-fade">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="card-header bg bg-dark text-white">
+                            <h4 class="subTitle" style="text-align: center ;"> Modificar Fichas </h4>
+                        </div>
+                        <div class="card-body">
+                            <table id="tablaFichas" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre de Ficha</th>
+                                        <th>Numero de Ficha</th>
+                                        <th>Estado</th>
+                                        <th>Accion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="card-header bg bg-dark text-white">
+                            <h4 class="subTitle" style="text-align: center ;"> Asignar Instructores a Fichas </h4>
+                        </div>
+                        <div class="card-body" style="">
+                            <table id="" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre de Ficha</th>
+                                        <th>Numero de Ficha</th>
+                                        <th>Estado</th>
+                                        <th>Accion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- End Slides with fade transition -->
         </div>
     </div>
+    <div class="card">
 
+    </div>
 </main><!-- End #main -->
 <?php footer_admin($data); ?>

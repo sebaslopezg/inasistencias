@@ -72,10 +72,11 @@ class FichasModel extends Mysql
         if (!empty($request)) {
             $respuesta = 'exist';
         } else {
-            $query_insert = "UPDATE ficha SET nombre = ?, status = ? WHERE status > 0 AND idFicha = {$this->intIdFicha}";
+            $query_insert = "UPDATE ficha SET nombre = ?, status = ? WHERE status > 0 AND idFicha = ?";
             $arrData = array(
                 $this->strNombreFicha,
-                $this->intStatus
+                $this->intStatus,
+                $this->intIdFicha   
             );
             $reques_insert = $this->update($query_insert, $arrData);
             $respuesta = $reques_insert;

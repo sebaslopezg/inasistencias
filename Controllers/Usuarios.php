@@ -1,24 +1,28 @@
-<?php 
+<?php
 
-class Usuarios extends Controllers{
-    public function __construct(){
+class Usuarios extends Controllers
+{
+    public function __construct()
+    {
         parent::__construct();
     }
-    public function usuarios(){
+    public function usuarios()
+    {
 
         $data['page_title'] = "Página de usuarios";
         $data['page_name'] = "usuarios";
         $data['script'] = "usuarios";
-        $this->views->getView($this,"usuarios", $data);
+        $this->views->getView($this, "usuarios", $data);
     }
 
-    public function getUsarios(){
+    public function getUsarios()
+    {
         $arrData = $this->model->selectUsuarios();
 
-        for($i = 0; $i < count($arrData); $i++){
+        for ($i = 0; $i < count($arrData); $i++) {
             $arrData[$i]['accion'] = '
-            <button type="button" data-action="delete" data-id="'.$arrData[$i]['ID'].'" class="btn btn-danger"><i class="bi bi-trash"></i></button>
-            <button type="button" data-action="edit" data-id="'.$arrData[$i]['ID'].'" class="btn btn-primary"><i class="bi bi-pencil-square"></i></button>
+            <button type="button" data-action="delete" data-id="' . $arrData[$i]['ID'] . '" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+            <button type="button" data-action="edit" data-id="' . $arrData[$i]['ID'] . '" class="btn btn-primary"><i class="bi bi-pencil-square"></i></button>
             ';
 
             if ($arrData[$i]['status'] == 1) {
@@ -32,32 +36,34 @@ class Usuarios extends Controllers{
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
 
-    public function getUsariosById($id){
+    public function getUsariosById($id)
+    {
 
         $intId = intval(strClean($id));
 
         if ($intId > 0) {
             $arrData = $this->model->selectUsuariosById($id);
-        }else{
+        } else {
             $arrResponse = array('status' => false, 'msg' => 'tipo de dato no permitido');
         }
 
         if (!empty($arrData)) {
             $arrResponse = array('status' => true, 'data' => $arrData);
-        }else{
+        } else {
             $arrResponse = array('status' => false, 'msg' => 'No se encontraron datos con este id');
         }
 
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
     }
 
-    public function setUsuario(){
+    public function setUsuario()
+    {
         $arrPosts = [
-            'txtNombre', 
-            'txtApellido', 
-            'txtDocumento', 
-            'txtTelefono', 
-            'genero', 
+            'txtNombre',
+            'txtApellido',
+            'txtDocumento',
+            'txtTelefono',
+            'genero',
             'txtEmail',
             'txtCodigo',
             'userStatus'
@@ -80,21 +86,21 @@ class Usuarios extends Controllers{
             try {
                 if ($intIdUsuario == 0 || $intIdUsuario == "" || $intIdUsuario == "0") {
                     $insert = $this->model->insertUsuario(
-                        $strNombre, 
-                        $strApellido, 
-                        $intDocumento, 
-                        $intTelefono, 
-                        $intGenero, 
-                        $strEmail, 
-                        $strCodigo, 
-                        $strRol, 
+                        $strNombre,
+                        $strApellido,
+                        $intDocumento,
+                        $intTelefono,
+                        $intGenero,
+                        $strEmail,
+                        $strCodigo,
+                        $strRol,
                         $strFirma
                     );
                     $option = 1;
-                }else{
+                } else {
                     if ($intStatus == 1) {
                         $intStatus = 2;
-                    }else{
+                    } else {
                         $intStatus = 1;
                     }
                     $insert = $this->model->updateUsuario(
@@ -122,33 +128,30 @@ class Usuarios extends Controllers{
                     if ($option == 2) {
                         $arrResponse = array('status' => true, 'msg' => 'Usuario actualizado correctamente');
                     }
-                    
-                }else if($insert == 'exist'){
+                } else if ($insert == 'exist') {
                     $arrResponse = array('status' => false, 'msg' => 'Ya existe un usuario con el mismo documento');
-                }else{
+                } else {
                     $arrResponse = array('status' => false, 'msg' => 'Error al insertar');
                 }
-
             } catch (\Throwable $th) {
                 $arrResponse = array('status' => false, 'msg' => "Error desconocido: $th");
             }
-
-        }else{
+        } else {
             $arrResponse = array('status' => false, 'msg' => 'Debe insertar todos los datos');
         }
 
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
-        
     }
 
-    function deleteUsuario(){
+    function deleteUsuario()
+    {
         if ($_POST) {
             $intIdUsuario = intval($_POST['idUsuario']);
             $requestDelete = $this->model->deleteUsuario($intIdUsuario);
 
             if ($requestDelete) {
                 $arrResponse = array('status' => true, 'msg' => 'Se ha eliminado el usuario');
-            }else{
+            } else {
                 $arrResponse = array('status' => false, 'msg' => 'Error al eliminar el usuario');
             }
 
@@ -156,5 +159,4 @@ class Usuarios extends Controllers{
         }
         die();
     }
-    
 }

@@ -1,4 +1,7 @@
 const input = document.getElementById('excel')
+const alertZone = document.querySelector('#alertZone')
+const btnMostrarRegistrosLeidos = document.querySelector('#btnMostrarRegistrosLeidos')
+
 const date = new Date()
 const display = document.querySelector('#display')
 const meses = [
@@ -33,6 +36,12 @@ const celdas = [
 let fileStatus = {}
 let ficha = null
 
+btnMostrarRegistrosLeidos.addEventListener('click', ()=> {
+    if (horario != null) {
+        fntPrintHorario()
+    }
+})
+
 input.addEventListener('change', () => {
     fileStatus = {
         code: 0,
@@ -55,8 +64,22 @@ input.addEventListener('change', () => {
                 fntSearchFicha(rows)
                 if (fntCheckStatus()) {
                     fntSearchHorarios(rows)
-                    fntPrintHorario()
                     procesData(horario)
+                    if (horario == null) {
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se lograron obtener datos",
+                            icon: "error"
+                        });
+                    }else{
+                        Swal.fire({
+                            title: "Carga de datos",
+                            text: "Se han cargado datos",
+                            icon: "info"
+                        });
+                        printAlert()
+                        enableButtons()
+                    }
                 }
             })
         }
@@ -206,6 +229,17 @@ function fntCompareMounths(data){
     return respuesta
 }
 
+function printAlert(){
+    let cantidadRegistros = 0
+    Object.entries(horario).forEach(row => cantidadRegistros++)
+    
+    html = `
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+        Cantidad de registros leidos: ${cantidadRegistros}
+    </div>
+    `
+    alertZone.innerHTML = html
+}
 
 function fntPrintHorario(){
 
@@ -271,4 +305,8 @@ function procesData(data){
         dataRow = row[1]
         console.log(dataRow)        
     })
+}
+
+function enableButtons(){
+    btnMostrarRegistrosLeidos.removeAttribute('disabled')
 }

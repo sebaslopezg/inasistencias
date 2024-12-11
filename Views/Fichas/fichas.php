@@ -68,7 +68,7 @@ getModal('fichasModal', $data);
                         <div class="card-header bg bg-dark text-white">
                             <h4 class="subTitle" style="text-align: center ;"> Asignar Instructores a Fichas </h4>
                         </div>
-                        <div class="card-body" style="">
+                        <div class="card-body" >
                             <table id="" class="table">
                                 <thead>
                                     <tr>

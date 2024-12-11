@@ -64,7 +64,8 @@ input.addEventListener('change', () => {
                 fntSearchFicha(rows)
                 if (fntCheckStatus()) {
                     fntSearchHorarios(rows)
-                    procesData(horario)
+                    let dataProcesada = procesData(horario)
+                    console.log(dataProcesada)
                     if (horario == null) {
                         Swal.fire({
                             title: "Error",
@@ -301,10 +302,34 @@ function fntPrintHorario(){
 }
 
 function procesData(data){
+    let response = {}
+    let arrFechas = []
     Object.entries(data).forEach(row =>{
         dataRow = row[1]
-        console.log(dataRow)        
+        //console.log(dataRow)
+        arrFechas.push(dataRow.fecha)       
     })
+    let uniqArrFechas = [...new Set(arrFechas)]
+    
+    //FIX IT!!!!
+    uniqArrFechas.forEach((fecha) => {
+
+        Object.entries(data).forEach((row, index) =>{
+            dataRow = row[1]
+            if (fecha == dataRow.fecha) { 
+                    console.log('esigual xD')
+                    response[fecha] += {
+                        [index]: {
+                            horaInicio:dataRow.horaInicio,
+                            horaFin:dataRow.horaFin,
+                            contenido:dataRow.contenido
+                        }
+                }
+            }  
+        })
+    })
+
+    return response
 }
 
 function enableButtons(){

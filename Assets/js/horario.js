@@ -54,8 +54,9 @@ input.addEventListener('change', () => {
             readXlsxFile(input.files[0]).then((rows) => {
                 fntSearchFicha(rows)
                 if (fntCheckStatus()) {
-                    fntSearchHorarios(rows)  
+                    fntSearchHorarios(rows)
                     fntPrintHorario()
+                    procesData(horario)
                 }
             })
         }
@@ -100,16 +101,17 @@ function fntSearchHorarios(rows){
     let mesEncontrado = null
     let lastNotNull
     let contadorDia = 0
+    let contadorDiaHorario = 0
     let mesPlaceholder
     let hold = false
-    let diaEncontrado
+    let diaEncontrado = []
     let horasEncontrada = []
     let fecha
     let horaInicio
     let horaFin
     let contenido
     let contadorHorario = 0
-    rows.forEach((row, rowNumber) => {
+    rows.forEach((row, rowNumber, arrRowCell) => {
 
         row.forEach((cell, cellNumber, arrRow) =>{
 
@@ -128,6 +130,7 @@ function fntSearchHorarios(rows){
                     }else{
                         mesEncontrado = mes
                         contadorDia = 0
+                        diaEncontrado = []
                     }
                     lastNotNull = mes
                 }
@@ -139,30 +142,40 @@ function fntSearchHorarios(rows){
                     if (contadorDia > 5) {
                         //setea las horas
                         horasEncontrada.push(cell)
+                        contadorDiaHorario = 0
                     }else{
                         if (hold && cell == 1) {
                             mesEncontrado = mesPlaceholder
                             hold = false
                         }
-                        //lee los dias
-                        diaEncontrado = cell
+                        //lee los dias validos
+                        let celdaInferior = arrRowCell[rowNumber+1][cellNumber]
+                        if (celdaInferior != null && celdaInferior != 'FESTIVO') {
+                            diaEncontrado.push(cell)
+                        }
                         contadorDia++
                     }
                     lastNotNull = cell
                 }else if(cell != null && cell != 'FESTIVO' && !fntCompareDays(cell) && !fntCompareMounths(cell)){
-                    fecha = diaEncontrado + '/' + mesEncontrado + '/' + date.getFullYear()
+
+                    fecha = diaEncontrado[contadorDiaHorario] + '/' + (meses.findIndex(m => m == mesEncontrado)+1) + '/' + date.getFullYear()
                     horaInicio = horasEncontrada[horasEncontrada.length-2]
                     horaFin = horasEncontrada[horasEncontrada.length-1]
                     contenido = cell
 
                     horario[contadorHorario] = {
-                        fecha: fecha,
-                        horaInicio: horaInicio,
-                        horaFin: horaFin,
-                        contenido: contenido
+                        fecha:fecha,
+                        horaInicio:horaInicio,
+                        horaFin:horaFin,
+                        contenido:contenido,
+                        coordenada:{
+                            fila: rowNumber+1,
+                            celda_index: cellNumber,
+                            celda_letra: celdas[cellNumber]
+                        }
                     }
                     contadorHorario++
-
+                    contadorDiaHorario++
                     //console.log(' | en fila: ' + (rowNumber+1) + ' | Celda: ' + celdas[cellNumber])
                 }
             }
@@ -225,6 +238,11 @@ function fntPrintHorario(){
     th.appendChild(node)
     tr.appendChild(th)
 
+    node = document.createTextNode('Coordenada')
+    th = document.createElement('th')
+    th.appendChild(node)
+    tr.appendChild(th)
+
     thead.appendChild(tr)
     table.appendChild(thead)
     table.appendChild(tbody)
@@ -240,9 +258,17 @@ function fntPrintHorario(){
             <td>${dataRow.horaInicio}</td>
             <td>${dataRow.horaFin}</td>
             <td>${dataRow.contenido}</td>
+            <td>${dataRow.coordenada.fila} | ${dataRow.coordenada.celda_letra}</td>
         </tr>
         `
         
     })
     display.appendChild(table)
+}
+
+function procesData(data){
+    Object.entries(data).forEach(row =>{
+        dataRow = row[1]
+        console.log(dataRow)        
+    })
 }

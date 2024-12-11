@@ -105,7 +105,7 @@ frmCrearUsuario.addEventListener('submit', (e)=>{
                 text: data.msg,
                 icon: "success"
               });
-              loadTable()
+              tablaUsuarios.api().ajax.reload(function(){})
               $('#crearUsuarioModal').modal('hide')
               clearForm()
         }else{

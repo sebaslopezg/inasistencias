@@ -60,7 +60,6 @@ class Usuarios extends Controllers{
             'genero', 
             'txtEmail',
             'txtCodigo',
-            'userStatus'
         ];
 
         if (check_post($arrPosts)) {

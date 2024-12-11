@@ -22,7 +22,7 @@ getModal('excusasModal', $data);
                         <th>Fecha Inasistencia</th>
                         <th>Aprendiz</th>
                         <th>Estado</th>
-                        <th>Accion</th>
+                        <th>Excusa</th>
                     </tr>
                 </thead>
                 <tbody>

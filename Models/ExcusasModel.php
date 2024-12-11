@@ -14,4 +14,26 @@ class ExcusasModel extends mysql
         $request = $this->select_all($sql);
         return $request;
     }
+
+    /* public function selectInstructoresPorFicha($idFicha)
+    {
+        $sql = "SELECT usuario.idUsuarios, concat(nombre,' ',apellido)as nomCompleto FROM usuario JOIN usuario_has_ficha has on has.usuario_idUsuarios = idUsuarios WHERE rol = 'Instructor' AND status > 0 AND has.ficha_idFicha = $idFicha;";
+        $request = $this->select_all($sql);
+        return $request;
+    } */
+
+/*     public function selectInstructores()
+    {
+        $sql = "SELECT usuario.idUsuarios, concat(nombre,' ',apellido)as nomCompleto FROM usuario JOIN usuario_has_ficha has on has.usuario_idUsuarios = idUsuarios WHERE rol = 'Instructor' AND status > 0 AND has.ficha_idFicha = 1;";
+        $request = $this->select_all($sql);
+        return $request;
+    } */
+
+    public function selectInstructores()
+    {
+        $sql = "SELECT usuario.idUsuarios, concat(nombre,' ',apellido)as nomCompleto FROM usuario JOIN usuario_has_ficha has on has.usuario_idUsuarios = idUsuarios WHERE rol = 'Instructor' AND status > 0 AND has.ficha_idFicha = 1;";
+        $request = $this->select_all($sql);
+        return $request;
+    }
+   
 }

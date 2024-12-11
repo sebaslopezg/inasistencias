@@ -20,8 +20,8 @@ class Excusas extends Controllers
         $arrData = $this->model->selectExcusas();
 
         for ($i = 0; $i < count($arrData); $i++) {
-            $arrData[$i]['action'] = '<button type="button" data-action="delete" data-id="' . $arrData[$i]['id'] . '" class="btn btn-danger"><i class="bi bi-trash"></i></button>
-            <button type="button" data-action="edit" data-id="' . $arrData[$i]['id'] . '" class="btn btn-primary"><i class="bi bi-pencil-square"></i></button>
+            $arrData[$i]['action'] = '<button type="button" data-action="agregar" data-id="' . $arrData[$i]['id'] . '" class="btn btn-primary"><i class="bi bi-paperclip"></i></button>
+            <button type="button" data-action="edit" data-id="' . $arrData[$i]['id'] . '" class="btn btn-success"><i class="bi bi-pencil-square"></i></button>
             ';
 
             if ($arrData[$i]['status'] == 1) {

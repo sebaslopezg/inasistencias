@@ -9,20 +9,28 @@
       <div class="modal-body">
         <form id="frmCrearExcusa" method="post">
           <div class="row">
-            <div class="col-12 mb-3"><label for="txtNombre" class="form-label">Inansistencia</label>
-              <input type="text" class="form-control" id="txtNombre" name="txtNombre">
+            <div class="col-12 mb-3"><label for="txtNombre" class="form-label">IdExcusa</label>
+              <input type="number" class="form-control" id="txtIdExcusa" name="txtIdExcusa">
+            </div>
+            <div class="col-12 mb-3"><label for="" class="form-label">idInasistencias</label>
+              <input type="number" class="form-control" id="txtIdInasistencia" name="txtIdInasistencia">
+            </div>
+            <div class="col-12 mb-3"><label for="txtNombre" class="form-label">idUsuario</label>
+              <input type="number" class="form-control" id="txtIdUsuario" name="txtIdUsuario">
+            </div>
+            <div class="col-12 mb-3"><label for="txtNombre" class="form-label">IdInstructor</label>
+              <input type="number" class="form-control" id="txtIdInstructor" name="txtIdInstructor">
             </div>
             <div class="col-12 mb-3"><label for="txtNombre" class="form-label">Excusa</label>
-              <input type="file" class="form-control" id="txtNombre" name="txtNombre">
+              <input type="file" class="form-control" id="txtArchivo" name="txtArchivo">
             </div>
           </div>
-
-        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
         <button type="button" class="btn btn-primary">Agregar</button>
       </div>
+      </form>
     </div>
   </div>
 </div>

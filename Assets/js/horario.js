@@ -128,7 +128,6 @@ function fntSearchFicha(rows){
 }
 
 function fntSearchHorarios(rows){
-    //let horario = {}
     let mesEncontrado = null
     let lastNotNull
     let contadorDia = 0
@@ -142,28 +141,18 @@ function fntSearchHorarios(rows){
     let horaFin
     let contenido
     let contadorHorario = 0
+    let filaDelMes = 0
     rows.forEach((row, rowNumber, arrRowCell) => {
 
         row.forEach((cell, cellNumber, arrRow) =>{
 
             meses.forEach(mes =>{
-                
-                if (cell == mes) {
-                    
-                    meses.forEach(m =>{
-                        if (lastNotNull == m) {
-                            hold = true
-                        }
-                    })
 
-                    if (hold) {
-                        mesPlaceholder = mes
-                    }else{
-                        mesEncontrado = mes
-                        contadorDia = 0
-                        diaEncontrado = []
-                    }
-                    lastNotNull = mes
+                if (cell == mes || arrRowCell[filaDelMes][cellNumber] == mes) {
+                    filaDelMes = rowNumber
+                    mesEncontrado = mes
+                    contadorDia = 0
+                    diaEncontrado = []
                 }
             })
 
@@ -171,7 +160,6 @@ function fntSearchHorarios(rows){
                 if (Number.isInteger(cell)) {
                     
                     if (contadorDia > 5) {
-                        //setea las horas
                         horasEncontrada.push(cell)
                         contadorDiaHorario = 0
                     }else{
@@ -190,15 +178,17 @@ function fntSearchHorarios(rows){
                 }else if(cell != null && cell != 'FESTIVO' && !fntCompareDays(cell) && !fntCompareMounths(cell)){
 
                     fecha = diaEncontrado[contadorDiaHorario] + '/' + (meses.findIndex(m => m == mesEncontrado)+1) + '/' + date.getFullYear()
+
                     horaInicio = horasEncontrada[horasEncontrada.length-2]
                     horaFin = horasEncontrada[horasEncontrada.length-1]
-                    contenido = cell
+                    let contenidoFormateado = cell.replace(/\/n/gi, ",")
+                    contenido = contenidoFormateado.split(/\r?\n/)
 
                     horario[contadorHorario] = {
                         fecha:fecha,
                         horaInicio:horaInicio,
                         horaFin:horaFin,
-                        contenido:contenido,
+                        instructor:contenido[0],
                         coordenada:{
                             fila: rowNumber+1,
                             celda_index: cellNumber,
@@ -207,7 +197,6 @@ function fntSearchHorarios(rows){
                     }
                     contadorHorario++
                     contadorDiaHorario++
-                    //console.log(' | en fila: ' + (rowNumber+1) + ' | Celda: ' + celdas[cellNumber])
                 }
             }
 
@@ -275,7 +264,7 @@ function fntPrintHorario(){
     th.appendChild(node)
     tr.appendChild(th)
 
-    node = document.createTextNode('contenido')
+    node = document.createTextNode('Instructor')
     th = document.createElement('th')
     th.appendChild(node)
     tr.appendChild(th)
@@ -299,7 +288,7 @@ function fntPrintHorario(){
             <td>${dataRow.fecha}</td>
             <td>${dataRow.horaInicio}</td>
             <td>${dataRow.horaFin}</td>
-            <td>${dataRow.contenido}</td>
+            <td>${dataRow.instructor}</td>
             <td>${dataRow.coordenada.fila} | ${dataRow.coordenada.celda_letra}</td>
         </tr>
         `
@@ -315,7 +304,7 @@ function sentData(){
         dataRow = row[1]
         console.log(dataRow)
         frmData.append('fecha', dataRow.fecha)
-        frmData.append('contenido', dataRow.contenido)
+        frmData.append('contenido', dataRow.instructor)
         frmData.append('horaInicio', dataRow.horaInicio)
         frmData.append('horaFin', dataRow.horaFin)
     })
@@ -333,8 +322,9 @@ function enableButtons(){
 }
 
  function procesData(data){
-    let respuesta = {}
+    let respuestaRaw = {}
     let arrFechas = []
+    let respuesta = {}
     Object.entries(data).forEach(row =>{
         dataRow = row[1]
         arrFechas.push(dataRow.fecha)       
@@ -342,14 +332,61 @@ function enableButtons(){
     let uniqArrFechas = [...new Set(arrFechas)]
     //FIX IT!!!!
     uniqArrFechas.forEach((fecha, fechaIndex) => {
-        Object.entries(data).forEach((row, dataIndex) =>{
+        let contenido = {}
+        let indexCout = 0
+        Object.entries(data).forEach((row) =>{
             dataRow = row[1]
+
             if (fecha == dataRow.fecha) {
-                
+                contenido[indexCout] = {
+                    horaInicio:dataRow.horaInicio,
+                    horaFin:dataRow.horaFin,
+                    instructor:dataRow.instructor
+                }
+                indexCout++
             }  
         })
+
+        respuestaRaw[fecha] = contenido
     })
 
-    return arrRespuesta
+    let letResponseIndex = 0
+    Object.entries(respuestaRaw).forEach((data) =>{
+        
+        console.log(data)
+        let resFecha = data[0]
+        let resHoraInicio
+        let resHoraFin
+        let resInstructor
+        
+        if (data[1][0].instructor == data[1][5].instructor) {
+            resHoraInicio = data[1][0].horaInicio
+            resHoraFin = data[1][5].horaFin
+            resInstructor = data[1][0].instructor
+        }else{
+
+            respuesta[letResponseIndex] = {
+                fecha:resFecha,
+                horaInicio:resHoraInicio,
+                horaFin:resHoraFin,
+                instructor:resInstructor
+            }
+            letResponseIndex++
+        }
+
+        respuesta[letResponseIndex] = {
+            fecha:resFecha,
+            horaInicio:resHoraInicio,
+            horaFin:resHoraFin,
+            instructor:resInstructor
+        }
+
+
+        letResponseIndex++
+    })
+
+    //console.log(respuestaRaw)
+
+    return respuestaRaw
 } 
 

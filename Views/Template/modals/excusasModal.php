@@ -24,6 +24,13 @@
             <div class="col-12 mb-3"><label for="txtNombre" class="form-label">Excusa</label>
               <input type="file" class="form-control" id="txtArchivo" name="txtArchivo">
             </div>
+            <div id="userStatusZone" class="mb-3">
+                <label for="genero" class="form-label">Estado</label>
+                <select class="form-control" name="userStatus" id="userStatus">
+                    <option value="0">Inactivo</option>
+                    <option value="1">Activo</option>
+                </select>
+            </div>
           </div>
       </div>
       <div class="modal-footer">

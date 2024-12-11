@@ -17,7 +17,7 @@ class Usuarios extends Controllers{
 
         for($i = 0; $i < count($arrData); $i++){
             $arrData[$i]['accion'] = '
-            <button type="button" data-action="delete" data-id="'.$arrData[$i]['ID'].'" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+            <button type="button" data-action="delete" data-id="'.$arrData[$i]['ID'].'" class="btn btn-danger"><i class="bi bi-trash"></i></button>         
             <button type="button" data-action="edit" data-id="'.$arrData[$i]['ID'].'" class="btn btn-primary"><i class="bi bi-pencil-square"></i></button>
             ';
 

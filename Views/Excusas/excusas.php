@@ -6,9 +6,7 @@ getModal('excusasModal', $data);
     <div class="pagetitle">
         <h1>
             <?= $data['page_title'] ?>
-            <button type="button" id="btnCrearExcusa" class="btn btn-primary mt-3 mb-3" style="display: block;">
-                Crear Excusa
-            </button>
+           
         </h1>
     </div>
 
@@ -21,6 +19,7 @@ getModal('excusasModal', $data);
                     <tr>
                         <th>Fecha Inasistencia</th>
                         <th>Aprendiz</th>
+                        <th>Instructor</th>
                         <th>Estado</th>
                         <th>Excusa</th>
                     </tr>

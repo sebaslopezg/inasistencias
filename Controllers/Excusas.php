@@ -18,10 +18,14 @@ class Excusas extends Controllers
     public function getExcusas()
     {
         $arrData = $this->model->selectExcusas();
+        
 
         for ($i = 0; $i < count($arrData); $i++) {
-            $arrData[$i]['action'] = '<button type="button" data-action="agregar" data-id="' . $arrData[$i]['id'] . '" class="btn btn-primary"><i class="bi bi-paperclip"></i></button>
-            <button type="button" data-action="edit" data-id="' . $arrData[$i]['id'] . '" class="btn btn-success"><i class="bi bi-pencil-square"></i></button>
+            $arrData[$i]['instructor'] = $this->model->selectInstructor($arrData[$i]['idInstructor']);
+            $arrData[$i]['action'] = '
+            <button type="button" data-id="'.$arrData[$i]['Id'].'" data-action="agregar" class="btn btn-primary"><i class="bi bi-paperclip"></i></button>
+
+            <button type="button" data-id="'.$arrData[$i]['Id'].'" data-action="edit" class="btn btn-success"><i class="bi bi-pencil-square"></i></button>
             ';
 
             if ($arrData[$i]['status'] == 1) {
@@ -33,4 +37,33 @@ class Excusas extends Controllers
         }
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
+
+    public function getInasistenciaById($id){
+
+        $intId = intval(strClean($id));
+
+        if ($intId > 0) {
+            $arrData = $this->model->selectInasistenciaById($id);
+        }else{
+            $arrResponse = array('status' => false, 'msg' => 'tipo de dato no permitido');
+        }
+
+        if (!empty($arrData)) {
+            $arrResponse = array('status' => true, 'data' => $arrData);
+        }else{
+            $arrResponse = array('status' => false, 'msg' => 'No se encontraron datos con este id');
+        }
+
+        echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function setExcusas(){
+        $arrPosts =[
+            'txtIdInasistencia',
+            'txtIdUsuario',
+            'txtIdInstructor',
+            'txtArchivo'
+        ];
+    }
+
 }

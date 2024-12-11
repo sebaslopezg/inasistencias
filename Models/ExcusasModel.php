@@ -10,30 +10,38 @@ class ExcusasModel extends mysql
 
     public function selectExcusas()
     {
-        $sql = "SELECT i.idInasistencias as id,concat(i.fecha,' ', i.hora) as fechaCompleta,i.codigoNovedad,concat(u.nombre,' ',u.apellido) as nombreCompleto,i.status FROM inasistencias i JOIN usuario u on u.idUsuarios = i.usuario_idUsuarios WHERE i.codigoNovedad = 0";
+        $sql = "SELECT i.idInasistencias as Id,concat(i.fecha,' ', i.hora) as fechaCompleta,i.codigoNovedad,concat(u.nombre,' ',u.apellido) as nombreCompleto,idInstructor,i.status FROM inasistencias i JOIN usuario u on u.idUsuarios = i.usuario_idUsuarios WHERE i.codigoNovedad = 0";
         $request = $this->select_all($sql);
         return $request;
     }
 
-    /* public function selectInstructoresPorFicha($idFicha)
+    public function selectInasistenciaById(int $idInasistencia)
     {
-        $sql = "SELECT usuario.idUsuarios, concat(nombre,' ',apellido)as nomCompleto FROM usuario JOIN usuario_has_ficha has on has.usuario_idUsuarios = idUsuarios WHERE rol = 'Instructor' AND status > 0 AND has.ficha_idFicha = $idFicha;";
-        $request = $this->select_all($sql);
+        $this->$idInasistencia = $idInasistencia;
+        $sql = "SELECT i.idInasistencias as idIna,i.idInstructor,i.status,u.idUsuarios as idUsu FROM inasistencias i JOIN usuario u on u.idUsuarios = i.usuario_idUsuarios WHERE i.codigoNovedad = 0 and i.idInasistencias = '{$this->$idInasistencia}'";
+        $request = $this->select($sql);
         return $request;
-    } */
+    }
 
-/*     public function selectInstructores()
-    {
-        $sql = "SELECT usuario.idUsuarios, concat(nombre,' ',apellido)as nomCompleto FROM usuario JOIN usuario_has_ficha has on has.usuario_idUsuarios = idUsuarios WHERE rol = 'Instructor' AND status > 0 AND has.ficha_idFicha = 1;";
-        $request = $this->select_all($sql);
+    public function selectInstructor(int $id){
+        $this->id = $id;
+        $sql = "SELECT concat(u.nombre,' ',u.apellido) as nombreIntru FROM usuario u WHERE u.idUsuarios = '{$this->id}' and rol = 'Instructor'";
+        $request = $this->select($sql);
         return $request;
-    } */
+    }
 
-    public function selectInstructores()
-    {
-        $sql = "SELECT usuario.idUsuarios, concat(nombre,' ',apellido)as nomCompleto FROM usuario JOIN usuario_has_ficha has on has.usuario_idUsuarios = idUsuarios WHERE rol = 'Instructor' AND status > 0 AND has.ficha_idFicha = 1;";
-        $request = $this->select_all($sql);
-        return $request;
+    public function insertExcusas(int $idInasistencia,int $idUsuario,int $idInstructor,string $uriExcusa){
+        $this->idInasistencia = $idInasistencia;
+        $this->idUsuario = $idUsuario;
+        $this->idInstructor = $idInstructor;
+        $this->uriExcusa = $uriExcusa;
+
+        $query_insert ="INSERT INTO excusas(inasistencias_idInasistencias,usuario_idUsuarios,idInstructor,uriArchivo,status) VALUES(?,?,?,?,?)";
+        $arrData = array($this->idInasistencia,$this->idUsuario,$this->idInstructor,$this->uriExcusa,1);
+        $request_insert = $this->insert($query_insert,$arrData);
+        $respuesta = $request_insert;
+        
+        return$respuesta;
     }
    
 }

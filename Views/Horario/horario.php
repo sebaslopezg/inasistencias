@@ -7,6 +7,7 @@
 
   <div class="mb-3">
     <button id="btnMostrarRegistrosLeidos" class="btn btn-primary" disabled>Mostrar registros leidos</button>
+    <button id="btnGuardarHorario" class="btn btn-primary" disabled>Guardar Horario</button>
   </div>
 
   <div id="alertZone"></div>

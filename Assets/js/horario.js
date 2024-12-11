@@ -1,6 +1,7 @@
 const input = document.getElementById('excel')
 const alertZone = document.querySelector('#alertZone')
 const btnMostrarRegistrosLeidos = document.querySelector('#btnMostrarRegistrosLeidos')
+const btnGuardarHorario = document.querySelector('#btnGuardarHorario')
 
 const date = new Date()
 const display = document.querySelector('#display')
@@ -42,6 +43,12 @@ btnMostrarRegistrosLeidos.addEventListener('click', ()=> {
     }
 })
 
+btnGuardarHorario.addEventListener('click', ()=>{ 
+    if (horario != null) {
+        //sentData()
+    }
+})
+
 input.addEventListener('change', () => {
     fileStatus = {
         code: 0,
@@ -64,8 +71,6 @@ input.addEventListener('change', () => {
                 fntSearchFicha(rows)
                 if (fntCheckStatus()) {
                     fntSearchHorarios(rows)
-                    let dataProcesada = procesData(horario)
-                    console.log(dataProcesada)
                     if (horario == null) {
                         Swal.fire({
                             title: "Error",
@@ -80,6 +85,8 @@ input.addEventListener('change', () => {
                         });
                         printAlert()
                         enableButtons()
+                        let dataProcesada = procesData(horario)
+                        //console.log(dataProcesada)
                     }
                 }
             })
@@ -301,37 +308,48 @@ function fntPrintHorario(){
     display.appendChild(table)
 }
 
-function procesData(data){
-    let response = {}
-    let arrFechas = []
-    Object.entries(data).forEach(row =>{
-        dataRow = row[1]
-        //console.log(dataRow)
-        arrFechas.push(dataRow.fecha)       
-    })
-    let uniqArrFechas = [...new Set(arrFechas)]
+function sentData(){
+    let frmData = new FormData()
     
-    //FIX IT!!!!
-    uniqArrFechas.forEach((fecha) => {
-
-        Object.entries(data).forEach((row, index) =>{
-            dataRow = row[1]
-            if (fecha == dataRow.fecha) { 
-                    console.log('esigual xD')
-                    response[fecha] += {
-                        [index]: {
-                            horaInicio:dataRow.horaInicio,
-                            horaFin:dataRow.horaFin,
-                            contenido:dataRow.contenido
-                        }
-                }
-            }  
-        })
+    Object.entries(horario).forEach(row =>{
+        dataRow = row[1]
+        console.log(dataRow)
+        frmData.append('fecha', dataRow.fecha)
+        frmData.append('contenido', dataRow.contenido)
+        frmData.append('horaInicio', dataRow.horaInicio)
+        frmData.append('horaFin', dataRow.horaFin)
     })
 
-    return response
+    fetch(base_url + '/horario/setHorario',{
+        method: "POST",
+        body: frmData,
+    })
+    .then((res)=>console.log(res))
 }
 
 function enableButtons(){
     btnMostrarRegistrosLeidos.removeAttribute('disabled')
+    btnGuardarHorario.removeAttribute('disabled')
 }
+
+ function procesData(data){
+    let respuesta = {}
+    let arrFechas = []
+    Object.entries(data).forEach(row =>{
+        dataRow = row[1]
+        arrFechas.push(dataRow.fecha)       
+    })
+    let uniqArrFechas = [...new Set(arrFechas)]
+    //FIX IT!!!!
+    uniqArrFechas.forEach((fecha, fechaIndex) => {
+        Object.entries(data).forEach((row, dataIndex) =>{
+            dataRow = row[1]
+            if (fecha == dataRow.fecha) {
+                
+            }  
+        })
+    })
+
+    return arrRespuesta
+} 
+

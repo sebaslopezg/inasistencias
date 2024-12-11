@@ -62,7 +62,7 @@
             <div id="userStatusZone" class="mb-3">
                 <label for="genero" class="form-label">Estado</label>
                 <select class="form-control" name="userStatus" id="userStatus">
-                    <option value="0">Inactivo</option>
+                    <option value="2">Inactivo</option>
                     <option value="1">Activo</option>
                 </select>
             </div>

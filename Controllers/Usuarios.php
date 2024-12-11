@@ -60,6 +60,7 @@ class Usuarios extends Controllers{
             'genero', 
             'txtEmail',
             'txtCodigo',
+            'userStatus'
         ];
 
         if (check_post($arrPosts)) {
@@ -91,9 +92,7 @@ class Usuarios extends Controllers{
                     );
                     $option = 1;
                 }else{
-                    if ($intStatus == 1) {
-                        $intStatus = 2;
-                    }else{
+                    if ($intStatus == 0) {
                         $intStatus = 1;
                     }
                     $insert = $this->model->updateUsuario(

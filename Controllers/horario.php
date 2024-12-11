@@ -12,4 +12,10 @@ class Horario extends Controllers{
 
         $this->views->getView($this,"horario", $data);
     }
+
+    public function setHorario(){
+        if ($_POST) {
+            dep($_POST);
+        }
+    }
 }

@@ -1,10 +1,9 @@
 const input = document.getElementById('excel')
 const alertZone = document.querySelector('#alertZone')
-const btnMostrarRegistrosLeidos = document.querySelector('#btnMostrarRegistrosLeidos')
 const btnGuardarHorario = document.querySelector('#btnGuardarHorario')
+const display = document.querySelector('#display')
 
 const date = new Date()
-const display = document.querySelector('#display')
 const meses = [
     'ENERO', 
     'FEBRERO', 
@@ -36,16 +35,13 @@ const celdas = [
 
 let fileStatus = {}
 let ficha = null
-
-btnMostrarRegistrosLeidos.addEventListener('click', ()=> {
-    if (horario != null) {
-        fntPrintHorario()
-    }
-})
+let cantidadCeldasProcesadas
+let cantidadDatosFormateados
+let dataProcesada
 
 btnGuardarHorario.addEventListener('click', ()=>{ 
     if (horario != null) {
-        //sentData()
+        sentData()
     }
 })
 
@@ -68,6 +64,9 @@ input.addEventListener('change', () => {
             fntCheckStatus()
         }else{
             readXlsxFile(input.files[0]).then((rows) => {
+                cantidadCeldasProcesadas = 0
+                cantidadDatosFormateados = 0
+                dataProcesada = null
                 fntSearchFicha(rows)
                 if (fntCheckStatus()) {
                     fntSearchHorarios(rows)
@@ -83,10 +82,10 @@ input.addEventListener('change', () => {
                             text: "Se han cargado datos",
                             icon: "info"
                         });
+                        dataProcesada = procesData(horario)
+                        printProcesData()
                         printAlert()
                         enableButtons()
-                        let dataProcesada = procesData(horario)
-                        //console.log(dataProcesada)
                     }
                 }
             })
@@ -129,7 +128,6 @@ function fntSearchFicha(rows){
 
 function fntSearchHorarios(rows){
     let mesEncontrado = null
-    let lastNotNull
     let contadorDia = 0
     let contadorDiaHorario = 0
     let mesPlaceholder
@@ -142,17 +140,21 @@ function fntSearchHorarios(rows){
     let contenido
     let contadorHorario = 0
     let filaDelMes = 0
+    cantidadCeldasProcesadas = rows.length
+
     rows.forEach((row, rowNumber, arrRowCell) => {
 
         row.forEach((cell, cellNumber, arrRow) =>{
 
             meses.forEach(mes =>{
 
-                if (cell == mes || arrRowCell[filaDelMes][cellNumber] == mes) {
+                if (cell === mes) {
                     filaDelMes = rowNumber
-                    mesEncontrado = mes
                     contadorDia = 0
                     diaEncontrado = []
+                }
+                if (cell === mes || arrRowCell[filaDelMes][cellNumber] === mes) {
+                    mesEncontrado = mes
                 }
             })
 
@@ -168,13 +170,18 @@ function fntSearchHorarios(rows){
                             hold = false
                         }
                         //lee los dias validos
-                        let celdaInferior = arrRowCell[rowNumber+1][cellNumber]
+                        let celdaInferior
+                        try{
+                            celdaInferior = arrRowCell[rowNumber+1][cellNumber]
+                        }catch{
+                            celdaInferior = null
+                        } 
+
                         if (celdaInferior != null && celdaInferior != 'FESTIVO') {
                             diaEncontrado.push(cell)
                         }
                         contadorDia++
                     }
-                    lastNotNull = cell
                 }else if(cell != null && cell != 'FESTIVO' && !fntCompareDays(cell) && !fntCompareMounths(cell)){
 
                     fecha = diaEncontrado[contadorDiaHorario] + '/' + (meses.findIndex(m => m == mesEncontrado)+1) + '/' + date.getFullYear()
@@ -232,7 +239,9 @@ function printAlert(){
     
     html = `
     <div class="alert alert-primary alert-dismissible fade show" role="alert">
-        Cantidad de registros leidos: ${cantidadRegistros}
+        Cantidad de celdas procesadas: <b>${cantidadCeldasProcesadas}</b>
+        | Cantidad de datos validados: <b>${cantidadRegistros}</b>
+        | Datos organizados: <b>${cantidadDatosFormateados}</b>
     </div>
     `
     alertZone.innerHTML = html
@@ -300,13 +309,13 @@ function fntPrintHorario(){
 function sentData(){
     let frmData = new FormData()
     
-    Object.entries(horario).forEach(row =>{
+    Object.entries(dataProcesada).forEach(row =>{
         dataRow = row[1]
         console.log(dataRow)
         frmData.append('fecha', dataRow.fecha)
-        frmData.append('contenido', dataRow.instructor)
         frmData.append('horaInicio', dataRow.horaInicio)
         frmData.append('horaFin', dataRow.horaFin)
+        frmData.append('instructor', dataRow.instructor)
     })
 
     fetch(base_url + '/horario/setHorario',{
@@ -314,10 +323,10 @@ function sentData(){
         body: frmData,
     })
     .then((res)=>console.log(res))
+
 }
 
 function enableButtons(){
-    btnMostrarRegistrosLeidos.removeAttribute('disabled')
     btnGuardarHorario.removeAttribute('disabled')
 }
 
@@ -353,17 +362,17 @@ function enableButtons(){
     let letResponseIndex = 0
     Object.entries(respuestaRaw).forEach((data) =>{
         
-        console.log(data)
+        //console.log(data)
         let resFecha = data[0]
         let resHoraInicio
         let resHoraFin
         let resInstructor
+        let resContenido = data[1]
         
-        if (data[1][0].instructor == data[1][5].instructor) {
-            resHoraInicio = data[1][0].horaInicio
-            resHoraFin = data[1][5].horaFin
-            resInstructor = data[1][0].instructor
-        }else{
+        if (resContenido[0].instructor == resContenido[5].instructor) {
+            resHoraInicio = resContenido[0].horaInicio
+            resHoraFin = resContenido[5].horaFin
+            resInstructor = resContenido[0].instructor
 
             respuesta[letResponseIndex] = {
                 fecha:resFecha,
@@ -371,22 +380,77 @@ function enableButtons(){
                 horaFin:resHoraFin,
                 instructor:resInstructor
             }
+    
+            letResponseIndex++
+        }else{
+            //primer bloque
+            resHoraInicio = resContenido[0].horaInicio
+            resHoraFin = resContenido[2].horaFin
+            resInstructor = resContenido[0].instructor
+
+            respuesta[letResponseIndex] = {
+                fecha:resFecha,
+                horaInicio:resHoraInicio,
+                horaFin:resHoraFin,
+                instructor:resInstructor
+            }
+    
+            letResponseIndex++
+            
+            //segundo bloque
+            resHoraInicio_bloque2 = resContenido[3].horaInicio
+            resHoraFin_bloque2 = resContenido[5].horaFin
+            resInstructor_bloque2 = resContenido[3].instructor
+            
+            respuesta[letResponseIndex] = {
+                fecha:resFecha,
+                horaInicio:resHoraInicio_bloque2,
+                horaFin:resHoraFin_bloque2,
+                instructor:resInstructor_bloque2
+            }
             letResponseIndex++
         }
-
-        respuesta[letResponseIndex] = {
-            fecha:resFecha,
-            horaInicio:resHoraInicio,
-            horaFin:resHoraFin,
-            instructor:resInstructor
-        }
-
-
-        letResponseIndex++
     })
 
-    //console.log(respuestaRaw)
-
-    return respuestaRaw
+    return respuesta
 } 
+
+function printProcesData(){
+    let html = ""
+    Object.entries(dataProcesada).forEach(data => {
+        data = data[1]
+        html += `
+            <tr>
+                <td>${data.fecha}</td>
+                <td>${data.horaInicio}</td>
+                <td>${data.horaFin}</td>
+                <td>${data.instructor}</td>
+            </tr>
+        `;
+        cantidadDatosFormateados++
+    })
+
+
+    display.innerHTML = `
+    
+    <div class="card">
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora inicio</th>
+                        <th>Hora fin</th>
+                        <th>Instructor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${html}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    `
+}
 

@@ -67,7 +67,7 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="<?= base_url() ?>/salir">
+        <a class="nav-link collapsed" href="<?= base_url() ?>/logout">
           <i class="bi bi-box-arrow-in-right"></i>
           <span>Salir</span>
         </a>

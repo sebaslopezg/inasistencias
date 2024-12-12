@@ -10,7 +10,4 @@ class Home extends Controllers{
         $data['page_name'] = "home";
         $this->views->getView($this,"home", $data);
     }
-    public function getSaludo(){
-        echo "saludos!!!!!!";
-    }
 }

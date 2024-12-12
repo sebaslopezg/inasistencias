@@ -76,6 +76,7 @@ class Usuarios extends Controllers{
             $strFirma = "";
             $strRol = "APRENDIZ";
             $intIdUsuario = intval(strClean($_POST['idUsuario']));
+            $strPassword =  hash("SHA256", strClean($_POST['txtDocumento']));
 
             try {
                 if ($intIdUsuario == 0 || $intIdUsuario == "" || $intIdUsuario == "0") {
@@ -87,7 +88,8 @@ class Usuarios extends Controllers{
                         $intGenero, 
                         $strEmail, 
                         $strCodigo, 
-                        $strRol, 
+                        $strRol,
+                        $strPassword,
                         $strFirma
                     );
                     $option = 1;

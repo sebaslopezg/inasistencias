@@ -19,7 +19,7 @@ class UsuariosModel extends Mysql{
         return $request;
     }
 
-    public function insertUsuario(string $strNombre, string $strApellido, int $intDocumento, int $intTelefono, int $intGenero, string $strEmail, string $strCodigo, string $strRol, string $strFirma){
+    public function insertUsuario(string $strNombre, string $strApellido, int $intDocumento, int $intTelefono, int $intGenero, string $strEmail, string $strCodigo, string $strRol, string $password, string $strFirma){
         $this->strNombre = $strNombre;
         $this->strApellido = $strApellido;
         $this->intDocumento = $intDocumento;
@@ -29,7 +29,7 @@ class UsuariosModel extends Mysql{
         $this->strCodigo = $strCodigo;
         $this->strFirma = $strFirma;
         $this->strRol = $strRol;
-        $this->password = strval($this->intDocumento);
+        $this->password = $password;
         
         $query_usuarios = "SELECT * FROM usuario WHERE documento = {$this->intDocumento} AND status > 0";
 

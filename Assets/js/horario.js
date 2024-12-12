@@ -77,11 +77,6 @@ input.addEventListener('change', () => {
                             icon: "error"
                         });
                     }else{
-                        Swal.fire({
-                            title: "Carga de datos",
-                            text: "Se han cargado datos",
-                            icon: "info"
-                        });
                         dataProcesada = procesData(horario)
                         printProcesData()
                         printAlert()

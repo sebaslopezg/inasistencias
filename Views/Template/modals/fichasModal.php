@@ -16,7 +16,7 @@
                             <input type="text" class="form-control" id="txtNombre" name="txtNombre">
                         </div>
                         <div class="mb-3 col-6">
-                            <label for="txtApellido" class="form-label">Numero de Ficha</label>
+                            <label for="txtNumeroFicha" class="form-label">Numero de Ficha</label>
                             <input type="number" class="form-control" id="txtNumeroFicha" name="txtNumeroFicha">
                         </div>
                     </div>

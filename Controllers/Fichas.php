@@ -8,7 +8,6 @@ class Fichas extends Controllers
     }
     public function fichas()
     {
-
         $data['page_title'] = "Página de Fichas";
         $data['page_name'] = "fichas";
         $data['script'] = "fichas";
@@ -92,12 +91,12 @@ class Fichas extends Controllers
 
     public function setFicha()
     {
+       
         $arrPosts = [
             'txtNombre',
-            'txtNumeroFicha',
-            'txtIdFicha',
-            'userStatus'
+            'txtNumeroFicha'
         ];
+      
         if (check_post($arrPosts)) {
             $strNombre = strClean($_POST['txtNombre']);
             $intNumeroFicha = intval(strClean($_POST['txtNumeroFicha']));
@@ -140,7 +139,7 @@ class Fichas extends Controllers
                 $arrResponse = array('status' => false, 'msg' => "Error desconocido: $th");
             }
         } else {
-            $arrResponse = array('status' => false, 'msg' => 'Debe insertar todos los datos');
+            $arrResponse = array('status' => false, 'msg' => 'Debe insertar todos los datos  '.$_POST['userStatus'].$_POST['txtNumeroFicha'].$_POST['txtNombre']);
         }
 
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);

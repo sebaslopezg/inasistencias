@@ -1,7 +1,8 @@
 const input = document.getElementById('excel')
 const alertZone = document.querySelector('#alertZone')
-const btnGuardarHorario = document.querySelector('#btnGuardarHorario')
+//const btnGuardarHorario = document.querySelector('#btnGuardarHorario')
 const display = document.querySelector('#display')
+const displayModal = document.querySelector('#displayModal')
 
 const date = new Date()
 const meses = [
@@ -39,11 +40,28 @@ let cantidadCeldasProcesadas
 let cantidadDatosFormateados
 let dataProcesada
 
-btnGuardarHorario.addEventListener('click', ()=>{ 
-    if (horario != null) {
-        sentData()
-    }
-})
+document.addEventListener('click', (e)=>{
+    try{
+        if (e.target.closest('button').getAttribute('id') == 'btnGuardarHorario') {
+            if (horario != null) {
+                sentData()
+            } 
+        }
+
+        if (e.target.closest('span').getAttribute('data-action') == 'datosValidos') {
+            console.log('a')
+            fntPrintHorario()
+            $('#horarioModal').modal('show')
+        }
+
+        if (e.target.closest('span').getAttribute('data-action') == 'datosOrganizados') {
+            console.log('a')
+            printProcesData()
+            $('#horarioModal').modal('show')
+        }
+    }catch{}
+
+}) 
 
 input.addEventListener('change', () => {
     fileStatus = {
@@ -78,7 +96,8 @@ input.addEventListener('change', () => {
                         });
                     }else{
                         dataProcesada = procesData(horario)
-                        printProcesData()
+                        //printProcesData()
+                        printForms()
                         printAlert()
                         enableButtons()
                     }
@@ -234,9 +253,10 @@ function printAlert(){
     
     html = `
     <div class="alert alert-primary alert-dismissible fade show" role="alert">
+    <button id="btnGuardarHorario" class="btn btn-primary">Guardar Todo</button> 
         Cantidad de celdas procesadas: <b>${cantidadCeldasProcesadas}</b>
-        | Cantidad de datos validados: <b>${cantidadRegistros}</b>
-        | Datos organizados: <b>${cantidadDatosFormateados}</b>
+        | <span data-action="datosValidos">Cantidad de datos validados</span>: <b>${cantidadRegistros}</b>
+        | <span data-action="datosOrganizados">Datos organizados</span>: <b>${cantidadDatosFormateados}</b>
     </div>
     `
     alertZone.innerHTML = html
@@ -244,6 +264,7 @@ function printAlert(){
 
 function fntPrintHorario(){
 
+    let div = document.createElement('div')
     let table = document.createElement('table')
     let thead = document.createElement('thead')
     let tbody = document.createElement('tbody')
@@ -282,8 +303,6 @@ function fntPrintHorario(){
     table.appendChild(thead)
     table.appendChild(tbody)
 
-    //console.log(Object.entries(horario))
-
     Object.entries(horario).forEach(row =>{
         dataRow = row[1]
 
@@ -298,20 +317,13 @@ function fntPrintHorario(){
         `
         
     })
-    display.appendChild(table)
+    div.appendChild(table)
+    displayModal.innerHTML = div
 }
 
 function sentData(){
-    let frmData = new FormData()
-    
-    Object.entries(dataProcesada).forEach(row =>{
-        dataRow = row[1]
-        console.log(dataRow)
-        frmData.append('fecha', dataRow.fecha)
-        frmData.append('horaInicio', dataRow.horaInicio)
-        frmData.append('horaFin', dataRow.horaFin)
-        frmData.append('instructor', dataRow.instructor)
-    })
+    const frmHorario = document.querySelector('#frmHorario')
+    let frmData = new FormData(frmHorario)
 
     fetch(base_url + '/horario/setHorario',{
         method: "POST",
@@ -425,8 +437,7 @@ function printProcesData(){
         cantidadDatosFormateados++
     })
 
-
-    display.innerHTML = `
+    displayModal.innerHTML = `
     
     <div class="card">
         <div class="card-body">
@@ -447,5 +458,46 @@ function printProcesData(){
     </div>
 
     `
+}
+
+function printForms(){
+    let html = `
+    <form id="frmHorario">
+    <ul class="list-group">
+    `
+
+    Object.entries(dataProcesada).forEach(data => {
+        data = data[1]
+
+        html += `
+            
+            <li class="list-group-item">
+                <div class="mb-3 col-12">
+                    <label for="txtNombre" class="form-label">Fecha</label>
+                    <input type="text" class="form-control" name="hFecha[]" value="${data.fecha}">
+                </div>
+                <div class="mb-3 col-6">
+                    <label for="txtNombre" class="form-label">Hora Inicio</label>
+                    <input type="text" class="form-control" name="hHoraInicio[]" value="${data.horaInicio}">
+                </div>
+                <div class="mb-3 col-6">
+                    <label for="txtNombre" class="form-label">Hora Fin</label>
+                    <input type="text" class="form-control" name="hHoraFin[]" value="${data.horaFin}">
+                </div>
+                <div class="mb-3 col-12">
+                    <label for="txtNombre" class="form-label">Instructor</label>
+                    <input type="text" class="form-control" name="hInstructor[]" value="${data.instructor}">
+                </div>
+            </li>
+
+        `;
+        cantidadDatosFormateados++
+    })
+
+    html += `
+    </ul>
+    </form>`
+
+    display.innerHTML = html
 }
 

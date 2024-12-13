@@ -3,6 +3,10 @@
 class Usuarios extends Controllers{
     public function __construct(){
         parent::__construct();
+        session_start();
+        if(empty($_SESSION['login'])){
+           header('Location: ' . base_url().'/login' );
+       } 
     }
     public function usuarios(){
 
@@ -20,6 +24,16 @@ class Usuarios extends Controllers{
             <button type="button" data-action="delete" data-id="'.$arrData[$i]['ID'].'" class="btn btn-danger"><i class="bi bi-trash"></i></button>
             <button type="button" data-action="edit" data-id="'.$arrData[$i]['ID'].'" class="btn btn-primary"><i class="bi bi-pencil-square"></i></button>
             ';
+
+            if ($arrData[$i]['rol'] == "COORDINADOR") {
+                $arrData[$i]['rol'] = '<span class="badge bg-primary">Coordinador</span>';
+            }
+            if ($arrData[$i]['rol'] == "INSTRUCTOR") {
+                $arrData[$i]['rol'] = '<span class="badge bg-info text-dark">Instructor</span>';
+            }
+            if ($arrData[$i]['rol'] == "APRENDIZ") {
+                $arrData[$i]['rol'] = '<span class="badge bg-secondary">Aprendiz</span>';
+            }
 
             if ($arrData[$i]['status'] == 1) {
                 $arrData[$i]['status'] = '<span class="badge rounded-pill bg-success">Activo</span>';

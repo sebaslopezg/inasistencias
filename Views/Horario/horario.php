@@ -1,4 +1,7 @@
-<?php header_admin($data); ?>
+<?php 
+header_admin($data); 
+getModal('horarioModal', $data);
+?>
   <main id="main" class="main">
 
   <div class="mb-3">
@@ -6,7 +9,7 @@
   </div>
 
   <div class="mb-3">
-    <button id="btnGuardarHorario" class="btn btn-primary" disabled>Guardar Horario</button>
+
   </div>
 
   <div id="alertZone"></div>

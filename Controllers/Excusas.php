@@ -62,8 +62,62 @@ class Excusas extends Controllers
             'txtIdInasistencia',
             'txtIdUsuario',
             'txtIdInstructor',
-            'txtArchivo'
+            
+            
         ];
+        $arrFile = [
+                'txtArchivo'
+        ];
+        if (check_post($arrPosts) && check_file($arrFile)) {
+            
+            $intInasistencia = intval(strClean($_POST['txtIdInasistencia']));
+            $intIdUsuario = intval(strClean($_POST['txtIdUsuario']));
+            $intIdInstructor = intval(strClean($_POST['txtIdInstructor']));
+            $strArchivo = strClean($_FILES['txtArchivo']['name']);
+            $intEstado = intval(strClean($_POST['txtEstado']));
+            $intExcusa= intval(strClean($_POST['txtIdExcusa']));
+
+            try {
+                if ($intExcusa == 0 || $intExcusa == "" || $intExcusa == "0") {
+                    $insert = $this->model->insertExcusas(
+                        $intInasistencia,
+                        $intIdUsuario,
+                        $intIdInstructor,
+                        $strArchivo,
+                        
+                    );
+                    $option = 1;
+                }
+    
+                if (intval($insert) > 0) {
+                    if ($option == 1) {
+                        $arrResponse = array('status' => true, 'msg' => 'Excusa insertada correctamente');
+                    }
+                }else{
+                    $arrResponse = array('status' => false, 'msg' => 'Error al insertar');
+                }
+            } catch (\Throwable $th) {
+                $arrResponse = array('status' => false, 'msg' => "Error desconocido: $th");
+            }
+
+        }else{
+            $arrResponse = array('status' => false, 'msg' => 'Debe insertar todos los datos'.$_POST['txtIdInasistencia'].$_POST['txtIdUsuario'].$_POST['txtIdInstructor'].$_POST['txtArchivo']);
+        }
+        echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
+    }
+
+
+    function deleteExcusas(){
+        if ($_POST) {
+            $intIdExcusa = intval($_POST['txtIdExcusa']);
+            $requestDelete = $this->model->deleteExcusa($intIdExcusa);
+
+            if ($requestDelete) {
+                $arrResponse = array('status' => true, 'msg' => 'se ha eliminado la excusa');
+            }else {
+                $arrResponse = array('status' => true, 'msg' => 'error al eliminar la excusa');
+            }
+        }
     }
 
 }

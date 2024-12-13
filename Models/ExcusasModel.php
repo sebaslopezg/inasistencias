@@ -18,7 +18,7 @@ class ExcusasModel extends mysql
     public function selectInasistenciaById(int $idInasistencia)
     {
         $this->$idInasistencia = $idInasistencia;
-        $sql = "SELECT i.idInasistencias as idIna,i.idInstructor,i.status,u.idUsuarios as idUsu FROM inasistencias i JOIN usuario u on u.idUsuarios = i.usuario_idUsuarios WHERE i.codigoNovedad = 0 and i.idInasistencias = '{$this->$idInasistencia}'";
+        $sql = "SELECT i.idInasistencias as idIna,i.idInstructor,i.status as estado,u.idUsuarios as idUsu FROM inasistencias i JOIN usuario u on u.idUsuarios = i.usuario_idUsuarios WHERE i.codigoNovedad = 0 and i.idInasistencias = '{$this->$idInasistencia}'";
         $request = $this->select($sql);
         return $request;
     }

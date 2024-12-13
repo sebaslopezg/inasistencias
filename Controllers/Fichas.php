@@ -5,6 +5,10 @@ class Fichas extends Controllers
     public function __construct()
     {
         parent::__construct();
+        session_start();
+        if (!empty($_SESSION['login'])) {
+            header('location:'.base_url().'/login');
+        }
     }
     public function fichas()
     {
@@ -91,12 +95,12 @@ class Fichas extends Controllers
 
     public function setFicha()
     {
-       
+
         $arrPosts = [
             'txtNombre',
             'txtNumeroFicha'
         ];
-      
+
         if (check_post($arrPosts)) {
             $strNombre = strClean($_POST['txtNombre']);
             $intNumeroFicha = intval(strClean($_POST['txtNumeroFicha']));
@@ -112,7 +116,7 @@ class Fichas extends Controllers
                 } else {
                     if ($intStatus == 0) {
                         $intStatus = 1;
-                    } 
+                    }
                     $insert = $this->model->updateFicha(
                         $strNombre,
                         $intIdFicha,
@@ -139,7 +143,7 @@ class Fichas extends Controllers
                 $arrResponse = array('status' => false, 'msg' => "Error desconocido: $th");
             }
         } else {
-            $arrResponse = array('status' => false, 'msg' => 'Debe insertar todos los datos  '.$_POST['userStatus'].$_POST['txtNumeroFicha'].$_POST['txtNombre']);
+            $arrResponse = array('status' => false, 'msg' => 'Debe insertar todos los datos  ' . $_POST['userStatus'] . $_POST['txtNumeroFicha'] . $_POST['txtNombre']);
         }
 
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);

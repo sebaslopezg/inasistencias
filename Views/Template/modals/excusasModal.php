@@ -9,17 +9,17 @@
       <div class="modal-body">
         <form id="frmCrearExcusa" method="post" enctype="multipart/form-data">
           <div class="row">
-            <div class="col-12 mb-3"><label for="txtNombre" class="form-label">IdExcusa</label>
-              <input type="number" class="form-control" id="txtIdExcusa" name="txtIdExcusa" value="0">
+            <div class="col-12 "><label for="txtNombre" class="form-label" style="display: none;">IdExcusa</label>
+              <input type="number" class="form-control" id="txtIdExcusa" name="txtIdExcusa" value="0"style="display: none;" >
             </div>
-            <div class="col-12 mb-3"><label for="" class="form-label">idInasistencias</label>
-              <input type="number" class="form-control" id="txtIdInasistencia" name="txtIdInasistencia">
+            <div class="col-12 "><label for="" class="form-label" style="display: none;">idInasistencias</label>
+              <input type="number" class="form-control" id="txtIdInasistencia" name="txtIdInasistencia" style="display: none;">
             </div>
-            <div class="col-12 mb-3"><label for="txtNombre" class="form-label">idUsuario</label>
-              <input type="number" class="form-control" id="txtIdUsuario" name="txtIdUsuario">
+            <div class="col-12 "><label for="txtNombre" class="form-label"style="display: none;">idUsuario</label>
+              <input type="number" class="form-control" id="txtIdUsuario" name="txtIdUsuario"style="display: none;">
             </div>
-            <div class="col-12 mb-3"><label for="txtNombre" class="form-label">IdInstructor</label>
-              <input type="number" class="form-control" id="txtIdInstructor" name="txtIdInstructor">
+            <div class="col-12 "><label for="txtNombre" class="form-label" style="display: none;">IdInstructor</label>
+              <input type="number" class="form-control" id="txtIdInstructor" name="txtIdInstructor" style="display: none;">
             </div>
             <div class="col-12 mb-3"><label for="txtNombre" class="form-label">Excusa</label>
               <input type="file" class="form-control" id="txtArchivo" name="txtArchivo">

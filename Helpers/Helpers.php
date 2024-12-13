@@ -75,6 +75,14 @@ function check_post(array $postNames){
 
     return $validState;
 }
+function check_post_var($post){
+
+    $validState = true;
+    if (!isset($post) || empty(strClean($post))) {
+        $validState = false;
+    }
+    return $validState;
+}
 
 function check_file(array $fileName){
     $validState = true;

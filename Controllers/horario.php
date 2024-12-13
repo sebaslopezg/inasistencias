@@ -3,6 +3,10 @@
 class Horario extends Controllers{
     public function __construct(){
         parent::__construct();
+        session_start();
+        if(empty($_SESSION['login'])){
+           header('Location: ' . base_url().'/login' );
+       } 
     }
     public function horario(){
 
@@ -15,7 +19,56 @@ class Horario extends Controllers{
 
     public function setHorario(){
         if ($_POST) {
-            dep($_POST);
+            $statusLectura = true;
+            $arrStatus = array();
+            for ($i=0; $i < count($_POST['hFecha']); $i++) { 
+
+                $fecha = strClean($_POST['hFecha'][$i]);
+                $horaInicio = intval(strClean($_POST['hHoraInicio'][$i]));
+                $horaFin = intval(strClean($_POST['hHoraFin'][$i]));
+                $instructor = strClean($_POST['hInstructor'][$i]);
+
+                if (
+                    check_post_var($fecha) && 
+                    check_post_var($horaInicio) &&
+                    check_post_var($horaFin) &&
+                    check_post_var($instructor)) {
+                        $horaInicioFormateada = mktime($horaInicio,0,0);
+                        $horaFinFormateada = mktime($horaFin,0,0);
+            
+                        $horaInicioConvertida = date('H:i:s', $horaInicioFormateada);
+                        $horaFinConvertida = date('H:i:s', $horaFinFormateada);
+
+                        $idInstructor = $this->model->selectInstructorByName($instructor);
+                        if ($idInstructor) {
+                            $insert = $this->model->insertHorario($fecha, $horaInicioConvertida, $horaFinConvertida, $idInstructor);
+                        }else{
+                            $insert = 0;
+                        }
+                        
+                        if (intval($insert) > 0) {
+                        }else if($insert == 'exist'){
+                            $arrStatusMessage = array('index' => $i, 'msg' => 'El registro ya existe');
+                            $arrStatus = array_push($arrStatusMessage);
+                        }else{
+                            $arrStatusMessage = array('index' => $i, 'msg' => 'No se pudo insertar el registro');
+                            $arrStatus = array_push($arrStatusMessage);
+                        }
+                }else{
+                    $statusLectura = false;
+                    break;
+                }
+            }
+
+            if (!empty($arrStatus)) {
+                $arrResponse = array('status' => true, 'msg' => 'algunos registros no se insertaron correctamente', 'log' => $arrStatus);
+            }else if($statusLectura){
+                $arrResponse = array('status' => true, 'msg' => 'registros del horario insertados correctamente');
+            }else{
+                $arrResponse = array('status' => false, 'msg' => 'Uno o varios campos estan vacios o contienen datos inválidos');
+            }
+
+            echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
         }
     }
 }

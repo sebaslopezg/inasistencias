@@ -21,6 +21,7 @@ class Horario extends Controllers{
         if ($_POST) {
             $statusLectura = true;
             $arrStatus = array();
+            $revisarIdInstructor;
             for ($i=0; $i < count($_POST['hFecha']); $i++) { 
 
                 $fecha = strClean($_POST['hFecha'][$i]);
@@ -40,19 +41,22 @@ class Horario extends Controllers{
                         $horaFinConvertida = date('H:i:s', $horaFinFormateada);
 
                         $idInstructor = $this->model->selectInstructorByName($instructor);
+                        $revisarIdInstructor = $idInstructor;
                         if ($idInstructor) {
                             $insert = $this->model->insertHorario($fecha, $horaInicioConvertida, $horaFinConvertida, $idInstructor);
                         }else{
                             $insert = 0;
+                            $arrStatusMessage = array('index' => $i, 'msg' => 'No se encontró el nombre del instructor');
+                            array_push($arrStatus,$arrStatusMessage);
                         }
                         
                         if (intval($insert) > 0) {
                         }else if($insert == 'exist'){
                             $arrStatusMessage = array('index' => $i, 'msg' => 'El registro ya existe');
-                            $arrStatus = array_push($arrStatusMessage);
+                            array_push($arrStatus,$arrStatusMessage);
                         }else{
                             $arrStatusMessage = array('index' => $i, 'msg' => 'No se pudo insertar el registro');
-                            $arrStatus = array_push($arrStatusMessage);
+                            array_push($arrStatus,$arrStatusMessage);
                         }
                 }else{
                     $statusLectura = false;

@@ -14,7 +14,13 @@ class horarioModel extends Mysql{
 
     public function selectInstructorByName($nombreInstructor){
         $this->nombreInstructor = $nombreInstructor;
-        $sql = "SELECT idUsuarios FROM usuario WHERE nombre = '{$this->nombreInstructor}'";
+        $this->arrNombreCompleto = explode(' ', $this->nombreInstructor);
+        $this->nombre = $this->arrNombreCompleto[0];
+        $this->lastElement = count($this->arrNombreCompleto)-1;
+        $this->apellido = $this->arrNombreCompleto[$this->lastElement];
+
+        //$sql = "SELECT idUsuarios FROM usuario WHERE nombre = '{$this->nombreInstructor}'";
+        $sql = "SELECT idUsuarios FROM usuario WHERE nombre like '{$this->nombre}%' AND apellido like '%{$this->apellido}' AND status > 0;";
         $request = $this->select($sql);
         return $request;
     }

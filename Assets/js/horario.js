@@ -45,16 +45,16 @@ document.addEventListener('click', (e)=>{
         if (e.target.closest('button').getAttribute('id') == 'btnGuardarHorario') {
             if (horario != null) {
                 sentData()
-            } 
+            }  
         }
 
-        if (e.target.closest('span').getAttribute('data-action') == 'datosValidos') {
+        if (e.target.closest('button').getAttribute('data-action') == 'datosValidos') {
             console.log('a')
             fntPrintHorario()
             $('#horarioModal').modal('show')
         }
 
-        if (e.target.closest('span').getAttribute('data-action') == 'datosOrganizados') {
+        if (e.target.closest('button').getAttribute('data-action') == 'datosOrganizados') {
             console.log('a')
             printProcesData()
             $('#horarioModal').modal('show')
@@ -96,10 +96,8 @@ input.addEventListener('change', () => {
                         });
                     }else{
                         dataProcesada = procesData(horario)
-                        //printProcesData()
                         printForms()
                         printAlert()
-                        enableButtons()
                     }
                 }
             })
@@ -253,10 +251,14 @@ function printAlert(){
     
     html = `
     <div class="alert alert-primary alert-dismissible fade show" role="alert">
-    <button id="btnGuardarHorario" class="btn btn-primary">Guardar Todo</button> 
+        <button id="btnGuardarHorario" class="btn btn-primary">Guardar Todo</button> 
+        <button type="button" class="btn btn-secondary" data-action="datosValidos">
+            Datos validados <span class="badge text-bg-primary">${cantidadRegistros}</span>
+        </button>
+        <button type="button" class="btn btn-secondary" data-action="datosOrganizados">
+            Datos organizados <span class="badge text-bg-primary">${cantidadDatosFormateados}</span>
+        </button>
         Cantidad de celdas procesadas: <b>${cantidadCeldasProcesadas}</b>
-        | <span data-action="datosValidos">Cantidad de datos validados</span>: <b>${cantidadRegistros}</b>
-        | <span data-action="datosOrganizados">Datos organizados</span>: <b>${cantidadDatosFormateados}</b>
     </div>
     `
     alertZone.innerHTML = html
@@ -318,7 +320,9 @@ function fntPrintHorario(){
         
     })
     div.appendChild(table)
-    displayModal.innerHTML = div
+    console.log(div)
+    displayModal.innerHTML = ""
+    displayModal.appendChild(div)
 }
 
 function sentData(){
@@ -331,10 +335,6 @@ function sentData(){
     })
     .then((res)=>console.log(res))
 
-}
-
-function enableButtons(){
-    btnGuardarHorario.removeAttribute('disabled')
 }
 
  function procesData(data){
@@ -500,4 +500,3 @@ function printForms(){
 
     display.innerHTML = html
 }
-

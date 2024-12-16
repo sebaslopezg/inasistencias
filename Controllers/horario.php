@@ -21,7 +21,7 @@ class Horario extends Controllers{
         if ($_POST) {
             $statusLectura = true;
             $arrStatus = array();
-            $revisarIdInstructor;
+            $insert = 0;
             for ($i=0; $i < count($_POST['hFecha']); $i++) { 
 
                 $fecha = strClean($_POST['hFecha'][$i]);
@@ -34,16 +34,23 @@ class Horario extends Controllers{
                     check_post_var($horaInicio) &&
                     check_post_var($horaFin) &&
                     check_post_var($instructor)) {
+
+                        $arrFecha = explode('/', $fecha);
+
+                        $strFechaFormateada = $arrFecha[2]."/".$arrFecha[1]."/".$arrFecha[0];
+
                         $horaInicioFormateada = mktime($horaInicio,0,0);
                         $horaFinFormateada = mktime($horaFin,0,0);
             
                         $horaInicioConvertida = date('H:i:s', $horaInicioFormateada);
                         $horaFinConvertida = date('H:i:s', $horaFinFormateada);
+                        $fechaConvertida = date('Y/m/d', $fechaFormateada);
 
                         $idInstructor = $this->model->selectInstructorByName($instructor);
-                        $revisarIdInstructor = $idInstructor;
-                        if ($idInstructor) {
-                            $insert = $this->model->insertHorario($fecha, $horaInicioConvertida, $horaFinConvertida, $idInstructor);
+                        
+                        if (!empty($idInstructor)) {
+                            $idInstructor = $idInstructor['idUsuarios'];
+                            $insert = $this->model->insertHorario($strFechaFormateada, $horaInicioConvertida, $horaFinConvertida, $idInstructor);
                         }else{
                             $insert = 0;
                             $arrStatusMessage = array('index' => $i, 'msg' => 'No se encontró el nombre del instructor');
@@ -65,7 +72,7 @@ class Horario extends Controllers{
             }
 
             if (!empty($arrStatus)) {
-                $arrResponse = array('status' => true, 'msg' => 'algunos registros no se insertaron correctamente', 'log' => $arrStatus);
+                $arrResponse = array('status' => true, 'msg' => 'algunos registros no se insertaron correctamente: ', 'log' => $arrStatus);
             }else if($statusLectura){
                 $arrResponse = array('status' => true, 'msg' => 'registros del horario insertados correctamente');
             }else{

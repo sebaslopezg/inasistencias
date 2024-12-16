@@ -49,13 +49,11 @@ document.addEventListener('click', (e)=>{
         }
 
         if (e.target.closest('button').getAttribute('data-action') == 'datosValidos') {
-            console.log('a')
             fntPrintHorario()
             $('#horarioModal').modal('show')
         }
 
         if (e.target.closest('button').getAttribute('data-action') == 'datosOrganizados') {
-            console.log('a')
             printProcesData()
             $('#horarioModal').modal('show')
         }
@@ -320,7 +318,6 @@ function fntPrintHorario(){
         
     })
     div.appendChild(table)
-    console.log(div)
     displayModal.innerHTML = ""
     displayModal.appendChild(div)
 }
@@ -333,7 +330,32 @@ function sentData(){
         method: "POST",
         body: frmData,
     })
-    .then((res)=>console.log(res))
+    .then((res)=>res.json())
+    .then((data) => {
+        console.log(data)
+        let dataStatus = 'question'
+        switch (data.statusCode) {
+            case 0:
+                dataStatus = 'success'
+                break;
+            case 1:
+                dataStatus = 'warning'
+                break;
+            case 2:
+                dataStatus = 'error'
+                break;
+            case 3:
+                dataStatus = 'error'
+                break;
+        }
+
+        Swal.fire({
+            title: 'Insertar Horario',
+            text: data.msg,
+            icon: dataStatus
+        });
+        displayErrors(data.log)
+    })
 
 }
 
@@ -463,14 +485,69 @@ function printProcesData(){
 function printForms(){
     let html = `
     <form id="frmHorario">
-    <ul class="list-group">
+        <input type="hidden" class="form-control" name="ficha" value="${ficha}">
     `
 
-    Object.entries(dataProcesada).forEach(data => {
+    Object.entries(dataProcesada).forEach((data, index) => {
         data = data[1]
 
         html += `
-            
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                
+                <div class="mt-2"></div>
+                <div id="dataCard_${index}"></div>
+                <div class="mb-1"></div>
+
+                    <div class="col-lg-6">
+                        <div class="mb-3 col-12">
+                            <label for="txtNombre" class="form-label">Fecha</label>
+                            <input type="text" class="form-control" name="hFecha[]" value="${data.fecha}">
+                        </div>
+
+                        <div class="mb-3 col-12">
+                            <label for="txtNombre" class="form-label">Instructor</label>
+                            <input type="text" class="form-control" name="hInstructor[]" value="${data.instructor}">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="mb-3 col-6">
+                            <label for="txtNombre" class="form-label">Hora Inicio</label>
+                            <input type="text" class="form-control" name="hHoraInicio[]" value="${data.horaInicio}">
+                        </div>
+
+                        <div class="mb-3 col-6">
+                            <label for="txtNombre" class="form-label">Hora Fin</label>
+                            <input type="text" class="form-control" name="hHoraFin[]" value="${data.horaFin}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+        cantidadDatosFormateados++
+    })
+
+    html += `
+    </form>`
+
+    display.innerHTML = html
+}
+
+function displayErrors(log){
+    log.forEach((error, index) => {
+        let display = document.querySelector(`#dataCard_${index}`)
+        display.innerHTML = error;
+        console.log(error)
+    })
+}
+
+
+/*
+
             <li class="list-group-item">
                 <div class="mb-3 col-12">
                     <label for="txtNombre" class="form-label">Fecha</label>
@@ -490,13 +567,8 @@ function printForms(){
                 </div>
             </li>
 
-        `;
-        cantidadDatosFormateados++
-    })
 
-    html += `
-    </ul>
-    </form>`
+                            <span class="badge bg-danger"><i class="bi bi-exclamation-octagon me-1"></i> Danger</span>
 
-    display.innerHTML = html
-}
+*/
+

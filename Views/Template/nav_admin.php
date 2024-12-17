@@ -18,13 +18,25 @@
         </a>
       </li>
 
-      <!-- Pagina Gestion de horarios -->
+      <!-- Gestion de horarios -->
       <li class="nav-item">
-        <a class="nav-link <?= $data['page_name'] != 'horario' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/horario">
-          <i class="bi bi-person-x"></i>
-          <span>Horario</span>
+        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-menu-button-wide"></i><span>Gestion de Horarios</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-      </li>
+        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a class="nav-link <?= $data['page_name'] != 'horario' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/horario">
+              <i class="bi bi-circle"></i>
+              <span>Cargar Horarios</span>
+            </a>
+          </li>
+          <li>
+            <a href="<?= base_url() ?>/verhorario">
+              <i class="bi bi-circle"></i><span>Ver horarios</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Gestion de horarios -->
 
       <!-- Pagina Gestion de Fichas -->
       <li class="nav-item">

@@ -40,36 +40,53 @@ class Horario extends Controllers{
                         check_post_var($horaInicio) &&
                         check_post_var($horaFin) &&
                         check_post_var($instructor)) {
+
+                        $arrFecha = explode('/', $fecha);
     
-                            $arrFecha = explode('/', $fecha);
-    
+                        if(count($arrFecha) === 3) {
+                            
+
                             $strFechaFormateada = $arrFecha[2]."/".$arrFecha[1]."/".$arrFecha[0];
-    
+
                             $horaInicioFormateada = mktime($horaInicio,0,0);
                             $horaFinFormateada = mktime($horaFin,0,0);
-                
+                    
                             $horaInicioConvertida = date('H:i:s', $horaInicioFormateada);
                             $horaFinConvertida = date('H:i:s', $horaFinFormateada);
+        
+                            $horariosRegistrados = $this->model->selectHorarios($ficha, $strFechaFormateada, $horaInicioConvertida);
     
-                            $idInstructor = $this->model->selectInstructorByName($instructor);
-                            
-                            if (!empty($idInstructor)) {
-                                $idInstructor = $idInstructor['idUsuarios'];
-                                $insert = $this->model->insertHorario($ficha, $strFechaFormateada, $horaInicioConvertida, $horaFinConvertida, $idInstructor);
+                            if (empty($horariosRegistrados)) {
+                                    
+                                $idInstructor = $this->model->selectInstructorByName($instructor);
+    
+                                if (!empty($idInstructor)) {
+                                    $idInstructor = $idInstructor['idUsuarios'];
+                                    $insert = $this->model->insertHorario($ficha, $strFechaFormateada, $horaInicioConvertida, $horaFinConvertida, $idInstructor);
+        
+                                    if (intval($insert) > 0) {
+                                        $arrStatusMessage = array('index' => $i, 'status' => true, 'msg' => 'Registro insertado exitosamente');
+                                        array_push($arrStatus,$arrStatusMessage);
+                                    }else if($insert == 'exist'){
+                                        $arrStatusMessage = array('index' => $i, 'status' => false, 'msg' => 'El registro ya existe');
+                                        array_push($arrStatus,$arrStatusMessage);
+                                    }else{
+                                        $arrStatusMessage = array('index' => $i, 'status' => false, 'msg' => 'No se pudo insertar el registro');
+                                        array_push($arrStatus,$arrStatusMessage);
+                                    }
+                                }else{
+                                    $arrStatusMessage = array('index' => $i, 'status' => false, 'msg' => 'No se encontró el nombre del instructor');
+                                    array_push($arrStatus,$arrStatusMessage);
+                                }
                             }else{
-                                $insert = 0;
-                                $arrStatusMessage = array('index' => $i, 'msg' => 'No se encontró el nombre del instructor');
+                                $arrStatusMessage = array('index' => $i, 'status' => false, 'msg' => 'Ya existe un registro con la misma fecha y hora');
                                 array_push($arrStatus,$arrStatusMessage);
-                            }
-                            
-                            if (intval($insert) > 0) {
-                            }else if($insert == 'exist'){
-                                $arrStatusMessage = array('index' => $i, 'msg' => 'El registro ya existe');
-                                array_push($arrStatus,$arrStatusMessage);
-                            }else{
-                                $arrStatusMessage = array('index' => $i, 'msg' => 'No se pudo insertar el registro');
-                                array_push($arrStatus,$arrStatusMessage);
-                            }
+                            }      
+                        }else{
+                            $arrStatusMessage = array('index' => $i, 'status' => false, 'msg' => 'La fecha contiene un formato inválido');
+                            array_push($arrStatus,$arrStatusMessage);
+                        }
+    
                     }else{
                         $statusLectura = false;
                         break;

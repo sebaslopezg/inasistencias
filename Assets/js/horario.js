@@ -3,6 +3,7 @@ const alertZone = document.querySelector('#alertZone')
 //const btnGuardarHorario = document.querySelector('#btnGuardarHorario')
 const display = document.querySelector('#display')
 const displayModal = document.querySelector('#displayModal')
+const horariotitulo = document.querySelector('#horariotitulo')
 
 const date = new Date()
 const meses = [
@@ -51,6 +52,7 @@ document.addEventListener('click', (e)=>{
         if (e.target.closest('button').getAttribute('data-action') == 'datosValidos') {
             fntPrintHorario()
             $('#horarioModal').modal('show')
+            setModalTitle()
         }
 
         if (e.target.closest('button').getAttribute('data-action') == 'datosOrganizados') {
@@ -272,6 +274,7 @@ function fntPrintHorario(){
     let tr = document.createElement('tr')
 
     table.classList.add('table')
+    table.classList.add('table-striped')
 
     let node = document.createTextNode('Fecha')
     th = document.createElement('th')
@@ -461,23 +464,21 @@ function printProcesData(){
 
     displayModal.innerHTML = `
     
-    <div class="card">
-        <div class="card-body">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Hora inicio</th>
-                        <th>Hora fin</th>
-                        <th>Instructor</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${html}
-                </tbody>
-            </table>
-        </div>
-    </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora inicio</th>
+                    <th>Hora fin</th>
+                    <th>Instructor</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${html}
+            </tbody>
+        </table>
+
 
     `
 }
@@ -493,12 +494,12 @@ function printForms(){
 
         html += `
 
-        <div class="card">
+        <div class="card" id="dataCard_${index}">
             <div class="card-body">
                 <div class="row">
                 
                 <div class="mt-2"></div>
-                <div id="dataCard_${index}"></div>
+                <div id="dataCardMessage_${index}"></div>
                 <div class="mb-1"></div>
 
                     <div class="col-lg-6">
@@ -539,12 +540,22 @@ function printForms(){
 
 function displayErrors(log){
     log.forEach((error, index) => {
-        let display = document.querySelector(`#dataCard_${index}`)
-        display.innerHTML = error;
+        let display = document.querySelector(`#dataCardMessage_${index}`)
+        let card = document.querySelector(`#dataCard_${index}`)
+
+        if (error.status) {
+            card.remove()
+        }else{
+            display.innerHTML = `<span class="badge bg-danger"><i class="bi bi-exclamation-octagon me-1"></i> ${error.msg}</span>`
+        }
+        
         console.log(error)
     })
 }
 
+function setModalTitle(){
+    horariotitulo.innerHTML = `Datos del Horario ficha: <b>${ficha}</b>`
+}
 
 /*
 

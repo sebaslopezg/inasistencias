@@ -6,10 +6,14 @@ class horarioModel extends Mysql{
         parent::__construct();
     }
 
-    public function selectHorarios(){
-/*         $sql = "";
+    public function selectHorarios(int $ficha, string $fecha, string $horaInicio){
+        $this->intFicha = $ficha;
+        $this->strFecha = $fecha;
+        $this->strHoraInicio = $horaInicio;
+
+        $sql = "SELECT * FROM horario WHERE fechaInicio = '{$this->strFecha}' AND horaInicio = '{$this->strHoraInicio}' AND ficha = {$this->intFicha}";
         $request = $this->select_all($sql);
-        return $request; */
+        return $request;
     }
 
     public function selectFicha($ficha){

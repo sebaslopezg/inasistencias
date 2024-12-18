@@ -6,7 +6,7 @@ getModal('excusasModal', $data);
     <div class="pagetitle">
         <h1>
             <?= $data['page_title'] ?>
-           
+
         </h1>
     </div>
 

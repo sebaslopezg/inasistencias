@@ -6,9 +6,9 @@ class Fichas extends Controllers
     {
         parent::__construct();
         session_start();
-        if (!empty($_SESSION['login'])) {
+        /* if (!empty($_SESSION['login'])) {
             header('location:'.base_url().'/login');
-        }
+        } */
     }
     public function fichas()
     {
@@ -149,6 +149,61 @@ class Fichas extends Controllers
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
     }
 
+    public function setInstructor()
+    {
+
+        $arrPosts = [
+            'txtIdInstructor',
+            'txtIdFicha'
+        ];
+
+        if (check_post($arrPosts)) {
+            $strNombre = strClean($_POST['txtNombre']);
+            $intNumeroFicha = intval(strClean($_POST['txtNumeroFicha']));
+            $intIdFicha = intval(strClean($_POST['txtIdFicha']));
+            $intStatus = intval(strClean($_POST['userStatus']));
+            try {
+                if ($intIdFicha == 0 || $intIdFicha == "" || $intIdFicha == "0") {
+                    $insert = $this->model->insertFicha(
+                        $strNombre,
+                        $intNumeroFicha
+                    );
+                    $option = 1;
+                } else {
+                    if ($intStatus == 0) {
+                        $intStatus = 1;
+                    }
+                    $insert = $this->model->updateFicha(
+                        $strNombre,
+                        $intIdFicha,
+                        $intStatus
+                    );
+                    $option = 2;
+                }
+
+                if (intval($insert) > 0) {
+
+                    if ($option == 1) {
+                        $arrResponse = array('status' => true, 'msg' => 'Ficha insertada correctamente');
+                    }
+
+                    if ($option == 2) {
+                        $arrResponse = array('status' => true, 'msg' => 'Ficha actualizada correctamente');
+                    }
+                } else if ($insert == 'exist') {
+                    $arrResponse = array('status' => false, 'msg' => 'Ya existe una Ficha con el mismo numero');
+                } else {
+                    $arrResponse = array('status' => false, 'msg' => 'Error al insertar');
+                }
+            } catch (\Throwable $th) {
+                $arrResponse = array('status' => false, 'msg' => "Error desconocido: $th");
+            }
+        } else {
+            $arrResponse = array('status' => false, 'msg' => 'Debe insertar todos los datos  ' . $_POST['userStatus'] . $_POST['txtNumeroFicha'] . $_POST['txtNombre']);
+        }
+
+        echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
+    }
     function deleteFicha()
     {
         if ($_POST) {

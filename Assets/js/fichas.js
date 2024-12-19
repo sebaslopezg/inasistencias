@@ -230,10 +230,10 @@ function SelecionFicha() {
     });
 
     // -----------------------------------
-    //    AGREGAR PRODUCTO A TABLA
+    //    AGREGAR FICHA A TABLA
     // -----------------------------------
 
-    function agregarFicha(idFicha, idInstructor) {
+    function agregarFicha(idFicha, nombre, numeroFicha) {
       // Verificar si la Ficha ya está en la tabla
       let fichaYaAgregado = false;
       // Itera sobre cada fila de la tabla para comprobar si el ID del producto ya existe
@@ -249,51 +249,90 @@ function SelecionFicha() {
       if (productoYaAgregado) {
         Swal.fire({
           icon: "warning",
-          title: "Producto ya agregado",
-          text: "El producto ya está en la tabla de productos seleccionados."
+          title: "Ficha ya agregado",
+          text: "La Ficha ya está en la tabla de Fichas seleccionados."
         });
       } else {
         // Si el producto no está en la tabla, crea una nueva fila para agregar el producto
         let nuevaFila =
           `
         <tr>
-         <input type="hidden" class="form-control" name="idempleados[]"  value="<?php echo $idUser ?>" >
-            <td><input type="hidden" name="idproductos[]" value="` +
-          idproductos +
+            <td><input type="hidden" name="idFicha[]" value="` +
+          idFicha +
           `">` +
+          `</td>  
+            <td><input type="text" name="" class="form-control" placeholder="` +
           nombre +
-          `</td>
-            <td><input type="number" name="cantidadProductos[]" id="cantidad" class="form-control" placeholder="Cantidad" required></td>
-            <td><input type="number" name="precio[]" class="form-control" placeholder="` +
-          precio +
-          `" required></td>
-            <td><button type="button" class="btn btn-danger btn-sm eliminar-fila"><i class="fas fa-trash"></i></button></td>
+          `" ></td>
+          <td><input type="text" name="" class="form-control" placeholder="` +
+          numeroFicha +
+          `" ></td>
+          <td><button type="button" class="btn btn-danger btn-sm eliminar-fila"><i class="fas fa-trash"></i></button></td>
         </tr>
     `;
         // Agrega la nueva fila al final del tbody de la tabla de productos
         $("#tabla-Ficha tbody").append(nuevaFila);
       }
     }
-
+    function agregarIstructor(idInstructor, nombre) {
+      // Verificar si la Ficha ya está en la tabla
+      let IsntruYaAgregado = false;
+      // Itera sobre cada fila de la tabla para comprobar si el ID del producto ya existe
+      $("#tabla-BusqInstru tbody tr").each(function () {
+        if ($(this).find("input[name='idInstructor[]']").val() == idInstructor) {
+          // Si encuentra una coincidencia de ID, marca productoYaAgregado como true
+          IsntruYaAgregado = true;
+          // Sale del ciclo
+          return false;
+        }
+      });
+      // Si el producto ya está en la tabla, muestra una alerta usando SweetAlert
+      if (IsntruYaAgregado) {
+        Swal.fire({
+          icon: "warning",
+          title: "Isntructor  ya agregado",
+          text: "El Isntructor ya está en la tabla de Isntructores seleccionados."
+        });
+      } else {
+        // Si el producto no está en la tabla, crea una nueva fila para agregar el producto
+        let nuevaFila =
+          `
+        <tr>
+          <td>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="` +
+          idInstructor +
+          `" name="selecInstru[]" id="selecInstru" checked />                                   
+              <label class="form-check-label" for="flexCheckChecked">                                                      
+                 <p>` +
+          nombre +
+          `</p>
+            </label>
+           </div>
+          </td>
+        </tr>
+    `;
+        // Agrega la nueva fila al final del tbody de la tabla de productos
+        $("#tabla-BusqInstru tbody").append(nuevaFila);
+      }
+    }
     // Asigna un evento "blur" a los campo de Busqueda de cliente
     $(document).on("blur", 'input[name="search_Ficha"]', function () {
       // Traemos el input del HTML, para deshabilitarlo una vez pierda el foco.
       let txtSearchClient = document.querySelector("#ficha");
       txtSearchClient.disabled = true;
     });
-
     $(document).on("click", ".eliminar-fila", function () {
       $(this).closest("tr").remove();
-      $("#total-pagar").val("");
-      $("#cantidad").focus();
+      /*  $("#total-pagar").val("");
+      $("#cantidad").focus(); */
     });
-
     // Maneja el evento de envío del formulario de venta
     $("#form-Ficha").on("submit", function (e) {
       // Prevenir el envío estándar del formulario
       e.preventDefault();
       // Contar las filas de la tabla de productos
-      let filas = $("#tabla-productos tbody tr").length;
+      let filas = $("#tabla-Ficha tbody tr").length;
       if (filas === 0) {
         // Si no hay productos en la tabla, mostrar una alerta
         Swal.fire({
@@ -309,14 +348,13 @@ function SelecionFicha() {
 
       // Iterar sobre cada fila de la tabla de productos para recolectar datos
       $("#tabla-Ficha tbody tr").each(function () {
-        let idproducto = $(this).find("input[name='idproductos[]']").val();
-        let idEmpleado = $(this).find("input[name='idempleados[]']").val();
-        let precio = $(this).find("input[name='precio[]']").val();
-        formData.append("idproductos[]", idproducto);
-        formData.append("idempleados", idEmpleado);
-        formData.append("cantidadProducto[]", cantidadProducto);
-        formData.append("precioProducto[]", precio);
-        formData.append("totalPagar", valorPagar);
+        let idFicha = $(this).find("input[name='idFicha[]']").val();
+        formData.append("txtIdFicha", idFicha);
+      });
+
+      $("#tabla-BusqInstru tbody tr").each(function () {
+        let idInstructor = $(this).find("input[name='selecInstru[]']").val();
+        formData.append("txtIdInstructor", idInstructors);
       });
 
       // Enviar los datos al servidor utilizando AJAX
@@ -324,7 +362,7 @@ function SelecionFicha() {
         // Método de envío
         type: "POST",
         // URL del script de PHP que procesará la venta
-        url: "indexVentas.php",
+        url: " " + base_url + "/fichas/setIsntructor",
         data: formData,
         // No procesar los datos (ya se usa FormData)
         processData: false,
@@ -333,7 +371,7 @@ function SelecionFicha() {
         success: function (respuesta) {
           // Si la venta se crea correctamente, mostrar una alerta de éxito
           Swal.fire({
-            title: "¡Venta Registrada Correctamente!",
+            title: "¡Instructor Asiganado Correctamente!",
             icon: "success",
             // Duración de la alerta en milisegundos
             timer: 2000,
@@ -341,7 +379,7 @@ function SelecionFicha() {
             showConfirmButton: false
           }).then(() => {
             // Redirigir a la lista de ventas después de la alerta
-            window.location.href = "indexVentas.php?action=ventas";
+            window.location.href = "" + base_url + "/fichas/getFichasPreview";
           });
         },
         error: function (xhr, status, error) {

@@ -5,6 +5,9 @@ class Usuarios extends Controllers
     public function __construct()
     {
         parent::__construct();
+        if (!empty($_SESSION['login'])) {
+            header('location:'.base_url().'/login');
+        }
     }
     public function usuarios()
     {

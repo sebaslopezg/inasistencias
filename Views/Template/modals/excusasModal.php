@@ -22,7 +22,7 @@
               <input type="number" class="form-control" id="txtIdInstructor" name="txtIdInstructor" style="display: none;">
             </div>
             <div class="col-12 mb-3"><label for="txtNombre" class="form-label">Excusa</label>
-              <input type="file" class="form-control" id="txtArchivo" name="txtArchivo">
+              <input type="file" class="form-control" id="txtArchivo" name="txtArchivo" accept="application/pdf" required>
             </div>
             <div class="mb-3">
               <label for="genero" class="form-label" style="display: none;">Estado</label>

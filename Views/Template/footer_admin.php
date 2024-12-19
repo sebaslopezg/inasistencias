@@ -1,11 +1,10 @@
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
     <div class="copyright">
-      &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
+      ADSO <strong><span>2827725</span></strong>. 2024
     </div>
     <div class="credits">
-      Diseñado por <a href="https://bootstrapmade.com/">BootstrapMade</a>
-      <p>Proyecto creado con fines educativos</p>
+      <p>Proyecto creado con fines educativos, el repositorio se encuentra disponible en <a target="_blank" href="https://github.com/sebaslopezg/inasistencias">github</a></p>
     </div>
   </footer><!-- End Footer -->
 

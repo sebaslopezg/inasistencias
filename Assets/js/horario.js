@@ -1,6 +1,11 @@
 const input = document.getElementById('excel')
-const date = new Date()
+const alertZone = document.querySelector('#alertZone')
+//const btnGuardarHorario = document.querySelector('#btnGuardarHorario')
 const display = document.querySelector('#display')
+const displayModal = document.querySelector('#displayModal')
+const horariotitulo = document.querySelector('#horariotitulo')
+
+const date = new Date()
 const meses = [
     'ENERO', 
     'FEBRERO', 
@@ -32,6 +37,31 @@ const celdas = [
 
 let fileStatus = {}
 let ficha = null
+let cantidadCeldasProcesadas
+let cantidadDatosFormateados
+let dataProcesada
+
+document.addEventListener('click', (e)=>{
+    try{
+        if (e.target.closest('button').getAttribute('id') == 'btnGuardarHorario') {
+            if (horario != null) {
+                sentData()
+            }  
+        }
+
+        if (e.target.closest('button').getAttribute('data-action') == 'datosValidos') {
+            fntPrintHorario()
+            $('#horarioModal').modal('show')
+            setModalTitle()
+        }
+
+        if (e.target.closest('button').getAttribute('data-action') == 'datosOrganizados') {
+            printProcesData()
+            $('#horarioModal').modal('show')
+        }
+    }catch{}
+
+}) 
 
 input.addEventListener('change', () => {
     fileStatus = {
@@ -52,10 +82,23 @@ input.addEventListener('change', () => {
             fntCheckStatus()
         }else{
             readXlsxFile(input.files[0]).then((rows) => {
+                cantidadCeldasProcesadas = 0
+                cantidadDatosFormateados = 0
+                dataProcesada = null
                 fntSearchFicha(rows)
                 if (fntCheckStatus()) {
-                    fntSearchHorarios(rows)  
-                    fntPrintHorario()
+                    fntSearchHorarios(rows)
+                    if (horario == null) {
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se lograron obtener datos",
+                            icon: "error"
+                        });
+                    }else{
+                        dataProcesada = procesData(horario)
+                        printForms()
+                        printAlert()
+                    }
                 }
             })
         }
@@ -96,40 +139,34 @@ function fntSearchFicha(rows){
 }
 
 function fntSearchHorarios(rows){
-    //let horario = {}
     let mesEncontrado = null
-    let lastNotNull
     let contadorDia = 0
+    let contadorDiaHorario = 0
     let mesPlaceholder
     let hold = false
-    let diaEncontrado
+    let diaEncontrado = []
     let horasEncontrada = []
     let fecha
     let horaInicio
     let horaFin
     let contenido
     let contadorHorario = 0
-    rows.forEach((row, rowNumber) => {
+    let filaDelMes = 0
+    cantidadCeldasProcesadas = rows.length
+
+    rows.forEach((row, rowNumber, arrRowCell) => {
 
         row.forEach((cell, cellNumber, arrRow) =>{
 
             meses.forEach(mes =>{
-                
-                if (cell == mes) {
-                    
-                    meses.forEach(m =>{
-                        if (lastNotNull == m) {
-                            hold = true
-                        }
-                    })
 
-                    if (hold) {
-                        mesPlaceholder = mes
-                    }else{
-                        mesEncontrado = mes
-                        contadorDia = 0
-                    }
-                    lastNotNull = mes
+                if (cell === mes) {
+                    filaDelMes = rowNumber
+                    contadorDia = 0
+                    diaEncontrado = []
+                }
+                if (cell === mes || arrRowCell[filaDelMes][cellNumber] === mes) {
+                    mesEncontrado = mes
                 }
             })
 
@@ -137,33 +174,48 @@ function fntSearchHorarios(rows){
                 if (Number.isInteger(cell)) {
                     
                     if (contadorDia > 5) {
-                        //setea las horas
                         horasEncontrada.push(cell)
+                        contadorDiaHorario = 0
                     }else{
                         if (hold && cell == 1) {
                             mesEncontrado = mesPlaceholder
                             hold = false
                         }
-                        //lee los dias
-                        diaEncontrado = cell
+                        //lee los dias validos
+                        let celdaInferior
+                        try{
+                            celdaInferior = arrRowCell[rowNumber+1][cellNumber]
+                        }catch{
+                            celdaInferior = null
+                        } 
+
+                        if (celdaInferior != null && celdaInferior != 'FESTIVO') {
+                            diaEncontrado.push(cell)
+                        }
                         contadorDia++
                     }
-                    lastNotNull = cell
                 }else if(cell != null && cell != 'FESTIVO' && !fntCompareDays(cell) && !fntCompareMounths(cell)){
-                    fecha = diaEncontrado + '/' + mesEncontrado + '/' + date.getFullYear()
+
+                    fecha = diaEncontrado[contadorDiaHorario] + '/' + (meses.findIndex(m => m == mesEncontrado)+1) + '/' + date.getFullYear()
+
                     horaInicio = horasEncontrada[horasEncontrada.length-2]
                     horaFin = horasEncontrada[horasEncontrada.length-1]
-                    contenido = cell
+                    let contenidoFormateado = cell.replace(/\/n/gi, ",")
+                    contenido = contenidoFormateado.split(/\r?\n/)
 
                     horario[contadorHorario] = {
-                        fecha: fecha,
-                        horaInicio: horaInicio,
-                        horaFin: horaFin,
-                        contenido: contenido
+                        fecha:fecha,
+                        horaInicio:horaInicio,
+                        horaFin:horaFin,
+                        instructor:contenido[0],
+                        coordenada:{
+                            fila: rowNumber+1,
+                            celda_index: cellNumber,
+                            celda_letra: celdas[cellNumber]
+                        }
                     }
                     contadorHorario++
-
-                    //console.log(' | en fila: ' + (rowNumber+1) + ' | Celda: ' + celdas[cellNumber])
+                    contadorDiaHorario++
                 }
             }
 
@@ -193,9 +245,28 @@ function fntCompareMounths(data){
     return respuesta
 }
 
+function printAlert(){
+    let cantidadRegistros = 0
+    Object.entries(horario).forEach(row => cantidadRegistros++)
+    
+    html = `
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+        <button id="btnGuardarHorario" class="btn btn-primary">Guardar Todo</button> 
+        <button type="button" class="btn btn-secondary" data-action="datosValidos">
+            Datos validados <span class="badge text-bg-primary">${cantidadRegistros}</span>
+        </button>
+        <button type="button" class="btn btn-secondary" data-action="datosOrganizados">
+            Datos organizados <span class="badge text-bg-primary">${cantidadDatosFormateados}</span>
+        </button>
+        Cantidad de celdas procesadas: <b>${cantidadCeldasProcesadas}</b>
+    </div>
+    `
+    alertZone.innerHTML = html
+}
 
 function fntPrintHorario(){
 
+    let div = document.createElement('div')
     let table = document.createElement('table')
     let thead = document.createElement('thead')
     let tbody = document.createElement('tbody')
@@ -203,6 +274,7 @@ function fntPrintHorario(){
     let tr = document.createElement('tr')
 
     table.classList.add('table')
+    table.classList.add('table-striped')
 
     let node = document.createTextNode('Fecha')
     th = document.createElement('th')
@@ -220,7 +292,12 @@ function fntPrintHorario(){
     th.appendChild(node)
     tr.appendChild(th)
 
-    node = document.createTextNode('contenido')
+    node = document.createTextNode('Instructor')
+    th = document.createElement('th')
+    th.appendChild(node)
+    tr.appendChild(th)
+
+    node = document.createTextNode('Coordenada')
     th = document.createElement('th')
     th.appendChild(node)
     tr.appendChild(th)
@@ -228,8 +305,6 @@ function fntPrintHorario(){
     thead.appendChild(tr)
     table.appendChild(thead)
     table.appendChild(tbody)
-
-    //console.log(Object.entries(horario))
 
     Object.entries(horario).forEach(row =>{
         dataRow = row[1]
@@ -239,10 +314,272 @@ function fntPrintHorario(){
             <td>${dataRow.fecha}</td>
             <td>${dataRow.horaInicio}</td>
             <td>${dataRow.horaFin}</td>
-            <td>${dataRow.contenido}</td>
+            <td>${dataRow.instructor}</td>
+            <td>${dataRow.coordenada.fila} | ${dataRow.coordenada.celda_letra}</td>
         </tr>
         `
         
     })
-    display.appendChild(table)
+    div.appendChild(table)
+    displayModal.innerHTML = ""
+    displayModal.appendChild(div)
 }
+
+function sentData(){
+    const frmHorario = document.querySelector('#frmHorario')
+    let frmData = new FormData(frmHorario)
+
+    fetch(base_url + '/horario/setHorario',{
+        method: "POST",
+        body: frmData,
+    })
+    .then((res)=>res.json())
+    .then((data) => {
+        console.log(data)
+        let dataStatus = 'question'
+        switch (data.statusCode) {
+            case 0:
+                dataStatus = 'success'
+                break;
+            case 1:
+                dataStatus = 'warning'
+                break;
+            case 2:
+                dataStatus = 'error'
+                break;
+            case 3:
+                dataStatus = 'error'
+                break;
+        }
+
+        Swal.fire({
+            title: 'Insertar Horario',
+            text: data.msg,
+            icon: dataStatus
+        });
+        displayErrors(data.log)
+    })
+
+}
+
+ function procesData(data){
+    let respuestaRaw = {}
+    let arrFechas = []
+    let respuesta = {}
+    Object.entries(data).forEach(row =>{
+        dataRow = row[1]
+        arrFechas.push(dataRow.fecha)       
+    })
+    let uniqArrFechas = [...new Set(arrFechas)]
+    //FIX IT!!!!
+    uniqArrFechas.forEach((fecha, fechaIndex) => {
+        let contenido = {}
+        let indexCout = 0
+        Object.entries(data).forEach((row) =>{
+            dataRow = row[1]
+
+            if (fecha == dataRow.fecha) {
+                contenido[indexCout] = {
+                    horaInicio:dataRow.horaInicio,
+                    horaFin:dataRow.horaFin,
+                    instructor:dataRow.instructor
+                }
+                indexCout++
+            }  
+        })
+
+        respuestaRaw[fecha] = contenido
+    })
+
+    let letResponseIndex = 0
+    Object.entries(respuestaRaw).forEach((data) =>{
+        
+        //console.log(data)
+        let resFecha = data[0]
+        let resHoraInicio
+        let resHoraFin
+        let resInstructor
+        let resContenido = data[1]
+        
+        if (resContenido[0].instructor == resContenido[5].instructor) {
+            resHoraInicio = resContenido[0].horaInicio
+            resHoraFin = resContenido[5].horaFin
+            resInstructor = resContenido[0].instructor
+
+            respuesta[letResponseIndex] = {
+                fecha:resFecha,
+                horaInicio:resHoraInicio,
+                horaFin:resHoraFin,
+                instructor:resInstructor
+            }
+    
+            letResponseIndex++
+        }else{
+            //primer bloque
+            resHoraInicio = resContenido[0].horaInicio
+            resHoraFin = resContenido[2].horaFin
+            resInstructor = resContenido[0].instructor
+
+            respuesta[letResponseIndex] = {
+                fecha:resFecha,
+                horaInicio:resHoraInicio,
+                horaFin:resHoraFin,
+                instructor:resInstructor
+            }
+    
+            letResponseIndex++
+            
+            //segundo bloque
+            resHoraInicio_bloque2 = resContenido[3].horaInicio
+            resHoraFin_bloque2 = resContenido[5].horaFin
+            resInstructor_bloque2 = resContenido[3].instructor
+            
+            respuesta[letResponseIndex] = {
+                fecha:resFecha,
+                horaInicio:resHoraInicio_bloque2,
+                horaFin:resHoraFin_bloque2,
+                instructor:resInstructor_bloque2
+            }
+            letResponseIndex++
+        }
+    })
+
+    return respuesta
+} 
+
+function printProcesData(){
+    let html = ""
+    Object.entries(dataProcesada).forEach(data => {
+        data = data[1]
+        html += `
+            <tr>
+                <td>${data.fecha}</td>
+                <td>${data.horaInicio}</td>
+                <td>${data.horaFin}</td>
+                <td>${data.instructor}</td>
+            </tr>
+        `;
+        cantidadDatosFormateados++
+    })
+
+    displayModal.innerHTML = `
+    
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora inicio</th>
+                    <th>Hora fin</th>
+                    <th>Instructor</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${html}
+            </tbody>
+        </table>
+
+
+    `
+}
+
+function printForms(){
+    let html = `
+    <form id="frmHorario">
+        <input type="hidden" class="form-control" name="ficha" value="${ficha}">
+    `
+
+    Object.entries(dataProcesada).forEach((data, index) => {
+        data = data[1]
+
+        html += `
+
+        <div class="card" id="dataCard_${index}">
+            <div class="card-body">
+                <div class="row">
+                
+                <div class="mt-2"></div>
+                <div id="dataCardMessage_${index}"></div>
+                <div class="mb-1"></div>
+
+                    <div class="col-lg-6">
+                        <div class="mb-3 col-12">
+                            <label for="txtNombre" class="form-label">Fecha</label>
+                            <input type="text" class="form-control" name="hFecha[]" value="${data.fecha}">
+                        </div>
+
+                        <div class="mb-3 col-12">
+                            <label for="txtNombre" class="form-label">Instructor</label>
+                            <input type="text" class="form-control" name="hInstructor[]" value="${data.instructor}">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="mb-3 col-6">
+                            <label for="txtNombre" class="form-label">Hora Inicio</label>
+                            <input type="text" class="form-control" name="hHoraInicio[]" value="${data.horaInicio}">
+                        </div>
+
+                        <div class="mb-3 col-6">
+                            <label for="txtNombre" class="form-label">Hora Fin</label>
+                            <input type="text" class="form-control" name="hHoraFin[]" value="${data.horaFin}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+        cantidadDatosFormateados++
+    })
+
+    html += `
+    </form>`
+
+    display.innerHTML = html
+}
+
+function displayErrors(log){
+    log.forEach((error, index) => {
+        let display = document.querySelector(`#dataCardMessage_${index}`)
+        let card = document.querySelector(`#dataCard_${index}`)
+
+        if (error.status) {
+            card.remove()
+        }else{
+            display.innerHTML = `<span class="badge bg-danger"><i class="bi bi-exclamation-octagon me-1"></i> ${error.msg}</span>`
+        }
+        
+        console.log(error)
+    })
+}
+
+function setModalTitle(){
+    horariotitulo.innerHTML = `Datos del Horario ficha: <b>${ficha}</b>`
+}
+
+/*
+
+            <li class="list-group-item">
+                <div class="mb-3 col-12">
+                    <label for="txtNombre" class="form-label">Fecha</label>
+                    <input type="text" class="form-control" name="hFecha[]" value="${data.fecha}">
+                </div>
+                <div class="mb-3 col-6">
+                    <label for="txtNombre" class="form-label">Hora Inicio</label>
+                    <input type="text" class="form-control" name="hHoraInicio[]" value="${data.horaInicio}">
+                </div>
+                <div class="mb-3 col-6">
+                    <label for="txtNombre" class="form-label">Hora Fin</label>
+                    <input type="text" class="form-control" name="hHoraFin[]" value="${data.horaFin}">
+                </div>
+                <div class="mb-3 col-12">
+                    <label for="txtNombre" class="form-label">Instructor</label>
+                    <input type="text" class="form-control" name="hInstructor[]" value="${data.instructor}">
+                </div>
+            </li>
+
+
+                            <span class="badge bg-danger"><i class="bi bi-exclamation-octagon me-1"></i> Danger</span>
+
+*/
+

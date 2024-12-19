@@ -12,7 +12,7 @@ getModal('excusasModal', $data);
 
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Inasistencias</h5>
+            <h5 class="card-title">Excusas</h5>
 
             <table id="tablaExcusas" class="table">
                 <thead>

@@ -1,9 +1,19 @@
-<?php header_admin($data); ?>
+<?php 
+header_admin($data); 
+getModal('horarioModal', $data);
+?>
   <main id="main" class="main">
 
-  <input class="form-control" type="file" id="excel">
+  <div class="mb-3">
+    <input class="form-control" type="file" id="excel">
+  </div>
 
-  <br><br>
+  <div class="mb-3">
+
+  </div>
+
+  <div id="alertZone"></div>
+
   <div id="display"></div>
 
   </main><!-- End #main -->

@@ -3,6 +3,10 @@
 class Usuarios extends Controllers{
     public function __construct(){
         parent::__construct();
+        session_start();
+/*         if(empty($_SESSION['login'])){
+           header('Location: ' . base_url().'/login' );
+       }  */
     }
     public function usuarios(){
 
@@ -20,6 +24,16 @@ class Usuarios extends Controllers{
             <button type="button" data-action="delete" data-id="'.$arrData[$i]['ID'].'" class="btn btn-danger"><i class="bi bi-trash"></i></button>         
             <button type="button" data-action="edit" data-id="'.$arrData[$i]['ID'].'" class="btn btn-primary"><i class="bi bi-pencil-square"></i></button>
             ';
+
+            if ($arrData[$i]['rol'] == "COORDINADOR") {
+                $arrData[$i]['rol'] = '<span class="badge bg-primary">Coordinador</span>';
+            }
+            if ($arrData[$i]['rol'] == "INSTRUCTOR") {
+                $arrData[$i]['rol'] = '<span class="badge bg-info text-dark">Instructor</span>';
+            }
+            if ($arrData[$i]['rol'] == "APRENDIZ") {
+                $arrData[$i]['rol'] = '<span class="badge bg-secondary">Aprendiz</span>';
+            }
 
             if ($arrData[$i]['status'] == 1) {
                 $arrData[$i]['status'] = '<span class="badge rounded-pill bg-success">Activo</span>';
@@ -76,6 +90,7 @@ class Usuarios extends Controllers{
             $strFirma = "";
             $strRol = "APRENDIZ";
             $intIdUsuario = intval(strClean($_POST['idUsuario']));
+            $strPassword =  hash("SHA256", strClean($_POST['txtDocumento']));
 
             try {
                 if ($intIdUsuario == 0 || $intIdUsuario == "" || $intIdUsuario == "0") {
@@ -87,14 +102,13 @@ class Usuarios extends Controllers{
                         $intGenero, 
                         $strEmail, 
                         $strCodigo, 
-                        $strRol, 
+                        $strRol,
+                        $strPassword,
                         $strFirma
                     );
                     $option = 1;
                 }else{
-                    if ($intStatus == 1) {
-                        $intStatus = 2;
-                    }else{
+                    if ($intStatus == 0) {
                         $intStatus = 1;
                     }
                     $insert = $this->model->updateUsuario(

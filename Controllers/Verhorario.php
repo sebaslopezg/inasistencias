@@ -1,6 +1,6 @@
 <?php 
 
-class Dashboard extends Controllers{
+class Verhorario extends Controllers{
     public function __construct(){
         parent::__construct();
         session_start();
@@ -8,7 +8,7 @@ class Dashboard extends Controllers{
             header('Location: ' . base_url().'/login' );
         } 
     }
-    public function dashboard(){
+    public function verhorario(){
 
         $data['page_title'] = "Página de dashboard";
         $data['page_name'] = "dashboard";

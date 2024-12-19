@@ -8,10 +8,32 @@ class ExcusasModel extends mysql
         parent::__construct();
     }
 
-    public function selectExcusas()
+    public function selectInasistencias($idUsuario)
     {
-        $sql = "SELECT i.idInasistencias as Id,concat(i.fecha,' ', i.hora) as fechaCompleta,concat(u.nombre,' ',u.apellido) as nombreCompleto,i.idInstructor,i.status FROM inasistencias i JOIN usuario u on u.idUsuarios = i.usuario_idUsuarios WHERE i.codigoNovedad = 0;";
+        $this->$idUsuario = $idUsuario;
+        $sql = "SELECT i.idInasistencias as Id,concat(i.fecha,' ', i.hora) as fechaCompleta,concat(u.nombre,' ',u.apellido) as nombreCompleto,i.idInstructor,i.status FROM inasistencias i JOIN usuario u on u.idUsuarios = i.usuario_idUsuarios WHERE i.codigoNovedad = 0 and i.status > 0 AND u.idUsuarios = {$this->$idUsuario};";
         $request = $this->select_all($sql);
+        return $request;
+    }
+    public function selectUsuario($idUsuario)
+    {
+        $this->$idUsuario = $idUsuario;
+        $sql = "SELECT u.idUsuarios,u.rol FROM usuario u WHERE u.idUsuarios = {$this->$idUsuario};";
+        $request = $this->select_all($sql);
+        return $request;
+    }
+    public function selectInasistenciasPorInstru($idInstructor)
+    {
+        $this->$idInstructor = $idInstructor;
+        $sql = "SELECT e.idExcusas,i.idInasistencias,e.status,e.uriArchivo,i.fecha as feIna,concat(u.nombre, ' ',u.apellido)as nombreCompleto,f.nombre as ficha,f.numeroFicha,e.fecha as feExc FROM excusas e JOIN inasistencias i on i.idInasistencias = e.inasistencias_idInasistencias JOIN usuario u on u.idUsuarios = i.usuario_idUsuarios join usuario_has_ficha p on p.usuario_idUsuarios = u.idUsuarios JOIN ficha f on f.idFicha = p.ficha_idFicha WHERE e.status > 0 and i.status = 1 and e.idInstructor = {$this->$idInstructor};";
+        $request = $this->select_all($sql);
+        return $request;
+    }
+    public function selectFilePorId($id)
+    {
+        $this->$id = $id;
+        $sql = "SELECT e.uriArchivo,e.nomArchivo FROM excusas e WHERE e.idExcusas = {$this->$id};";
+        $request = $this->select($sql);
         return $request;
     }
     public function selectIdExcusa(int $idInasistencia)
@@ -55,15 +77,16 @@ class ExcusasModel extends mysql
         return $request;
     }
 
-    public function insertExcusas(int $idInasistencia, int $idUsuario, int $idInstructor, string $uriExcusa)
+    public function insertExcusas(int $idInasistencia, int $idUsuario, int $idInstructor, string $nameExcusa, string $uriExcusa)
     {
         $this->idInasistencia = $idInasistencia;
         $this->idUsuario = $idUsuario;
         $this->idInstructor = $idInstructor;
+        $this->nameExcusa = $nameExcusa;
         $this->uriExcusa = $uriExcusa;
 
-        $query_insert = "INSERT INTO excusas(inasistencias_idInasistencias,usuario_idUsuarios,idInstructor,uriArchivo,status) VALUES(?,?,?,?,?)";
-        $arrData = array($this->idInasistencia, $this->idUsuario, $this->idInstructor, $this->uriExcusa, 1);
+        $query_insert = "INSERT INTO excusas(inasistencias_idInasistencias,usuario_idUsuarios,idInstructor,nomArchivo,uriArchivo,status) VALUES(?,?,?,?,?,?)";
+        $arrData = array($this->idInasistencia, $this->idUsuario, $this->idInstructor,$this->nameExcusa,$this->uriExcusa, 1);
         $request_insert = $this->insert($query_insert, $arrData);
         $respuesta = $request_insert;
 
@@ -78,6 +101,32 @@ class ExcusasModel extends mysql
         $arrData = array(0);
         $request = $this->update($sql, $arrData);
         return $request;
+    }
+
+    public function aceptarExcusa(int $idInasistencia)
+    {
+        $this->idInasistencia = $idInasistencia;
+        $this->status = 2;
+
+        $sql = "UPDATE inasistencias set status = ? where idInasistencias = ?";
+        $arrData = array($this->status,$this->idInasistencia);
+        $reques_insert = $this->update($sql, $arrData);
+        $respuesta = $reques_insert;
+
+        return $respuesta;
+    }
+
+    public function denegarExcusa(int $idInasistencia)
+    {
+        $this->idInasistencia = $idInasistencia;
+        $this->status = 3;
+
+        $sql = "UPDATE inasistencias set status = ? where idInasistencias = ?";
+        $arrData = array($this->status,$this->idInasistencia);
+        $reques_insert = $this->update($sql, $arrData);
+        $respuesta = $reques_insert;
+
+        return $respuesta;
     }
 
     public function updateExcusa($idExcusa, $uriExcusa)

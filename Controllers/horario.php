@@ -17,6 +17,30 @@ class Horario extends Controllers{
         $this->views->getView($this,"horario", $data);
     }
 
+    public function gestionar(){
+
+        $data['page_title'] = "Página de dashboard";
+        $data['page_name'] = "horario";
+        $data['script'] = "gestionarHorarios";
+        $this->views->getView($this,"gestionar", $data);
+    }
+
+    public function getHorarios(){
+        $arrData = $this->model->selectAllHorarios();
+        for ($i=0; $i < count($arrData); $i++) { 
+            $arrData[$i]['fechaInicio'] = date('d/m/Y', strtotime($arrData[$i]['fechaInicio']));
+            $arrData[$i]['horaInicio'] = date('H:i', strtotime($arrData[$i]['horaInicio']));
+            $arrData[$i]['horaFin'] = date('H:i', strtotime($arrData[$i]['horaFin']));
+
+            $arrData[$i]['accion'] = '
+            <button type="button" data-action="delete" data-id="'.$arrData[$i]['ID'].'" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+            <button type="button" data-action="edit" data-id="'.$arrData[$i]['ID'].'" class="btn btn-primary"><i class="bi bi-pencil-square"></i></button>
+            ';
+        }
+        echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
+        die();
+    }
+
     public function setHorario(){
         if ($_POST) {
             $statusLectura = true;
@@ -107,6 +131,19 @@ class Horario extends Controllers{
 
 
 
+            echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+    public function deleteHorario(){
+        if ($_POST) {
+            $id = intval(strClean($_POST['idHorario']));
+            $delete = $this->model->deleteHorario($id);
+            if ($delete) {
+                $arrResponse = array('status' => true, 'msg' => 'Registro eliminado correctamente');
+            }else{
+                $arrResponse = array('status' => false, 'msg' => 'No se pudo eliminar el registro');
+            }
             echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
         }
     }

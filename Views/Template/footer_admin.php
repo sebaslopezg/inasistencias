@@ -27,12 +27,12 @@
   <script src="assets/vendor/echarts/echarts.min.js"></script>
   <script src="assets/vendor/quill/quill.js"></script> 
   
-  <script src="<?= media() ?>/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="/vendor/simple-datatables/simple-datatables.js"></script>
   
   <script src="assets/vendor/php-email-form/validate.js"></script> -->
 
   <!-- Template Main JS File -->
-  <script src="assets/js/main.js"></script>
+  <script src="<?= media() ?>/js/main.js"></script>
   <?php if(isset($data['script'])): ?>
     <script src="<?= media() ?>/js/<?= $data['script'] ?>.js"></script>
   <?php endif; ?>

@@ -6,6 +6,12 @@ class horarioModel extends Mysql{
         parent::__construct();
     }
 
+    public function selectAllHorarios(){
+        $sql = "SELECT h.idHorario AS ID, h.fechaInicio, h.horaInicio, h.horaFin, h.ficha, CONCAT(u.nombre, ' ', u.apellido) AS nombre FROM horario h INNER JOIN usuario u ON u.idUsuarios = h.usuarioId  WHERE h.status > 0";
+        $request = $this->select_all($sql);
+        return $request;
+    }
+
     public function selectHorarios(int $ficha, string $fecha, string $horaInicio){
         $this->intFicha = $ficha;
         $this->strFecha = $fecha;
@@ -58,6 +64,14 @@ class horarioModel extends Mysql{
         }
 
         return $respuesta;
+    }
+
+    public function deleteHorario(int $id){
+        $this->intId = $id;
+        $sql = "UPDATE horario SET status = ? WHERE idHorario = {$this->intId}";
+        $arrData = array(0);
+        $request = $this->update($sql, $arrData);
+        return $request;
     }
 
 }

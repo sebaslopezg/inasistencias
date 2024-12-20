@@ -127,9 +127,10 @@ getModal('fichasModal', $data);
                               <div class="col-8">
                                 <div class="input-group mb-3">
                                   <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
+                                  <label for="ficha"></label>
                                   <input
                                     type="text"
-                                    class="ficha form-control"
+                                    class="form-control"
                                     id="ficha"
                                     name="search_Ficha"
                                     placeholder="Ingrese el nombre de la ficha.."
@@ -144,55 +145,13 @@ getModal('fichasModal', $data);
                             id="tabla-Ficha">
                             <thead>
                               <tr>
-                                <th><i class="fas fa-solid fa-user"></i> Numero de Ficha</th>
-                                <th><i class="fas fa-solid fa-id-card"></i> Nombre de la Ficha</th>
-                                <th style="text-align: center;"><i class="fas fa-solid fa-id-card"></i> Instructores</th>
+                                <th> # Numero de Ficha</th>
+                                <th><i class="bi bi-journal-bookmark"></i> Nombre de la Ficha</th>
+                                <th style="text-align: center;"><i class="bi bi-person-fill"></i> Instructores</th>
                               </tr>
                             </thead>
                             <tbody>
-                              <tr>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                  <div class="card">
-                                    <div class="card-body">
-                                      <div class="container-fluid mt-3">
-                                        <div class="row mt-3">
-                                          <div class="col-10 mb-2 mt-2">
-                                            <div class="input-group mb-3">
-                                              <span
-                                                class="buscarInstructor input-group-text"
-                                                id="basic-addon1"><i class="bi bi-search"></i></span>
-                                              <input
-                                                type="text"
-                                                class="buscarInstructor form-control"
-                                                placeholder="Buscar.."
-                                                aria-label="Username"
-                                                id="buscarInstructor"
-                                                name="search_Instructor"
-                                                aria-describedby="basic-addon1" />
-                                            </div>
-                                          </div>
-                                        </div>
-                                        <div class="row">
-                                          <div class="col mb-3">
-                                            <table id="tabla-BusqInstru" class="table">
-                                              <thead>
-                                              </thead>
-                                              <tbody>
-                                                <tr>
-                                                  <td>
-                                                  </td>
-                                                </tr>
-                                              </tbody>
-                                            </table>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </td>
-                              </tr>
+  
                             </tbody>
                           </table>
                         </div>

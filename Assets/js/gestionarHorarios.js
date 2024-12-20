@@ -37,13 +37,13 @@ document.addEventListener('click', (e)=>{
         }
 
         if (action == 'edit') {
-            fetch(base_url + '/usuarios/getUsariosById/'+id)
+            fetch(base_url + '/horario/getHorarioById/'+id)
             .then((res) => res.json())
             .then((data) => {
                 if (data.status) {
                     data = data.data
-                    //console.log(data)
-                    $('#crearUsuarioModal').modal('show')
+                    console.log(data)
+                    $('#horarioEditarModal').modal('show')
                 }else{
                     Swal.fire({
                         title: "Error",

@@ -102,7 +102,6 @@ class Usuarios extends Controllers
             try {
                 if ($intIdUsuario == 0 || $intIdUsuario == "" || $intIdUsuario == "0") {
                     $insert = $this->model->insertUsuario(
-<<<<<<< HEAD
                         $strNombre, 
                         $strApellido, 
                         $intDocumento, 
@@ -117,23 +116,6 @@ class Usuarios extends Controllers
                     $option = 1;
                 }else{
                     if ($intStatus == 0) {
-=======
-                        $strNombre,
-                        $strApellido,
-                        $intDocumento,
-                        $intTelefono,
-                        $intGenero,
-                        $strEmail,
-                        $strCodigo,
-                        $strRol,
-                        $strFirma
-                    );
-                    $option = 1;
-                } else {
-                    if ($intStatus == 1) {
-                        $intStatus = 2;
-                    } else {
->>>>>>> da852c1c43390d6141ded5e2b55a11fa06bc1acc
                         $intStatus = 1;
                     }
                     $insert = $this->model->updateUsuario(

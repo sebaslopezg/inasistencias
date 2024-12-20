@@ -17,7 +17,7 @@ class horarioModel extends Mysql{
         $this->strFecha = $fecha;
         $this->strHoraInicio = $horaInicio;
 
-        $sql = "SELECT * FROM horario WHERE fechaInicio = '{$this->strFecha}' AND horaInicio = '{$this->strHoraInicio}' AND ficha = {$this->intFicha} AND status > 0";
+        $sql = "SELECT * FROM horario WHERE fechaInicio = '{$this->strFecha}' AND horaInicio = '{$this->strHoraInicio}' AND ficha = {$this->intFicha}";
         $request = $this->select_all($sql);
         return $request;
     }
@@ -26,13 +26,6 @@ class horarioModel extends Mysql{
         $this->intFicha = $ficha;
 
         $sql = "SELECT * FROM ficha WHERE numeroFicha = {$this->intFicha} AND status > 0;";
-        $request = $this->select($sql);
-        return $request;
-    }
-
-    public function selectHorariosById($id){
-        $this->intId = $id;
-        $sql = "SELECT h.idHorario AS ID, h.fechaInicio, h.horaInicio, h.horaFin, h.ficha, CONCAT(u.nombre, ' ', u.apellido) AS nombre FROM horario h INNER JOIN usuario u ON u.idUsuarios = h.usuarioId WHERE h.idHorario = {$this->intId} AND h.status > 0";
         $request = $this->select($sql);
         return $request;
     }

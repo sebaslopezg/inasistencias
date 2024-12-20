@@ -41,23 +41,6 @@ class Horario extends Controllers{
         die();
     }
 
-    public function getHorarioById($id){
-        $intId = intval(strClean($id));
-        if ($intId > 0) {
-            $arrData = $this->model->selectHorariosById($id);
-        }else{
-            $arrResponse = array('status' => false, 'msg' => 'tipo de dato no permitido');
-        }
-        if (empty($arrData)) {
-            $arrResponse = array('status' => false, 'msg' => 'No se encontraron datos con este id');
-        }else{
-            $arrResponse = array('status' => true, 'data' => $arrData);
-        }
-
-        echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
-        die();
-    }
-
     public function setHorario(){
         if ($_POST) {
             $statusLectura = true;
@@ -133,6 +116,7 @@ class Horario extends Controllers{
                         break;
                     }
                 }
+
                 if (!empty($arrStatus)){
                     $arrResponse = array('statusCode' => 1, 'msg' => 'algunos registros no se insertaron correctamente: ', 'log' => $arrStatus);
                 }else if($statusLectura){
@@ -140,9 +124,13 @@ class Horario extends Controllers{
                 }else{
                     $arrResponse = array('statusCode' => 2, 'msg' => 'Uno o varios campos estan vacios o contienen datos inválidos');
                 }
+
             }else{
                 $arrResponse = array('statusCode' => 3, 'msg' => 'Se debe insertar una ficha valida');
             }
+
+
+
             echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
         }
     }

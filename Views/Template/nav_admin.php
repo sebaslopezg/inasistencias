@@ -2,14 +2,14 @@
   <aside id="sidebar" class="sidebar">
 
     <ul class="sidebar-nav" id="sidebar-nav">
-      
+
       <li class="nav-item">
         <a class="nav-link <?= $data['page_name'] != 'dashboard' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/dashboard">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
       </li>
-      
+
       <!-- Pagina Inasistencias -->
       <li class="nav-item">
         <a class="nav-link <?= $data['page_name'] != 'inasistencias' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/inasistencias">
@@ -48,7 +48,7 @@
 
       <!-- Pagina Gestion de Excusas -->
       <li class="nav-item">
-        <a class="nav-link <?= $data['page_name'] != '' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/">
+        <a class="nav-link <?= $data['page_name'] != '' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/excusas">
           <i class="bi bi-person-x"></i>
           <span>Excusas</span>
         </a>
@@ -61,7 +61,7 @@
           <span>Exepciones</span>
         </a>
       </li>
-      
+
       <!-- Pagina de usuarios -->
       <li class="nav-item">
         <a class="nav-link <?= $data['page_name'] != 'usuarios' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/usuarios">
@@ -69,7 +69,7 @@
           <span>Usuarios</span>
         </a>
       </li>
-      
+
       <!-- Pagina de ingresos -->
       <li class="nav-item">
         <a class="nav-link <?= $data['page_name'] != 'ingresos' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/ingresos">

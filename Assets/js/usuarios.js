@@ -181,7 +181,6 @@ function loadTable(){
         `
         
         tablaUsuarios.innerHTML = tabla;
-
     }) */
 }
 

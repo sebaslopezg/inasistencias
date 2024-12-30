@@ -31,6 +31,13 @@ class FichasModel extends Mysql
         $request = $this->select_all($sql);
         return $request;
     }
+    public function selectInstDispo(int $idFicha)
+    {
+        $this->idFicha = $idFicha;
+        $sql = "SELECT CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo, usuario.idUsuarios FROM usuario WHERE rol = 'INSTRUCTOR' AND NOT EXISTS ( SELECT 1 FROM usuario_has_ficha WHERE usuario_has_ficha.usuario_idUsuarios = usuario.idUsuarios AND usuario_has_ficha.ficha_idFicha = {$this->idFicha} );";
+        $request = $this->select_all($sql);
+        return $request;
+    }
     public function selectInfoAprendicesFichaById(int $idFicha)
     {
         $this->idFicha = $idFicha;

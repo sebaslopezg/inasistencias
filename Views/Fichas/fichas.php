@@ -145,13 +145,12 @@ getModal('fichasModal', $data);
                             id="tabla-Ficha">
                             <thead>
                               <tr>
-                                <th> # Numero de Ficha</th>
                                 <th><i class="bi bi-journal-bookmark"></i> Nombre de la Ficha</th>
-                                <th style="text-align: center;"><i class="bi bi-person-fill"></i> Instructores</th>
+                                <th> # Numero de Ficha</th>
+                                <th style="text-align: center; "><i class="bi bi-person-fill"></i> Instructores</th>
                               </tr>
                             </thead>
                             <tbody>
-  
                             </tbody>
                           </table>
                         </div>

@@ -142,7 +142,7 @@ function loadTableView() {
     },
     columns: [{ data: "nombre" }, { data: "numeroFicha" }, { data: "status" }, { data: "accion" }],
     responsive: "true",
-    iDisplayLength: 10,
+    iDisplayLength: 6,
     order: [[0, "asc"]]
   });
 
@@ -157,7 +157,7 @@ function loadTableView() {
     },
     columns: [{ data: "nombre" }, { data: "numeroFicha" }, { data: "status" }, { data: "accion" }],
     responsive: "true",
-    iDisplayLength: 10,
+    iDisplayLength: 6,
     order: [[0, "asc"]]
   });
 }
@@ -203,24 +203,7 @@ $(document).ready(function () {
   // -----------------------------------
   //    VERIFICAR Fichas DISPONIBLES
   // -----------------------------------
-  let availableFichas = [
-    /*  {
-      label: "Analisis",
-      idFicha: "1",
-      numeroFicha: ""
-    },
-    {
-      label: "Diseño 3d",
-      idFicha: "2",
-      numeroFicha: ""
-    },
-    {
-      idFicha: "3",
-      nombre: "Gestion",
-      numeroFicha: ""
-    } */
-  ];
-
+  let availableFichas = [];
   fetch(base_url + "/fichas/getFichas")
     .then((res) => res.json())
     .then((data) => {
@@ -233,8 +216,6 @@ $(document).ready(function () {
         availableFichas.push(fila);
       });
     });
-  console.log(availableFichas);
-  // Se declara un array de productos disponibles llamado "availableProducts"
 
   // -----------------------------------
   //    AUTOCOMPLETADO DE FICHAS
@@ -260,9 +241,6 @@ $(document).ready(function () {
   // -----------------------------------
 
   function agregarFicha(idFicha, nombre, numeroFicha) {
-    console.log(idFicha);
-    console.log(nombre);
-    console.log(numeroFicha);
     // Verificar si la Ficha ya está en la tabla
     let fichaYaAgregado = false;
     // Itera sobre cada fila de la tabla para comprobar si el ID del producto ya existe
@@ -274,7 +252,7 @@ $(document).ready(function () {
         return false;
       }
     });
-    // Si el producto ya está en la tabla, muestra una alerta usando SweetAlert
+    // Si la fihca ya está en la tabla, muestra una alerta usando SweetAlert
     if (fichaYaAgregado) {
       Swal.fire({
         icon: "warning",
@@ -282,30 +260,63 @@ $(document).ready(function () {
         text: "La Ficha ya está en la tabla de Fichas seleccionados."
       });
     } else {
+      // traemos los instructores disponibles para asignarlos a la ficha Seleccionada.
+
       let nuevaFila =
         `
-            <tr>
-                <td><input type="hidden" name="idFicha[]" value="` +
+        <tr>
+            <input type="hidden" name="idFicha[]" value="` +
         idFicha +
-        `">` +
-        `</td>  
-                <td><input type="text" name="" class="form-control" placeholder="` +
+        `">
+            <td><div class="alert alert-secondary" role="alert">  ` +
         nombre +
-        `" ></td>
-              <td><input type="text" name="" class="form-control" placeholder="` +
+        `</div> </td>
+            <td style="text-align: center; font-size: large;"><div class="alert alert-light" role="alert"> <b>` +
         numeroFicha +
-        `" ></td>
-              <td><button type="button" class="btn btn-danger btn-sm eliminar-fila"><i class="fas fa-trash"></i></button></td>
-            </tr>
+        `</b> </div></td>
+            <td>
+              <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+              <h2 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><span class="badge rounded-pill bg-success" style="text-align:center;font-size:medium;">Disponibles</span></button></h2>
+               <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+               <div class="accordion-body" id="mostrarInstr" >
+         
+               </div>
+               </div>
+               </div>
+               </div>
+               </div>
+            </td>
+            <td><button type="button" class="btn btn-danger btn-sm eliminar-fila"><i class="bi bi-x-circle-fill"></i></button></td>
+        </tr>
         `;
 
-      // Si el producto no está en la tabla, crea una nueva fila para agregar el producto
-      // Agrega la nueva fila al final del tbody de la tabla de productos
+      let checkBox = document.createElement("input");
+      fetch(base_url + "/fichas/getInstDisponibles/" + idFicha + "")
+        .then((res) => res.json())
+        .then((data) => {
+          let mostrarCheck = document.getElementById("mostrarInstr");
+          data.forEach((data) => {
+            let fila = `
+            <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="${data.idUsuarios}" name="checkInstru" id="checkInstru">
+            <label class="form-check-label" for="flexCheckIndeterminate"> ${data.nombre_completo}</label>
+            </div>
+            `;
+            mostrarCheck.innerHTML += fila;
+            /*  checkBox.setAttribute = ("type", "checkbox");
+            checkBox.id = "checkInstru";
+            checkBox.className = "form-check-input";
+            checkBox.name = "checkInstru";
+            checkBox.value = data.idUsuarios + "<br/>";
+       
+            console.log(checkBox); */
+          });
+        });
       $("#tabla-Ficha tbody").append(nuevaFila);
     }
   }
- 
-
   // Asigna un evento "blur" a los campo de Busqueda de cliente
   $(document).on("blur", 'input[name="search_Ficha"]', function () {
     // Traemos el input del HTML, para deshabilitarlo una vez pierda el foco.
@@ -317,7 +328,7 @@ $(document).ready(function () {
     /*  $("#total-pagar").val("");
       $("#cantidad").focus(); */
   });
-  // Maneja el evento de envío del formulario de venta
+  // Maneja el evento de envío del formulario de asigancion de la ficha.
   $("#form-Ficha").on("submit", function (e) {
     // Prevenir el envío estándar del formulario
     e.preventDefault();

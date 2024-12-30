@@ -66,6 +66,12 @@ class Fichas extends Controllers
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
 
+    public function getInstDisponibles(int $idFicha): void
+    {
+        $intId = intval(strClean($idFicha));
+        $arrData = $this->model->selectInstDispo($intId);
+        echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
+    }
     public function getInfoAprendicesFicha(int $idFicha): void
     {
         $intId = intval(strClean($idFicha));

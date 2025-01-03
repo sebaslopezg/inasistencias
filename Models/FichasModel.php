@@ -68,6 +68,21 @@ class FichasModel extends Mysql
 
         return $respuesta;
     }
+
+    public function insertInstructor(int $intIdFicha, int $intIdInstru)
+    {
+        $this->intIdFicha = $intIdFicha;
+
+        $this->intIdInstru = $intIdInstru;
+
+        $query_insert = "INSERT INTO usuario_has_ficha (usuario_idUsuarios, ficha_idFicha) VALUES (?,?)";
+        $arrData = array($this->intIdInstru, $this->intIdFicha);
+
+        $reques_insert = $this->insert($query_insert, $arrData);
+
+        $respuesta = $reques_insert;
+        return $respuesta;
+    }
     public function updateFicha(string $strNombreFicha, int $intIdFicha, int $intStatus)
     {
         $this->strNombreFicha = $strNombreFicha;
@@ -83,7 +98,7 @@ class FichasModel extends Mysql
             $arrData = array(
                 $this->strNombreFicha,
                 $this->intStatus,
-                $this->intIdFicha   
+                $this->intIdFicha
             );
             $reques_insert = $this->update($query_insert, $arrData);
             $respuesta = $reques_insert;

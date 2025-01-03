@@ -18,6 +18,15 @@ class Fichas extends Controllers
         $this->views->getView($this, "fichas", $data);
     }
 
+    /* 
+    public function gestionar()
+    {
+        $data['page_title'] = "Gestion de Fichas";
+        $data['page_name'] = "Gestion";
+        $data['script'] = "fichas";
+        $this->views->getView($this, "fichas/Gestion", $data);
+    } */
+
     public function getFichas()
     {
         $arrData = $this->model->selectFicha();
@@ -70,6 +79,10 @@ class Fichas extends Controllers
     {
         $intId = intval(strClean($idFicha));
         $arrData = $this->model->selectInstDispo($intId);
+
+        for ($i = 0; $i < count($arrData); $i++) {
+            $arrData[$i]['checkBox'] = '<input class="instruCheck form-check-input" type="checkbox" value="' . $arrData[$i]['idUsuarios'] . '" name="selecInstru[]" id="checkInstru">';
+        };
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
     public function getInfoAprendicesFicha(int $idFicha): void
@@ -149,7 +162,7 @@ class Fichas extends Controllers
                 $arrResponse = array('status' => false, 'msg' => "Error desconocido: $th");
             }
         } else {
-            $arrResponse = array('status' => false, 'msg' => 'Debe insertar todos los datos  ' . $_POST['userStatus'] . $_POST['txtNumeroFicha'] . $_POST['txtNombre']);
+            $arrResponse = array('status' => false, 'msg' => 'Debe insertar todos los datos  ');
         }
 
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
@@ -160,44 +173,52 @@ class Fichas extends Controllers
 
         $arrPosts = [
             'txtIdInstructor',
-            'txtIdFicha'
+            'txtIdFicha',
+            'accion'
         ];
 
         if (check_post($arrPosts)) {
-            $strNombre = strClean($_POST['txtNombre']);
-            $intNumeroFicha = intval(strClean($_POST['txtNumeroFicha']));
+
+
+            $txtIdInstructor = intval(strClean($_POST['txtIdInstructor']));
+
             $intIdFicha = intval(strClean($_POST['txtIdFicha']));
-            $intStatus = intval(strClean($_POST['userStatus']));
+
+            $strAccion = strClean($_POST['accion']);
+
+            $arrIds = explode(",", $txtIdInstructor);
+
             try {
-                if ($intIdFicha == 0 || $intIdFicha == "" || $intIdFicha == "0") {
-                    $insert = $this->model->insertFicha(
-                        $strNombre,
-                        $intNumeroFicha
-                    );
-                    $option = 1;
-                } else {
-                    if ($intStatus == 0) {
-                        $intStatus = 1;
+                if ($strAccion == "insert") {
+
+                    for ($i = 0; $i < count($arrIds); $i++) {
+                        $insert = $this->model->insertInstructor(
+                            $intIdFicha,
+                            $arrIds[$i]
+                        );
                     }
-                    $insert = $this->model->updateFicha(
-                        $strNombre,
-                        $intIdFicha,
-                        $intStatus
-                    );
+                    $option = 1;
+                } else if ($strAccion == "modificar") {
+
+                    for ($i = 0; $i < count($arrIds); $i++) {
+                        $insert = $this->model->updateInstructor(
+                            $intIdFicha,
+                            $arrIds[$i]
+                        );
+                    }
                     $option = 2;
                 }
 
                 if (intval($insert) > 0) {
 
                     if ($option == 1) {
-                        $arrResponse = array('status' => true, 'msg' => 'Ficha insertada correctamente');
+                        $arrResponse = array('status' => true, 'msg' => 'El personal ha sido asignado correctamente');
                     }
-
                     if ($option == 2) {
-                        $arrResponse = array('status' => true, 'msg' => 'Ficha actualizada correctamente');
+                        $arrResponse = array('status' => true, 'msg' => 'Se realizo la modificacion correctamene');
                     }
                 } else if ($insert == 'exist') {
-                    $arrResponse = array('status' => false, 'msg' => 'Ya existe una Ficha con el mismo numero');
+                    $arrResponse = array('status' => false, 'msg' => 'Ya ha sido asignado a esta ficha, elija uno diferente ');
                 } else {
                     $arrResponse = array('status' => false, 'msg' => 'Error al insertar');
                 }
@@ -205,7 +226,7 @@ class Fichas extends Controllers
                 $arrResponse = array('status' => false, 'msg' => "Error desconocido: $th");
             }
         } else {
-            $arrResponse = array('status' => false, 'msg' => 'Debe insertar todos los datos  ' . $_POST['userStatus'] . $_POST['txtNumeroFicha'] . $_POST['txtNombre']);
+            $arrResponse = array('status' => false, 'msg' => 'Debe insertar todos los datos  ');
         }
 
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);

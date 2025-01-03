@@ -9,6 +9,7 @@ const frmUserStatus = document.querySelector("#userStatus");
 const btnAcccionUsuario = document.querySelector("#btnAccion");
 const btnAcccionUsuarioVolver = document.querySelector("#btnAccionVolver");
 let tablaFichasView = document.querySelector("#tablaFichasView");
+let btnCerrarModal = document.getElementById("btnCerrarModal");
 let tablaFicha = document.querySelector("#tablaFichas");
 let tablaInfoInstructor = document.querySelector("#tablaInfoInstructor");
 let tablaInfoAprendiz = document.querySelector("#tablaInfoAprendiz");
@@ -101,7 +102,12 @@ btnAcccionUsuarioVolver.addEventListener("click", () => {
   btnAcccionUsuario.style.display = "";
   btnAcccionUsuarioVolver.style.display = "none";
 });
-
+//Evento blur : Este se encarga de limpiar la tabla de informacion de la fichas.
+$(document).on("blur", "#infoFichaModal", function () {
+  console.log("perdio foco");
+  tablaInfoInstructor.innerHTML = "";
+  tablaInfoAprendiz.innerHTML = "";
+});
 frmCrearFicha.addEventListener("submit", (e) => {
   e.preventDefault();
   let frmFicha = new FormData(frmCrearFicha);
@@ -161,6 +167,7 @@ function loadTableView() {
     order: [[0, "asc"]]
   });
 }
+
 // lodInfoFicha : Este metodo se encargar de trae la informacion de los Instructores  y Aprendices relacionados con la ficha para pintarla en lsas tablas.
 function loadInfoFicha(id) {
   fetch(base_url + "/fichas/getInfoInstructoresFicha/" + id)
@@ -180,13 +187,13 @@ function loadInfoFicha(id) {
         tablaInfoAprendiz.innerHTML += texto;
       });
     });
+
   $("#infoFichaModal").modal("show");
 }
 function clearForm() {
   frmNombre.value = "";
   frmNumeroFicha.value = "";
   frmIdFicha.value = "0";
-  // frmDocumento.removeAttribute("readonly");
 }
 
 function optionStatus(mode) {
@@ -209,7 +216,7 @@ $(document).ready(function () {
     .then((data) => {
       data.forEach((data) => {
         let fila = {
-          label: "" + data.nombre + "",
+          label: "" + data.nombre + " - " + data.numeroFicha,
           value: "" + data.id + "",
           numeroFicha: "" + data.numeroFicha + ""
         };
@@ -270,15 +277,12 @@ $(document).ready(function () {
         `">
             <td><div class="alert alert-secondary" role="alert">  ` +
         nombre +
-        `</div> </td>
-            <td style="text-align: center; font-size: large;"><div class="alert alert-light" role="alert"> <b>` +
-        numeroFicha +
-        `</b> </div></td>
+        `</div> 
             <td>
               <div class="accordion" id="accordionExample">
               <div class="accordion-item">
               <h2 class="accordion-header">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><span class="badge rounded-pill bg-success" style="text-align:center;font-size:medium;">Disponibles</span></button></h2>
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><span class="badge rounded-pill bg-success" style="text-align:center;font-size:medium;">Personal</span></button></h2>
                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
                <div class="accordion-body" id="mostrarInstr" >
          
@@ -292,7 +296,6 @@ $(document).ready(function () {
         </tr>
         `;
 
-      let checkBox = document.createElement("input");
       fetch(base_url + "/fichas/getInstDisponibles/" + idFicha + "")
         .then((res) => res.json())
         .then((data) => {
@@ -300,18 +303,11 @@ $(document).ready(function () {
           data.forEach((data) => {
             let fila = `
             <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="${data.idUsuarios}" name="checkInstru" id="checkInstru">
+            ${data.checkBox}
             <label class="form-check-label" for="flexCheckIndeterminate"> ${data.nombre_completo}</label>
             </div>
             `;
             mostrarCheck.innerHTML += fila;
-            /*  checkBox.setAttribute = ("type", "checkbox");
-            checkBox.id = "checkInstru";
-            checkBox.className = "form-check-input";
-            checkBox.name = "checkInstru";
-            checkBox.value = data.idUsuarios + "<br/>";
-       
-            console.log(checkBox); */
           });
         });
       $("#tabla-Ficha tbody").append(nuevaFila);
@@ -325,52 +321,56 @@ $(document).ready(function () {
   });
   $(document).on("click", ".eliminar-fila", function () {
     $(this).closest("tr").remove();
-    /*  $("#total-pagar").val("");
-      $("#cantidad").focus(); */
   });
+
+  // Traemos los id de los Instructores por medio del evento click
+  let idCapturadas = "";
+  $(document).on("click", ".instruCheck", function () {
+    let arrIdInstru = $('[name="selecInstru[]"]:checked')
+      .map(function () {
+        return this.value;
+      })
+      .get();
+    idCapturadas = arrIdInstru.join(",");
+  });
+
   // Maneja el evento de envío del formulario de asigancion de la ficha.
   $("#form-Ficha").on("submit", function (e) {
     // Prevenir el envío estándar del formulario
     e.preventDefault();
-    // Contar las filas de la tabla de productos
     let filas = $("#tabla-Ficha tbody tr").length;
+
     if (filas === 0) {
-      // Si no hay productos en la tabla, mostrar una alerta
       Swal.fire({
         icon: "warning",
         title: "Sin productos",
-        text: "Por favor, agregue al menos una ficha a la venta."
+        text: "Por favor, agregue al menos una ficha."
       });
       return false;
     }
-
     // Crear un objeto FormData para recolectar los datos del formulario
     let formData = new FormData();
+    formData.append("txtIdInstructor", idCapturadas);
+    formData.append("accion", "insert");
 
-    // Iterar sobre cada fila de la tabla de productos para recolectar datos
     $("#tabla-Ficha tbody tr").each(function () {
       let idFicha = $(this).find("input[name='idFicha[]']").val();
       formData.append("txtIdFicha", idFicha);
     });
 
-    $("#tabla-BusqInstru tbody tr").each(function () {
-      let idInstructor = $(this).find("input[name='selecInstru[]']").val();
-      formData.append("txtIdInstructor", idInstructors);
-    });
+    // console.log(formData.get("txtIdInstructores"));
 
-    // Enviar los datos al servidor utilizando AJAX
     $.ajax({
       // Método de envío
       type: "POST",
       // URL del script de PHP que procesará la venta
-      url: " " + base_url + "/fichas/setIsntructor",
+      url: " " + base_url + "/fichas/setInstructor",
       data: formData,
       // No procesar los datos (ya se usa FormData)
       processData: false,
       // No establecer el tipo de contenido (ya se establece con FormData)
       contentType: false,
       success: function (respuesta) {
-        // Si la venta se crea correctamente, mostrar una alerta de éxito
         Swal.fire({
           title: "¡Instructor Asiganado Correctamente!",
           icon: "success",
@@ -380,7 +380,7 @@ $(document).ready(function () {
           showConfirmButton: false
         }).then(() => {
           // Redirigir a la lista de ventas después de la alerta
-          window.location.href = "" + base_url + "/fichas/getFichasPreview";
+          /*    window.location.href = "" + base_url + "/fichas"; */
         });
       },
       error: function (xhr, status, error) {
@@ -388,6 +388,7 @@ $(document).ready(function () {
         console.error("Error en la solicitud AJAX:", error);
       }
     });
+
     // Evita el comportamiento por defecto del formulario
     return false;
   });

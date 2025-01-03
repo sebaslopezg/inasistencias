@@ -25,8 +25,9 @@ class FichasModel extends Mysql
     public function selectInfoInstructoresById(int $idFicha)
     {
         $this->idFicha = $idFicha;
-        $sql = "SELECT  CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo, usuario.correo FROM usuario_has_ficha
+        $sql = "SELECT ficha.nombre as nombre_ficha, CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo, usuario.correo FROM usuario_has_ficha
         INNER JOIN usuario ON usuario.idUsuarios = usuario_has_ficha.usuario_idUsuarios 
+        INNER JOIN ficha ON ficha.idFicha = usuario_has_ficha.ficha_idFicha 
         WHERE usuario_has_ficha.ficha_idFicha = {$this->idFicha}  AND usuario.status = 1 AND usuario.rol = 'INSTRUCTOR'";
         $request = $this->select_all($sql);
         return $request;

@@ -44,8 +44,10 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-dark text-white">
-                <h2 class="modal-title fs-5" id="exampleModalLabel" style="text-align: center; display: flex;">INFORMACION DE LA FICHA</h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" id="btnCerrarModal" aria-label="Close" style="color: white;"> <i class="bi bi-x-lg"></i> </button>
+                <div class="titulo" id="tituloModal">
+
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" id="btnCerrarModal" aria-label="Close" style="color: white;"> <i class="bi bi-x-lg"></i></button>
             </div>
             <div class="modal-body">
                 <div class="card">

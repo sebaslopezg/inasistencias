@@ -5,10 +5,12 @@ const btnSubmit = document.querySelector("#btnSubmit");
 const frmNombre = document.querySelector("#txtNombre");
 const frmNumeroFicha = document.querySelector("#txtNumeroFicha");
 const frmIdFicha = document.querySelector("#txtIdFicha");
+const tituloModel = document.querySelector("#tituloModal");
 const frmUserStatus = document.querySelector("#userStatus");
 const btnAcccionUsuario = document.querySelector("#btnAccion");
 const btnAcccionUsuarioVolver = document.querySelector("#btnAccionVolver");
 let tablaFichasView = document.querySelector("#tablaFichasView");
+
 let btnCerrarModal = document.getElementById("btnCerrarModal");
 let tablaFicha = document.querySelector("#tablaFichas");
 let tablaInfoInstructor = document.querySelector("#tablaInfoInstructor");
@@ -102,12 +104,19 @@ btnAcccionUsuarioVolver.addEventListener("click", () => {
   btnAcccionUsuario.style.display = "";
   btnAcccionUsuarioVolver.style.display = "none";
 });
-//Evento blur : Este se encarga de limpiar la tabla de informacion de la fichas.
+
+//btnCerraModal : Este boton se encarga de limpiar la tabla de informacion de la fichas.
+btnCerrarModal.addEventListener("click", () => {
+  console.log("click");
+  tablaInfoInstructor.innerHTML = "";
+  tablaInfoAprendiz.innerHTML = "";
+});
+/*
 $(document).on("blur", "#infoFichaModal", function () {
   console.log("perdio foco");
   tablaInfoInstructor.innerHTML = "";
   tablaInfoAprendiz.innerHTML = "";
-});
+});*/
 frmCrearFicha.addEventListener("submit", (e) => {
   e.preventDefault();
   let frmFicha = new FormData(frmCrearFicha);
@@ -173,6 +182,12 @@ function loadInfoFicha(id) {
   fetch(base_url + "/fichas/getInfoInstructoresFicha/" + id)
     .then((res) => res.json())
     .then((data) => {
+      data.forEach((data) => {
+        let titulo = `<h2 class="modal-title fs-5" id="exampleModalLabel" style="text-align: center; display: flex;">INFORMACION DE LA FICHA -  ${data.nombre_ficha}</h2>
+        `;
+        tituloModel.innerHTML = titulo;
+      });
+
       data.forEach((data) => {
         let texto = ` <tr><td>${data.nombre_completo}</td><td>${data.correo}</td></tr>  `;
         tablaInfoInstructor.innerHTML += texto;

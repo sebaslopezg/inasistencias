@@ -10,7 +10,6 @@ const frmUserStatus = document.querySelector("#userStatus");
 const btnAcccionUsuario = document.querySelector("#btnAccion");
 const btnAcccionUsuarioVolver = document.querySelector("#btnAccionVolver");
 let tablaFichasView = document.querySelector("#tablaFichasView");
-
 let btnCerrarModal = document.getElementById("btnCerrarModal");
 let tablaFicha = document.querySelector("#tablaFichas");
 let tablaInfoInstructor = document.querySelector("#tablaInfoInstructor");
@@ -183,7 +182,10 @@ function loadInfoFicha(id) {
     .then((res) => res.json())
     .then((data) => {
       data.forEach((data) => {
-        let titulo = `<h2 class="modal-title fs-5" id="exampleModalLabel" style="text-align: center; display: flex;">INFORMACION DE LA FICHA -  ${data.nombre_ficha}</h2>
+        let titulo = `
+        <tr>
+          <th style="text-align: center;" scope="col"> ${data.nombre_ficha}</th>
+        </tr>
         `;
         tituloModel.innerHTML = titulo;
       });
@@ -233,7 +235,8 @@ $(document).ready(function () {
         let fila = {
           label: "" + data.nombre + " - " + data.numeroFicha,
           value: "" + data.id + "",
-          numeroFicha: "" + data.numeroFicha + ""
+          numeroFicha: "" + data.numeroFicha + "",
+          nombreFicha: "" + data.nombre + ""
         };
         availableFichas.push(fila);
       });
@@ -251,7 +254,7 @@ $(document).ready(function () {
     // Define la función que se ejecuta al seleccionar un producto de la lista de autocompletado
     select: function (event, ui) {
       // Pasa el idFicha (ui.item.value), el nombre(ui.item.label), el numeroFicha (ui.item.precio), como argumentos.
-      agregarFicha(ui.item.value, ui.item.label, ui.item.numeroFicha);
+      agregarFicha(ui.item.value, ui.item.label, ui.item.numeroFicha, ui.item.nombreFicha);
       // Limpia el campo de entrada después de que se haya seleccionado un Ficha
       $("#ficha").val("");
       return false;
@@ -262,37 +265,40 @@ $(document).ready(function () {
   //    AGREGAR FICHA A TABLA
   // -----------------------------------
 
-  function agregarFicha(idFicha, nombre, numeroFicha) {
-    // Verificar si la Ficha ya está en la tabla
-    let fichaYaAgregado = false;
-    // Itera sobre cada fila de la tabla para comprobar si el ID del producto ya existe
-    $("#tabla-Ficha tbody tr").each(function () {
-      if ($(this).find("input[name='idFicha[]']").val() == idFicha) {
-        // Si encuentra una coincidencia de ID, marca productoYaAgregado como true
-        fichaYaAgregado = true;
-        // Sale del ciclo
-        return false;
-      }
-    });
-    // Si la fihca ya está en la tabla, muestra una alerta usando SweetAlert
-    if (fichaYaAgregado) {
-      Swal.fire({
-        icon: "warning",
-        title: "Ficha ya agregada ",
-        text: "La Ficha ya está en la tabla de Fichas seleccionados."
+  function agregarFicha(idFicha, label, numeroFicha, nombreFicha) {
+    // Verificar que solo haya eligido 1 Ficha, para evitar Cruce de Informacion.
+    if ($("#tabla-Ficha tbody tr").length < 1) {
+      // Verificar si la Ficha ya está en la tabla
+      let fichaYaAgregado = false;
+      // Itera sobre cada fila de la tabla para comprobar si el ID del ficha ya existe
+      $("#tabla-Ficha tbody tr").each(function () {
+        if ($(this).find("input[name='idFicha[]']").val() == idFicha) {
+          // Si encuentra una coincidencia de ID, marca fichaYaAgregado como true
+          fichaYaAgregado = true;
+          // Sale del ciclo
+          return false;
+        }
       });
-    } else {
-      // traemos los instructores disponibles para asignarlos a la ficha Seleccionada.
 
-      let nuevaFila =
-        `
+      // Si la ficha ya está en la tabla, muestra una alerta usando SweetAlert
+      if (fichaYaAgregado) {
+        Swal.fire({
+          icon: "warning",
+          title: "Ficha ya agregada ",
+          text: "La Ficha ya está selecionada en la tabla de Fichas."
+        });
+      } else {
+        // traemos los instructores disponibles para asignarlos a la ficha Seleccionada.
+
+        let nuevaFila =
+          `
         <tr>
             <input type="hidden" name="idFicha[]" value="` +
-        idFicha +
-        `">
+          idFicha +
+          `">
             <td><div class="alert alert-secondary" role="alert">  ` +
-        nombre +
-        `</div> 
+          label +
+          `</div> 
             <td>
               <div class="accordion" id="accordionExample">
               <div class="accordion-item">
@@ -311,43 +317,63 @@ $(document).ready(function () {
         </tr>
         `;
 
-      fetch(base_url + "/fichas/getInstDisponibles/" + idFicha + "")
-        .then((res) => res.json())
-        .then((data) => {
-          let mostrarCheck = document.getElementById("mostrarInstr");
-          data.forEach((data) => {
-            let fila = `
+        fetch(base_url + "/fichas/getInstDisponibles/" + idFicha + "")
+          .then((res) => res.json())
+          .then((data) => {
+            let mostrarCheck = document.getElementById("mostrarInstr");
+            data.forEach((data) => {
+              let fila = `
             <div class="form-check">
             ${data.checkBox}
             <label class="form-check-label" for="flexCheckIndeterminate"> ${data.nombre_completo}</label>
             </div>
             `;
-            mostrarCheck.innerHTML += fila;
+              mostrarCheck.innerHTML += fila;
+            });
           });
-        });
-      $("#tabla-Ficha tbody").append(nuevaFila);
+
+        let filaFicha = `
+      <tr id="ficha-tr" >
+            <td style="font-size: large; text-align: center;">${nombreFicha}</td>
+            <td style="font-size: large; text-align: center;">${numeroFicha}</td>
+      </tr>
+      `;
+        $("#tabla-infoFicha-Mod tbody").append(filaFicha);
+
+        fetch(base_url + "/fichas/getInfoInstructoresFicha/" + idFicha + "")
+          .then((res) => res.json())
+          .then((data) => {
+            data.forEach((data) => {
+              let tablaInstructoresMod = document.getElementById("tabla-instructores-Mod");
+              let filaIntructores = `
+            <tr id="instru-tr">
+             <td>${data.nombre_completo}</td>
+             <td>${data.correo}</td>
+             <td>
+             <div class="form-check form-switch">
+            ${data.accion}
+             <label class="form-check-label" for="flexSwitchCheckChecked"></label></div>
+             </td>
+             </tr>
+        `;
+              tablaInstructoresMod.innerHTML += filaIntructores;
+            });
+          });
+
+        $("#tabla-Ficha tbody").append(nuevaFila);
+      }
+    } else {
+      Swal.fire({
+        icon: "warning",
+        title: "¡ Ya hay una ficha selecionada !",
+        text: "Elimina la ficha anterior para eligir una nueva ficha."
+      });
     }
   }
-  // Asigna un evento "blur" a los campo de Busqueda de cliente
-  $(document).on("blur", 'input[name="search_Ficha"]', function () {
-    // Traemos el input del HTML, para deshabilitarlo una vez pierda el foco.
-    /*   let txtSearchClient = document.querySelector("#ficha");
-    txtSearchClient.disabled = true; */
-  });
-  $(document).on("click", ".eliminar-fila", function () {
-    $(this).closest("tr").remove();
-  });
 
-  // Traemos los id de los Instructores por medio del evento click
-  let idCapturadas = "";
-  $(document).on("click", ".instruCheck", function () {
-    let arrIdInstru = $('[name="selecInstru[]"]:checked')
-      .map(function () {
-        return this.value;
-      })
-      .get();
-    idCapturadas = arrIdInstru.join(",");
-  });
+  // ---------------------------------------------
+  //    FORMULARIO DE ASIGNACION DE INSTRUCTOR
+  // ---------------------------------------------
 
   // Maneja el evento de envío del formulario de asigancion de la ficha.
   $("#form-Ficha").on("submit", function (e) {
@@ -406,5 +432,99 @@ $(document).ready(function () {
 
     // Evita el comportamiento por defecto del formulario
     return false;
+  });
+
+  // Asigna un evento "blur" a los campo de Busqueda de las fichas
+  $(document).on("blur", 'input[name="search_Ficha"]', function () {
+    // Traemos el input del HTML, para deshabilitarlo una vez pierda el foco.
+    /*   let txtSearchClient = document.querySelector("#ficha");
+    txtSearchClient.disabled = true; */
+  });
+
+  $(document).on("click", ".eliminar-fila", function () {
+    $(this).closest("tr").remove();
+
+    $("#tabla-infoFicha-Mod tr").each(function () {
+      $("#ficha-tr").remove();
+    });
+
+    $("#tabla-instructores-Mod tr").each(function () {
+      $("#instru-tr").remove();
+    });
+  });
+
+  // Traemos los id de los Instructores por medio del evento click
+  let idCapturadas = "";
+
+  $(document).on("click", ".instruCheck", function () {
+    let arrIdInstru = $('[name="selecInstru[]"]:checked')
+      .map(function () {
+        return this.value;
+      })
+      .get();
+    idCapturadas = arrIdInstru.join(",");
+  });
+
+  // -----------------------------------
+  //    MODIFICACION DE PERSONAL
+  // -----------------------------------
+
+  $(document).on("click", ".switchStatus", function (e) {
+    formData = new FormData();
+    $("#tabla-Ficha tbody tr").each(function () {
+      let idFicha = $(this).find("input[name='idFicha[]']").val();
+      formData.append("txtIdFicha", idFicha);
+    });
+
+    if (e.target.getAttribute("aria-checked") === "true") {
+      e.target.setAttribute("aria-checked", "false");
+
+      let idIntrutor = e.target.getAttribute("data-id");
+      formData.append("txtIdInstructor", idIntrutor);
+      formData.append("accion", "update-status-2");
+
+      $.ajax({
+        // Método de envío
+        type: "POST",
+        // URL del script de PHP que procesará la venta
+        url: " " + base_url + "/fichas/setInstructor",
+        data: formData,
+        //
+        processData: false,
+        //
+        contentType: false,
+        success: function (respuesta) {},
+        error: function (xhr, status, error) {
+          console.error("Error en la solicitud AJAX:", error);
+        }
+      });
+    } else {
+      e.target.setAttribute("aria-checked", "true");
+      formData = new FormData();
+      $("#tabla-Ficha tbody tr").each(function () {
+        let idFicha = $(this).find("input[name='idFicha[]']").val();
+        formData.append("txtIdFicha", idFicha);
+      });
+
+      let idIntrutor = e.target.getAttribute("data-id");
+      formData.append("txtIdInstructor", idIntrutor);
+      formData.append("accion", "update-status-1");
+
+      $.ajax({
+        // Método de envío
+        type: "POST",
+        // URL del script de PHP que procesará la venta
+        url: " " + base_url + "/fichas/setInstructor",
+        data: formData,
+        //
+        processData: false,
+        //
+        contentType: false,
+        success: function (respuesta) {},
+        error: function (xhr, status, error) {
+          console.error("Error en la solicitud AJAX:", error);
+        }
+      });
+    }
   });
 });

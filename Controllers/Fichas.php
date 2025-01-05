@@ -72,6 +72,17 @@ class Fichas extends Controllers
         $intId = intval(strClean($idFicha));
         $arrData = $this->model->selectInfoInstructoresById($intId);
 
+        for ($i = 0; $i < count($arrData); $i++) {
+            $arrData[$i]['accion'] = '
+             <input class="switchStatus form-check-input" type="checkbox"  aria-checked="true" name="switch_status[]" role="switch" data-id="' . $arrData[$i]['idUsuarios'] . '" id="switch_status" checked>
+            ';
+            /* if ($arrData[$i]['status'] == 1) {
+                $arrData[$i]['status'] = '<span class="badge rounded-pill bg-success">Activo</span>';
+            }
+            if ($arrData[$i]['status'] == 2) {
+                $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Inactivo</span>';
+            } */
+        }
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
 
@@ -198,15 +209,21 @@ class Fichas extends Controllers
                         );
                     }
                     $option = 1;
-                } else if ($strAccion == "modificar") {
+                } else if ($strAccion == "update-status-2") {
 
-                    for ($i = 0; $i < count($arrIds); $i++) {
-                        $insert = $this->model->updateInstructor(
-                            $intIdFicha,
-                            $arrIds[$i]
-                        );
-                    }
+                    $insert = $this->model->updateInstructor(
+                        $intIdFicha,
+                        $arrIds[0],
+                        2
+                    );
+
                     $option = 2;
+                }elseif ($strAccion == "update-status-1"){
+                    $insert = $this->model->updateInstructor(
+                        $intIdFicha,
+                        $arrIds[0],
+                        1
+                    );
                 }
 
                 if (intval($insert) > 0) {

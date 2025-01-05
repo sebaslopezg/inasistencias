@@ -25,7 +25,7 @@ class FichasModel extends Mysql
     public function selectInfoInstructoresById(int $idFicha)
     {
         $this->idFicha = $idFicha;
-        $sql = "SELECT ficha.nombre as nombre_ficha, CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo, usuario.correo FROM usuario_has_ficha
+        $sql = "SELECT ficha.nombre as nombre_ficha, CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo, usuario.correo,usuario.idUsuarios FROM usuario_has_ficha
         INNER JOIN usuario ON usuario.idUsuarios = usuario_has_ficha.usuario_idUsuarios 
         INNER JOIN ficha ON ficha.idFicha = usuario_has_ficha.ficha_idFicha 
         WHERE usuario_has_ficha.ficha_idFicha = {$this->idFicha}  AND usuario.status = 1 AND usuario.rol = 'INSTRUCTOR'";
@@ -76,7 +76,7 @@ class FichasModel extends Mysql
 
         $this->intIdInstru = $intIdInstru;
 
-        $query_insert = "INSERT INTO usuario_has_ficha (usuario_idUsuarios, ficha_idFicha) VALUES (?,?)";
+        $query_insert = "INSERT INTO usuario_has_ficha (usuario_idUsuarios, ficha_idFicha, status ) VALUES (?,?,1)";
         $arrData = array($this->intIdInstru, $this->intIdFicha);
 
         $reques_insert = $this->insert($query_insert, $arrData);
@@ -108,6 +108,24 @@ class FichasModel extends Mysql
         return $respuesta;
     }
 
+    public function updateInstructor(int $idFicha, int $intIdInstru, int $status)
+    {
+        $this->intIdInstru = $intIdInstru;
+        $this->idFicha = $idFicha;
+        $this->status = $status;
+
+        $query_insert = "UPDATE usuario_has_ficha SET status = ? WHERE usuario_idUsuarios  = ? AND ficha_idFicha = ? ";
+        $arrData = array(
+            $this->status,
+            $this->intIdInstru,
+            $this->idFicha
+
+        );
+        $reques_insert = $this->update($query_insert, $arrData);
+        $respuesta = $reques_insert;
+
+        return $respuesta;
+    }
     public function deleteFicha(int $idFicha)
     {
         $this->idFicha = $idFicha;

@@ -44,8 +44,8 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-dark text-white">
-                <div class="titulo" id="tituloModal">
-
+                <div class="titulo">
+                    <h2 class="modal-title fs-5" id="exampleModalLabel" style="text-align: center; display: flex;">INFORMACION DE LA FICHA</h2>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" id="btnCerrarModal" aria-label="Close" style="color: white;"> <i class="bi bi-x-lg"></i></button>
             </div>
@@ -65,11 +65,18 @@
 
                             <div class="card mt-2">
                                 <div class="card-body">
-                                    <table class="table">
+                                    <table class="table table-bordered ">
+                                        <thead id="tituloModal">
+
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                    <table class="table table-bordered ">
                                         <thead>
                                             <tr>
-                                                <th>Nombre Instructor</th>
-                                                <th>Correo</th>
+                                                <th style="text-align: center;" scope="col"><i class="bi bi-person-circle"></i> Instructores</th>
+                                                <th style="text-align: center;" scope="col"> <i class="bi bi-envelope-at-fill"></i> Correo </th>
                                             </tr>
                                         </thead>
                                         <tbody id="tablaInfoInstructor">
@@ -82,11 +89,18 @@
                         <div class="tab-pane fade" id="aprendices-justified" role="tabpanel" aria-labelledby="contact-tab">
                             <div class="card mt-2 ">
                                 <div class="card-body">
-                                    <table class="table">
+                                    <table class="table table-bordered ">
+                                        <thead id="tituloModal">
+
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                    <table class="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th>Nombre Aprendiz</th>
-                                                <th>Correo</th>
+                                                <th style="text-align: center;" scope="col"><i class="bi bi-mortarboard-fill"></i> Aprendiz</th>
+                                                <th style="text-align: center;" scope="col"><i class="bi bi-envelope-at-fill"></i> Correo</th>
                                             </tr>
                                         </thead>
                                         <tbody id="tablaInfoAprendiz">

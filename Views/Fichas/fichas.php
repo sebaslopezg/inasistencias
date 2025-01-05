@@ -6,29 +6,31 @@ getModal('fichasModal', $data);
   <div class="pagetitle">
     <h1>
       <?= $data['page_title'] ?>
-      <button type="button" id="btnCrearFicha" class="btn btn-primary" style="display: none">
+      <button type="button" id="btnCrearFicha" class="btn btn-success" style="display: none">
         <i class="bi bi-plus-lg"></i> Crear Ficha
       </button>
-      <button type="button" id="btnAccion" class="btn btn-primary">
-        <i class="bi bi-arrow-return-right"></i> Gestion de Fichas
-      </button>
+
       <button type="button" id="btnAccionVolver" class="btn btn-primary" style="display: none">
         Volver <i class="bi bi-arrow-90deg-left"></i>
+      </button>
+      <button type="button" id="btnAccion" class="btn btn-primary">
+        <i class="bi bi-tools"></i> Gestion de Fichas
       </button>
     </h1>
   </div>
   <div class="card" id="cardTabla" style="display: block">
     <div class="card-header bg bg-dark text-white">
+
       <h4 class="subTitle" style="text-align: center">Fichas</h4>
     </div>
     <div class="card-body">
       <table id="tablaFichasView" class="table">
         <thead>
           <tr>
-            <th>Nombre de Ficha</th>
-            <th>Numero de Ficha</th>
-            <th>Estado</th>
-            <th>Info</th>
+            <th scope="col">Nombre de Ficha</th>
+            <th scope="col"> Numero de Ficha</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Info</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -47,10 +49,10 @@ getModal('fichasModal', $data);
             <table id="tablaFichas" class="table">
               <thead>
                 <tr>
-                  <th>Nombre de Ficha</th>
-                  <th>Numero de Ficha</th>
-                  <th>Estado</th>
-                  <th>Accion</th>
+                  <th scope="col">Nombre de Ficha</th>
+                  <th scope="col">Numero de Ficha</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Accion</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -141,9 +143,9 @@ getModal('fichasModal', $data);
                           id="tabla-Ficha">
                           <thead>
                             <tr>
-                              <th><i class="bi bi-journal-bookmark"></i> Nombre de la Ficha</th>
-                            
-                              <th style="text-align: center; "><i class="bi bi-person-fill"></i> Instructores</th>
+                              <th scope="col"><i class="bi bi-journal-bookmark"></i> Ficha</th>
+
+                              <th scope="col" style="text-align: center; "><i class="bi bi-person-fill"></i> Instructores</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -155,12 +157,13 @@ getModal('fichasModal', $data);
                           type="submit"
                           id="btnEnviar"
                           style="
-                              background-color: #30465e;
-                              color: #eeb063;
+                              background-color:green;
+                              color: white;
                               font-family: Verdana, Geneva, Tahoma, sans-serif;
                             "
-                          class="btn btn-">
+                          class="btn btn-"><i class="bi bi-check-circle-fill"></i>
                           Asigar
+                          <i class="bi bi-check-circle-fill"></i>
                         </button>
                       </div>
                     </form>
@@ -180,10 +183,31 @@ getModal('fichasModal', $data);
                     id="bordered-justified-contact"
                     role="tabpanel"
                     aria-labelledby="contact-tab">
-                    Saepe animi et soluta ad odit soluta sunt. Nihil quos omnis animi debitis
-                    cumque. Accusantium quibusdam perspiciatis qui qui omnis magnam. Officiis
-                    accusamus impedit molestias nostrum veniam. Qui amet ipsum iure. Dignissimos
-                    fuga tempore dolor.
+
+                    <table class="table table-bordered"
+                      id="tabla-infoFicha-Mod">
+                      <thead>
+                        <tr>
+                          <th scope="col" style="text-align: center;"><i class="bi bi-person-fill"></i> Ficha</th>
+                          <th scope="col" style="text-align: center;"><i class="bi bi-person-fill"></i> Numero</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                    <table
+                      class="table table-bordered"
+                      id="tabla-instructores-Mod">
+                      <thead>
+                        <tr>
+                          <th scope="col"><i class="bi bi-person-fill"></i> Instructores</th>
+                          <th scope="col"><i class="bi bi-chat-right-text"></i> Contacto </th>
+                          <th>Accion</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
                 <!-- End Bordered Tabs Justified -->

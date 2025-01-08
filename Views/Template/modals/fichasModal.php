@@ -2,8 +2,8 @@
 <div class="modal fade" id="crearFichaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-dark text-white">
-                <h2 class="modal-title fs-5" id="exampleModalLabel" style="text-align: center; display: flex;">REGISTRAR FICHA NUEVA </h2>
+            <div class="modal-header bg-dark text-white" id="tituloModalFicha" >
+                <h2 class="modal-title fs-5" id="tituloModalFicha" style="text-align: center; display: flex;">REGISTRAR FICHA NUEVA </h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color: white;"> <i class="bi bi-x-lg"></i> </button>
             </div>
             </>
@@ -37,17 +37,16 @@
     </div>
 </div>
 
-
-
 <!-- Modal de Informacion de la Ficha -->
-<div class="modal fade" id="infoFichaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="infoFichaModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-dark text-white">
                 <div class="titulo">
                     <h2 class="modal-title fs-5" id="exampleModalLabel" style="text-align: center; display: flex;">INFORMACION DE LA FICHA</h2>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" id="btnCerrarModal" aria-label="Close" style="color: white;"> <i class="bi bi-x-lg"></i></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" id="btnCerrarModal" aria-label="Close" style="color: white;"> <i class="bi bi-x-lg"></i>
+            </button>
             </div>
             <div class="modal-body">
                 <div class="card">

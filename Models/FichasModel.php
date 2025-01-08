@@ -25,7 +25,7 @@ class FichasModel extends Mysql
     public function selectInfoInstructoresById(int $idFicha)
     {
         $this->idFicha = $idFicha;
-        $sql = "SELECT ficha.nombre as nombre_ficha, CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo, usuario.correo,usuario.idUsuarios FROM usuario_has_ficha
+        $sql = "SELECT ficha.nombre as nombre_ficha,usuario_has_ficha.status, CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo, usuario.correo,usuario.idUsuarios FROM usuario_has_ficha
         INNER JOIN usuario ON usuario.idUsuarios = usuario_has_ficha.usuario_idUsuarios 
         INNER JOIN ficha ON ficha.idFicha = usuario_has_ficha.ficha_idFicha 
         WHERE usuario_has_ficha.ficha_idFicha = {$this->idFicha}  AND usuario.status = 1 AND usuario.rol = 'INSTRUCTOR'";
@@ -89,8 +89,6 @@ class FichasModel extends Mysql
         $this->strNombreFicha = $strNombreFicha;
         $this->intIdFicha = $intIdFicha;
         $this->intStatus = $intStatus;
-        /*    $sql = "SELECT * FROM usuario WHERE (documento = '{$this->intDocumento}' AND codigo = '{$this->strCodigo}' AND idUsuarios != {$this->idUduario})";
-        $request = $this->select_all($sql); */
 
         if (!empty($request)) {
             $respuesta = 'exist';

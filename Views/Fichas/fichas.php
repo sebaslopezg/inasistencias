@@ -84,19 +84,7 @@ getModal('fichasModal', $data);
                       Asignar
                     </button>
                   </li>
-                  <li class="nav-item flex-fill" role="presentation">
-                    <button
-                      class="nav-link w-100"
-                      id="profile-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#bordered-justified-profile"
-                      type="button"
-                      role="tab"
-                      aria-controls="profile"
-                      aria-selected="false">
-                      Profile
-                    </button>
-                  </li>
+
                   <li class="nav-item flex-fill" role="presentation">
                     <button
                       class="nav-link w-100"
@@ -144,7 +132,6 @@ getModal('fichasModal', $data);
                           <thead>
                             <tr>
                               <th scope="col"><i class="bi bi-journal-bookmark"></i> Ficha</th>
-
                               <th scope="col" style="text-align: center; "><i class="bi bi-person-fill"></i> Instructores</th>
                             </tr>
                           </thead>
@@ -167,16 +154,6 @@ getModal('fichasModal', $data);
                         </button>
                       </div>
                     </form>
-                  </div>
-                  <div
-                    class="tab-pane fade"
-                    id="bordered-justified-profile"
-                    role="tabpanel"
-                    aria-labelledby="profile-tab">
-                    Nesciunt totam et. Consequuntur magnam aliquid eos nulla dolor iure eos quia.
-                    Accusantium distinctio omnis et atque fugiat. Itaque doloremque aliquid sint
-                    quasi quia distinctio similique. Voluptate nihil recusandae mollitia dolores.
-                    Ut laboriosam voluptatum dicta.
                   </div>
                   <div
                     class="tab-pane fade"

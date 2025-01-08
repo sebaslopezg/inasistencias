@@ -11,6 +11,7 @@ const btnAcccionUsuario = document.querySelector("#btnAccion");
 const btnAcccionUsuarioVolver = document.querySelector("#btnAccionVolver");
 let tablaFichasView = document.querySelector("#tablaFichasView");
 let btnCerrarModal = document.getElementById("btnCerrarModal");
+let tituloModalFicha = document.querySelector("#tituloModalFicha");
 let tablaFicha = document.querySelector("#tablaFichas");
 let tablaInfoInstructor = document.querySelector("#tablaInfoInstructor");
 let tablaInfoAprendiz = document.querySelector("#tablaInfoAprendiz");
@@ -61,6 +62,10 @@ document.addEventListener("click", (e) => {
             frmNombre.value = data.nombre;
             frmNumeroFicha.value = data.numeroFicha;
             frmIdFicha.value = data.id;
+            tituloModalFicha.innerHTML = `<h2 class="modal-title fs-5" id="tituloModalFicha" style="text-align: center; display: flex;">MODIFICAR FICHA </h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color: white;"> <i class="bi bi-x-lg"></i> </button>
+            
+            `;
             $("#crearFichaModal").modal("show");
             optionStatus(true);
           } else {
@@ -83,6 +88,10 @@ btnCrearFicha.addEventListener("click", () => {
   frmNumeroFicha.disabled = false;
   clearForm();
   optionStatus(false);
+  tituloModalFicha.innerHTML = `<h2 class="modal-title fs-5" id="tituloModalFicha" style="text-align: center; display: flex;">REGISTRAR FICHA NUEVA </h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color: white;"> <i class="bi bi-x-lg"></i> </button>
+            
+            `;
   $("#crearFichaModal").modal("show");
 });
 
@@ -106,16 +115,10 @@ btnAcccionUsuarioVolver.addEventListener("click", () => {
 
 //btnCerraModal : Este boton se encarga de limpiar la tabla de informacion de la fichas.
 btnCerrarModal.addEventListener("click", () => {
-  console.log("click");
   tablaInfoInstructor.innerHTML = "";
   tablaInfoAprendiz.innerHTML = "";
 });
-/*
-$(document).on("blur", "#infoFichaModal", function () {
-  console.log("perdio foco");
-  tablaInfoInstructor.innerHTML = "";
-  tablaInfoAprendiz.innerHTML = "";
-});*/
+
 frmCrearFicha.addEventListener("submit", (e) => {
   e.preventDefault();
   let frmFicha = new FormData(frmCrearFicha);
@@ -222,6 +225,10 @@ function optionStatus(mode) {
     userStatus.style.display = "none";
   }
 }
+
+// ------------------------------------------ //
+//  FUNCIONALIDAD DE TODO EL MODULO FICHAS    //
+// -----------------------------------------  //
 
 $(document).ready(function () {
   // -----------------------------------
@@ -333,32 +340,15 @@ $(document).ready(function () {
           });
 
         let filaFicha = `
-      <tr id="ficha-tr" >
+          <tr id="ficha-tr" >
             <td style="font-size: large; text-align: center;">${nombreFicha}</td>
             <td style="font-size: large; text-align: center;">${numeroFicha}</td>
-      </tr>
+         </tr>
       `;
         $("#tabla-infoFicha-Mod tbody").append(filaFicha);
 
-        fetch(base_url + "/fichas/getInfoInstructoresFicha/" + idFicha + "")
-          .then((res) => res.json())
-          .then((data) => {
-            data.forEach((data) => {
-              let tablaInstructoresMod = document.getElementById("tabla-instructores-Mod");
-              let filaIntructores = `
-            <tr id="instru-tr">
-             <td>${data.nombre_completo}</td>
-             <td>${data.correo}</td>
-             <td>
-             <div class="form-check form-switch">
-            ${data.accion}
-             <label class="form-check-label" for="flexSwitchCheckChecked"></label></div>
-             </td>
-             </tr>
-        `;
-              tablaInstructoresMod.innerHTML += filaIntructores;
-            });
-          });
+        // Rendirizamos los instructores en la tabla de informacion de la ficha, para hacer la modificacion del instructor
+        renderInstructor(idFicha);
 
         $("#tabla-Ficha tbody").append(nuevaFila);
       }
@@ -366,9 +356,30 @@ $(document).ready(function () {
       Swal.fire({
         icon: "warning",
         title: "¡ Ya hay una ficha selecionada !",
-        text: "Elimina la ficha anterior para eligir una nueva ficha."
+        text: "Elimina la ficha anterior, para eligir una nueva ficha."
       });
     }
+  }
+  function renderInstructor(idFicha) {
+    fetch(base_url + "/fichas/getInfoInstructoresFicha/" + idFicha + "")
+      .then((res) => res.json())
+      .then((data) => {
+        data.forEach((data) => {
+          let tablaInstructoresMod = document.getElementById("tabla-instructores-Mod");
+          let filaIntructores = `
+      <tr id="instru-tr">
+       <td>${data.nombre_completo}</td>
+       <td>${data.correo}</td>
+       <td>
+       <div class="form-check form-switch">
+      ${data.accion}
+       <label class="form-check-label" for="flexSwitchCheckChecked"></label></div>
+       </td>
+       </tr>
+  `;
+          tablaInstructoresMod.innerHTML += filaIntructores;
+        });
+      });
   }
 
   // ---------------------------------------------
@@ -384,7 +395,7 @@ $(document).ready(function () {
     if (filas === 0) {
       Swal.fire({
         icon: "warning",
-        title: "Sin productos",
+        title: "Sin ficha",
         text: "Por favor, agregue al menos una ficha."
       });
       return false;
@@ -399,8 +410,6 @@ $(document).ready(function () {
       formData.append("txtIdFicha", idFicha);
     });
 
-    // console.log(formData.get("txtIdInstructores"));
-
     $.ajax({
       // Método de envío
       type: "POST",
@@ -411,7 +420,7 @@ $(document).ready(function () {
       processData: false,
       // No establecer el tipo de contenido (ya se establece con FormData)
       contentType: false,
-      success: function (respuesta) {
+      success: function (response) {
         Swal.fire({
           title: "¡Instructor Asiganado Correctamente!",
           icon: "success",
@@ -420,8 +429,12 @@ $(document).ready(function () {
           // No mostrar botón de confirmación
           showConfirmButton: false
         }).then(() => {
-          // Redirigir a la lista de ventas después de la alerta
-          /*    window.location.href = "" + base_url + "/fichas"; */
+          let data = JSON.parse(response);
+          $("#tabla-instructores-Mod tr").each(function () {
+            $("#instru-tr").remove();
+          });
+          // Renderizamos los instructores con la ultima modificacion.
+          renderInstructor(data.id);
         });
       },
       error: function (xhr, status, error) {
@@ -432,13 +445,6 @@ $(document).ready(function () {
 
     // Evita el comportamiento por defecto del formulario
     return false;
-  });
-
-  // Asigna un evento "blur" a los campo de Busqueda de las fichas
-  $(document).on("blur", 'input[name="search_Ficha"]', function () {
-    // Traemos el input del HTML, para deshabilitarlo una vez pierda el foco.
-    /*   let txtSearchClient = document.querySelector("#ficha");
-    txtSearchClient.disabled = true; */
   });
 
   $(document).on("click", ".eliminar-fila", function () {
@@ -453,9 +459,8 @@ $(document).ready(function () {
     });
   });
 
-  // Traemos los id de los Instructores por medio del evento click
   let idCapturadas = "";
-
+  // Traemos los id de los Instructores por medio del evento click
   $(document).on("click", ".instruCheck", function () {
     let arrIdInstru = $('[name="selecInstru[]"]:checked')
       .map(function () {
@@ -471,6 +476,7 @@ $(document).ready(function () {
 
   $(document).on("click", ".switchStatus", function (e) {
     formData = new FormData();
+
     $("#tabla-Ficha tbody tr").each(function () {
       let idFicha = $(this).find("input[name='idFicha[]']").val();
       formData.append("txtIdFicha", idFicha);

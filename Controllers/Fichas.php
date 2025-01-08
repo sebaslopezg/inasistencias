@@ -18,14 +18,8 @@ class Fichas extends Controllers
         $this->views->getView($this, "fichas", $data);
     }
 
-    /* 
-    public function gestionar()
-    {
-        $data['page_title'] = "Gestion de Fichas";
-        $data['page_name'] = "Gestion";
-        $data['script'] = "fichas";
-        $this->views->getView($this, "fichas/Gestion", $data);
-    } */
+
+
 
     public function getFichas()
     {
@@ -73,15 +67,15 @@ class Fichas extends Controllers
         $arrData = $this->model->selectInfoInstructoresById($intId);
 
         for ($i = 0; $i < count($arrData); $i++) {
-            $arrData[$i]['accion'] = '
-             <input class="switchStatus form-check-input" type="checkbox"  aria-checked="true" name="switch_status[]" role="switch" data-id="' . $arrData[$i]['idUsuarios'] . '" id="switch_status" checked>
+
+            if ($arrData[$i]['status'] == 1) {
+                $arrData[$i]['accion'] = ' <input class="switchStatus form-check-input" type="checkbox"  aria-checked="true" name="switch_status[]" role="switch" data-id="' . $arrData[$i]['idUsuarios'] . '" id="switch_status" checked>
             ';
-            /* if ($arrData[$i]['status'] == 1) {
-                $arrData[$i]['status'] = '<span class="badge rounded-pill bg-success">Activo</span>';
             }
             if ($arrData[$i]['status'] == 2) {
-                $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Inactivo</span>';
-            } */
+                $arrData[$i]['accion'] = ' <input class="switchStatus form-check-input" type="checkbox"  aria-checked="false" name="switch_status[]" role="switch" data-id="' . $arrData[$i]['idUsuarios'] . '" id="switch_status" checked>
+            ';
+            }
         }
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
@@ -158,11 +152,11 @@ class Fichas extends Controllers
                 if (intval($insert) > 0) {
 
                     if ($option == 1) {
-                        $arrResponse = array('status' => true, 'msg' => 'Ficha insertada correctamente');
+                        $arrResponse = array('status' => true, 'msg' => 'Ficha Registrada correctamente');
                     }
 
                     if ($option == 2) {
-                        $arrResponse = array('status' => true, 'msg' => 'Ficha actualizada correctamente');
+                        $arrResponse = array('status' => true, 'msg' => 'Ficha Actualizada correctamente');
                     }
                 } else if ($insert == 'exist') {
                     $arrResponse = array('status' => false, 'msg' => 'Ya existe una Ficha con el mismo numero');
@@ -191,13 +185,14 @@ class Fichas extends Controllers
         if (check_post($arrPosts)) {
 
 
-            $txtIdInstructor = intval(strClean($_POST['txtIdInstructor']));
+            $txtIdInstructor = strClean($_POST['txtIdInstructor']);
 
             $intIdFicha = intval(strClean($_POST['txtIdFicha']));
 
             $strAccion = strClean($_POST['accion']);
 
             $arrIds = explode(",", $txtIdInstructor);
+
 
             try {
                 if ($strAccion == "insert") {
@@ -218,7 +213,7 @@ class Fichas extends Controllers
                     );
 
                     $option = 2;
-                }elseif ($strAccion == "update-status-1"){
+                } elseif ($strAccion == "update-status-1") {
                     $insert = $this->model->updateInstructor(
                         $intIdFicha,
                         $arrIds[0],
@@ -237,7 +232,7 @@ class Fichas extends Controllers
                 } else if ($insert == 'exist') {
                     $arrResponse = array('status' => false, 'msg' => 'Ya ha sido asignado a esta ficha, elija uno diferente ');
                 } else {
-                    $arrResponse = array('status' => false, 'msg' => 'Error al insertar');
+                    $arrResponse = array('status' => false, 'msg' => 'Error al insertar', 'id' => $intIdFicha, 'response_bd' => $insert);
                 }
             } catch (\Throwable $th) {
                 $arrResponse = array('status' => false, 'msg' => "Error desconocido: $th");

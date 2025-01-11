@@ -111,43 +111,11 @@ function save_image($fileName){
     return $response;
 }
 
-/* function uploadFile($file) {
-    $targetDir = "pdf/";
-
-    // Verificar si el directorio de destino existe, si no, crearlo
-    if (!is_dir($targetDir)) {
-        if (!mkdir($targetDir, 0777, true)) {
-            return "No se pudo crear el directorio para subir el archivo.";
-        }
-    }
-    $fileName = basename($file["name"]);
-    $targetFile = $targetDir . $fileName;
-    $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
-
-    // Verificar si el archivo es un PDF
-    if ($fileType != "pdf") {
-        return "Solo se permiten archivos PDF.";
-    }
-
-    // Verificar si el archivo ya existe
-    if (file_exists($targetFile)) {
-        return "El archivo ya existe.";
-    }
-
-    // Intentar mover el archivo al directorio de destino
-    if (move_uploaded_file($file["tmp_name"], $targetFile)) {
-        return $targetFile;
-    } else {
-        return false;
-    }
-} */
-
 function uploadFile($file) {
     $arrResponse = array('status' => false, 'msg' => '');
     // Definir el directorio de destino
     $targetDir = "pdf/";
 
-    // Verificar si el directorio de destino existe, si no, crearlo
     if (!is_dir($targetDir)) {
         if (!mkdir($targetDir, 0777, true)) {
             $arrResponse['msg'] = "No se pudo crear el directorio para subir el archivo.";
@@ -156,7 +124,7 @@ function uploadFile($file) {
     }
 
     $fileName = basename($file["name"]);
-    $fileName = preg_replace('/[^A-Za-z0-9\-\_\.]/', '_', $fileName);  // Reemplazar caracteres no permitidos por _
+    $fileName = preg_replace('/[^A-Za-z0-9\-\_\.]/', '_', $fileName);  // Reemplaza caracteres no permitidos por _
 
     // Generar un nombre único para evitar sobreescribir archivos existentes
     $targetFile = $targetDir . uniqid() . "_" . $fileName;
@@ -164,16 +132,15 @@ function uploadFile($file) {
     // Obtener la extensión del archivo
     $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 
-    // Verificar si el archivo es un PDF
     if ($fileType != "pdf") {
         $arrResponse['msg'] = "Solo se permiten archivos PDF.";
         return json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
     }
 
-    // Verificar el tamaño del archivo (no permitir archivos mayores a 10MB)
-    $maxFileSize = 10 * 1024 * 1024;  
+    // Verificar el tamaño del archivo (no permitir archivos mayores a 5MB)
+    $maxFileSize = 5 * 1024 * 1024;  
     if ($file["size"] > $maxFileSize) {
-        $arrResponse['msg'] = "El archivo es demasiado grande. El tamaño máximo permitido es 10MB.";
+        $arrResponse['msg'] = "El archivo es demasiado grande. El tamaño máximo permitido es 5MB.";
         return json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
     }
 

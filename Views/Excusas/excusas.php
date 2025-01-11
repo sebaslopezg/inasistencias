@@ -11,10 +11,11 @@ getModal('excusasModal', $data);
     </div>
 
     <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Excusas</h5>
-
-            <table id="tablaExcusas" class="table">
+    <div class="card-header" style="background-color: #00AA00;">
+            <h3 class="card-title text-light">Excusas</h3>
+          </div>
+        <div class="card-body table-responsive">
+            <table id="tablaExcusas" class="table table-bordered table-striped" >
                 <thead>
                     <tr>
                         <th>Fecha Inasistencia</th>

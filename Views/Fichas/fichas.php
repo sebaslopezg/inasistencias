@@ -166,7 +166,7 @@ getModal('fichasModal', $data);
                       <thead>
                         <tr>
                           <th scope="col" style="text-align: center;"><i class="bi bi-person-fill"></i> Ficha</th>
-                          <th scope="col" style="text-align: center;"><i class="bi bi-person-fill"></i> Numero</th>
+                          <th scope="col" style="text-align: center;"># Numero</th>
                         </tr>
                       </thead>
                       <tbody>

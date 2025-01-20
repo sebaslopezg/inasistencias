@@ -2,14 +2,14 @@
   <aside id="sidebar" class="sidebar">
 
     <ul class="sidebar-nav" id="sidebar-nav">
-      
+
       <li class="nav-item">
         <a class="nav-link <?= $data['page_name'] != 'dashboard' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/dashboard">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
       </li>
-      
+
       <!-- Pagina Inasistencias -->
       <li class="nav-item">
         <a class="nav-link <?= $data['page_name'] != 'inasistencias' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/inasistencias">
@@ -29,7 +29,7 @@
       <!-- Pagina Gestion de Fichas -->
       <li class="nav-item">
         <a class="nav-link <?= $data['page_name'] != 'fichas' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/fichas">
-          <i class="bi bi-person-x"></i>
+        <i class="bi bi-journals"></i>
           <span>Fichas</span>
         </a>
       </li>
@@ -49,7 +49,7 @@
           <span>Exepciones</span>
         </a>
       </li>
-      
+
       <!-- Pagina de usuarios -->
       <li class="nav-item">
         <a class="nav-link <?= $data['page_name'] != 'usuarios' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/usuarios">
@@ -57,7 +57,7 @@
           <span>Usuarios</span>
         </a>
       </li>
-      
+
       <!-- Pagina de ingresos -->
       <li class="nav-item">
         <a class="nav-link <?= $data['page_name'] != 'ingresos' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/ingresos">
@@ -65,7 +65,13 @@
           <span>Ingresos</span>
         </a>
       </li>
-
+      <!-- Pagina de ingresos -->
+      <li class="nav-item">
+        <a class="nav-link <?= $data['page_name'] != 'informes' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/informes">
+          <i class="bi bi-file-earmark-bar-graph"></i>
+          <span>Informes</span>
+        </a>
+      </li>
       <li class="nav-item">
         <a class="nav-link collapsed" href="<?= base_url() ?>/salir">
           <i class="bi bi-box-arrow-in-right"></i>

@@ -18,9 +18,6 @@ class Fichas extends Controllers
         $this->views->getView($this, "fichas", $data);
     }
 
-
-
-
     public function getFichas()
     {
         $arrData = $this->model->selectFicha();

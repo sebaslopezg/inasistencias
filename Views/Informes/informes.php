@@ -56,7 +56,7 @@ getModal('informesModal', $data);
                             <tr>
                                 <th scope="col"><i class="bi bi-mortarboard-fill"></i> Aprendiz</th>
                                 <th scope="col"><i class="bi bi-envelope-fill"></i> Correo </th>
-                              <!--   <th scope="col"><i class="bi bi-ban"></i> Inacistencias </th> -->
+                                <th scope="col" style="text-align: center;"><i class="bi bi-ban"></i> Inacistencias </th>
                                 <th scope="col" style="text-align: center;"><i class="bi bi-info-circle-fill"></i> Info </th>
                             </tr>
                         </thead>

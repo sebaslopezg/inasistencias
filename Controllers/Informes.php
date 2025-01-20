@@ -30,10 +30,15 @@ class Informes extends Controllers
 
         for ($i = 0; $i < count($arrData); $i++) {
             $arrData[$i]['accion'] = '
-           
             <button type="button" data-action="info" data-id="' . $arrData[$i]['id'] . '" class="btn btn-primary"><i class="bi bi-info-circle-fill"></i></button>
             ';
         }
+        echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
+    }
+    public function getFaltas(int $idAprendiz)
+    {
+        $arrData = $this->model->selectFechasFaltas($idAprendiz);
+
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
 }

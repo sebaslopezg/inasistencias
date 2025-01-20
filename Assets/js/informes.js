@@ -1,34 +1,47 @@
 let tablaInfoAprendiz = document.querySelector("#tabla-aprendices");
-
 let tableVisibility = document.querySelector("#tabla-informe");
+let mostrarInfo = document.querySelector("#mostrar-info");
+let btnCerrarModal = document.querySelector("#btnCerrarModal");
 
+btnCerrarModal.addEventListener("click", () => {
+  mostrarInfo.innerHTML = "";
+});
 document.addEventListener("click", (e) => {
   try {
     let action = e.target.closest("button").getAttribute("data-action");
     let id = e.target.closest("button").getAttribute("data-id");
 
     if (action == "info") {
-      
-     /*  fetch(base_url + "/fichas/getFichaById/" + id)
+      fetch(base_url + "/informes/getFaltas/" + id)
         .then((res) => res.json())
         .then((data) => {
-          if (data.status) {
-            data = data.data;
-
-            tituloModalFicha.innerHTML = `<h2 class="modal-title fs-5" id="tituloModalFicha" style="text-align: center; display: flex;">MODIFICAR FICHA </h2>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color: white;"> <i class="bi bi-x-lg"></i> </button>
-            
-            `;
-            $("#modalInfo").modal("show");
-          } else {
-            Swal.fire({
-              title: "Error",
-              text: data.msg,
-              icon: "error"
-            });
-          }
-        }); */
-        $("#modalInfo").modal("show");
+          data.forEach((data) => {
+            let row = `
+            <div class="row">
+                     <div class="mb-1 col-6">
+                         <label for="fecha" class="form-label"> <b>Nombre - Aprendiz</b> </label>
+                         <div class="card">
+                             <div class="card-body">
+                                 <ul class="list-group mt-3 ">
+                                     <li class="list-group-item" style="background-color:#e9ecef;"> ${data.nombre_completo}</li>
+                                 </ul>
+                             </div>
+                         </div>
+                     </div>
+                     <div class="mb-2 col-6">
+                         <label for="fecha" class="form-label"><b>Fecha - Inasistencia</b> </label>
+                         <div class="card">
+                             <ul class="list-group mt-3 ">
+                                   <li class="list-group-item" style="background-color:#e9ecef;"> ${data.fecha}</li>
+                             </ul>
+                         </div>
+                     </div>
+                 </div>
+           `;
+            mostrarInfo.innerHTML += row;
+          });
+        });
+      $("#modalInfo").modal("show");
     }
   } catch {}
 });
@@ -51,7 +64,6 @@ $(document).ready(function () {
       });
     });
 
-  console.log(availableFichas);
   // -----------------------------------
   //    AUTOCOMPLETADO DE FICHAS
   // -----------------------------------
@@ -101,7 +113,7 @@ $(document).ready(function () {
           .then((res) => res.json())
           .then((data) => {
             data.forEach((data) => {
-              let texto = ` <tr id="instru-tr"><td>${data.nombre_completo}</td><td>${data.correo}</td><td style="text-align: center;">${data.accion}</td></tr>  `;
+              let texto = ` <tr id="instru-tr"><td>${data.nombre_completo}</td><td>${data.correo}</td><td style="text-align: center;">${data.faltas}</td><td style="text-align: center;">${data.accion}</td></tr>  `;
               tablaInfoAprendiz.innerHTML += texto;
             });
           });
@@ -124,6 +136,7 @@ $(document).ready(function () {
   }
   $(document).on("click", ".eliminar-fila", function () {
     $(this).closest("tr").remove();
+    tableVisibility.style.display = "none";
 
     $("#tabla-infoFicha tr").each(function () {
       $("#ficha-tr").remove();

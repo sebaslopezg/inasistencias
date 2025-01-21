@@ -54,7 +54,7 @@
       <form id="frmObservacion" method="post">
       <div class="modal-body">
       <div class="col-12 "><label for="txtNombre" class="form-label" style="display: none;">IdExcusa</label>
-         <input type="number" class="form-control" id="IdExcusa" name="IdExcusa" value="0" style="display: none;">
+         <input type="hidden" class="form-control" id="IdExcusa" name="IdExcusa" value="0">
       </div>
       <div class="form-floating">
         <textarea class="form-control" placeholder="Leave a comment here" id="txtObservacion" name="txtObservacion" style="height: 100px" required></textarea>

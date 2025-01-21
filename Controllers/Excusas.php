@@ -90,9 +90,6 @@ class Excusas extends Controllers
                     $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Expirado</span>';
                 }
             }
-            
-            
-
 
             echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
         } elseif ($_SESSION['userData']['rol'] == 'INSTRUCTOR') {

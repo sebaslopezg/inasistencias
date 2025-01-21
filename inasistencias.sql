@@ -1,9 +1,9 @@
--- phpMyAdmin SQL Dump
+- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-12-2024 a las 12:31:17
+-- Tiempo de generación: 21-01-2025 a las 01:24:39
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -30,10 +30,15 @@ SET time_zone = "+00:00";
 CREATE TABLE `excepciones` (
   `idExcepciones` int(11) NOT NULL,
   `descripcion` text NOT NULL,
-  `horarioId` int(11) NOT NULL,
-  `usuarioId` int(11) NOT NULL,
+  `fechaInicio` datetime NOT NULL,
+  `fechaFin` datetime NOT NULL,
+  `usuarioId` int(11) DEFAULT NULL,
+  `fichaId` int(11) DEFAULT NULL,
+  `tipoExcepcion` int(11) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
 
 -- --------------------------------------------------------
 
@@ -44,8 +49,12 @@ CREATE TABLE `excepciones` (
 CREATE TABLE `excusas` (
   `idExcusas` int(11) NOT NULL,
   `inasistencias_idInasistencias` int(11) NOT NULL,
-  `uriArchivo` varchar(500) DEFAULT NULL,
-  `status` int(11) DEFAULT NULL
+  `usuario_idUsuarios` int(11) NOT NULL,
+  `idInstructor` int(11) NOT NULL,
+  `uriArchivo` varchar(500) NOT NULL,
+  `observacion` text DEFAULT NULL,
+  `fecha` date NOT NULL DEFAULT current_timestamp(),
+  `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -60,6 +69,14 @@ CREATE TABLE `ficha` (
   `numeroFicha` int(11) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Volcado de datos para la tabla `ficha`
+--
+
+INSERT INTO `ficha` (`idFicha`, `nombre`, `numeroFicha`, `status`) VALUES
+(1, 'Adso', 2827725, 1),
+(2, 'Gestion Empresarial', 3045122, 1);
 
 -- --------------------------------------------------------
 
@@ -89,6 +106,7 @@ CREATE TABLE `inasistencias` (
   `hora` time DEFAULT NULL,
   `codigoNovedad` int(11) DEFAULT NULL,
   `usuario_idUsuarios` int(11) NOT NULL,
+  `idInstructor` int(11) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
@@ -129,6 +147,17 @@ CREATE TABLE `usuario` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+--
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`idUsuarios`, `nombre`, `apellido`, `documento`, `telefono`, `genero`, `correo`, `codigo`, `password`, `firma`, `rol`, `status`) VALUES
+(1, 'pedro', 'gomez', 12345, '8444465', 1, 'pedro@gmail.com', '12345', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', '', 'APRENDIZ', 1),
+(2, 'melo', 'diaz', 1234, '330004', 1, 'emlo@dsa.com', '1234', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '', 'INSTRUCTOR', 1),
+(3, 'miguel', 'Sepulveda', 123, '555445', 1, 'miguel@gmail.com', '123', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', '', 'APRENDIZ', 1),
+(4, 'jeanpool', 'contreras', 1114153114, '330255', 1, 'jean@gmail.com', '123456', 'e23abca10997f023d0ee45d659856e5f4096727870236644cf8a4c3a2a2b3c07', '', 'APRENDIZ', 1),
+(13, 'Gabriel', 'Garabito', 1, '32655999', 1, 'web@master.com', '1', '6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b', '', 'COORDINADOR', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -141,6 +170,15 @@ CREATE TABLE `usuario_has_ficha` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
+-- Volcado de datos para la tabla `usuario_has_ficha`
+--
+
+INSERT INTO `usuario_has_ficha` (`usuario_idUsuarios`, `ficha_idFicha`) VALUES
+(1, 2),
+(3, 2),
+(4, 1);
+
+--
 -- Índices para tablas volcadas
 --
 
@@ -149,15 +187,16 @@ CREATE TABLE `usuario_has_ficha` (
 --
 ALTER TABLE `excepciones`
   ADD PRIMARY KEY (`idExcepciones`),
-  ADD KEY `horarioId` (`horarioId`),
-  ADD KEY `usuarioId` (`usuarioId`);
+  ADD KEY `usuarioId` (`usuarioId`),
+  ADD KEY `fk_excepciones_ficha1_idx` (`fichaId`);
 
 --
 -- Indices de la tabla `excusas`
 --
 ALTER TABLE `excusas`
   ADD PRIMARY KEY (`idExcusas`),
-  ADD KEY `fk_Excusas_Inasistencias1_idx` (`inasistencias_idInasistencias`);
+  ADD KEY `fk_Excusas_Inasistencias1_idx` (`inasistencias_idInasistencias`),
+  ADD KEY `fk_excusas_usuario1_idx` (`usuario_idUsuarios`);
 
 --
 -- Indices de la tabla `ficha`
@@ -211,19 +250,19 @@ ALTER TABLE `usuario_has_ficha`
 -- AUTO_INCREMENT de la tabla `excepciones`
 --
 ALTER TABLE `excepciones`
-  MODIFY `idExcepciones` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idExcepciones` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `excusas`
 --
 ALTER TABLE `excusas`
-  MODIFY `idExcusas` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idExcusas` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT de la tabla `ficha`
 --
 ALTER TABLE `ficha`
-  MODIFY `idFicha` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idFicha` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `horario`
@@ -235,7 +274,7 @@ ALTER TABLE `horario`
 -- AUTO_INCREMENT de la tabla `inasistencias`
 --
 ALTER TABLE `inasistencias`
-  MODIFY `idInasistencias` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idInasistencias` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `notificaciones`
@@ -247,7 +286,7 @@ ALTER TABLE `notificaciones`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idUsuarios` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idUsuarios` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Restricciones para tablas volcadas
@@ -257,14 +296,15 @@ ALTER TABLE `usuario`
 -- Filtros para la tabla `excepciones`
 --
 ALTER TABLE `excepciones`
-  ADD CONSTRAINT `excepciones_ibfk_1` FOREIGN KEY (`horarioId`) REFERENCES `horario` (`idHorario`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `excepciones_ibfk_2` FOREIGN KEY (`usuarioId`) REFERENCES `usuario` (`idUsuarios`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `excepciones_ibfk_2` FOREIGN KEY (`usuarioId`) REFERENCES `usuario` (`idUsuarios`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_excepciones_ficha1` FOREIGN KEY (`fichaId`) REFERENCES `ficha` (`idFicha`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `excusas`
 --
 ALTER TABLE `excusas`
-  ADD CONSTRAINT `fk_Excusas_Inasistencias1` FOREIGN KEY (`inasistencias_idInasistencias`) REFERENCES `inasistencias` (`idInasistencias`);
+  ADD CONSTRAINT `fk_Excusas_Inasistencias1` FOREIGN KEY (`inasistencias_idInasistencias`) REFERENCES `inasistencias` (`idInasistencias`),
+  ADD CONSTRAINT `fk_excusas_usuario1` FOREIGN KEY (`usuario_idUsuarios`) REFERENCES `usuario` (`idUsuarios`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `horario`

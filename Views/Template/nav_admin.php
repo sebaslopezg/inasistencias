@@ -54,9 +54,9 @@
         </a>
       </li>
 
-      <!-- Pagina Gestion de Excusas -->
+      <!-- Pagina Gestion de Excepciones -->
       <li class="nav-item">
-        <a class="nav-link <?= $data['page_name'] != '' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/">
+        <a class="nav-link <?= $data['page_name'] != '' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/excepciones">
           <i class="bi bi-person-x"></i>
           <span>Exepciones</span>
         </a>

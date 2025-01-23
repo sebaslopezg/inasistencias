@@ -42,6 +42,9 @@ function cargarTabla() {
 }
 
 btnCrearExcepcion.addEventListener("click", () => {
+  clearForm();
+  mostrarInputs();
+  
   $("#crearExcepcionModal").modal("show");
 });
 
@@ -84,11 +87,8 @@ document.addEventListener("click", (e) => {
         .then(async (data) => {
           if (data.status) {
             data = data.data;
-            console.log(data);
             clearForm();
-
             txtExcepcionId.value = data.idExcepciones;
-            console.log(txtExcepcionId.value);
             selectExepcion.value = data.tipoExcepcion;
             txtFechaFin.value = data.fechaFin;
             txtFechaInicio.value = data.fechaInicio;
@@ -157,7 +157,6 @@ async function mostrarAprendices() {
   let response = await fetch(base_url + "/excepciones/selectAprendisById/" + txtFicha.value);
   let data = await response.json();
 
-  console.log(data);
   data = data.data;
   data.map((Aprendiz) => {
     let opcionesApre = `<option value="${Aprendiz.usuario_idUsuarios}">${Aprendiz.nombre} - ${Aprendiz.documento}</option>`;
@@ -179,8 +178,7 @@ function mostrarInputs() {
     divAprendiz.style.display = "block";
     divFicha.classList.remove("col-12", "mb-2");
     divFicha.classList.add("col-6", "mb-2");
-  }
-  if (selectExepcion.value == 2) {
+  } else if (selectExepcion.value == 2) {
     slcts.style.display = "flex";
     divFicha.style.display = "block";
     ficha.setAttribute("required", "true");

@@ -50,49 +50,73 @@ class Excepciones extends Controllers
         }
     }
 
-    public function setExcepciones(){
+    public function setExcepciones()
+    {
         $txtTipoExcepcion = intval(strClean($_POST['txtTipoExcepcion']));
         $txtFicha = isset($_POST['txtFicha']) ? intval($_POST['txtFicha']) : null;
         $txtAprendiz = isset($_POST['txtAprendiz']) ? intval($_POST['txtAprendiz']) : null;
-        $txtFechaInicio = $_POST['txtFechaInicio'];
-        $txtFechaFin = $_POST['txtFechaFin'];
+        $txtFechaInicio = date('Y-m-d H:i:s', strtotime($_POST['txtFechaInicio']));
+        $txtFechaFin = date('Y-m-d H:i:s', strtotime($_POST['txtFechaFin']));
         $txtMotivo = strClean($_POST['txtMotivo']);
         $txtExcepcionId = intval(strClean($_POST['idExcepcion']));
 
-        $arrPosts= [
-            'txtTipoExcepcion','txtFechaInicio','txtFechaFin','txtMotivo'
+        $arrPosts = [
+            'txtTipoExcepcion',
+            'txtFechaInicio',
+            'txtFechaFin',
+            'txtMotivo'
         ];
         if (check_post($arrPosts)) {
-            try {
-            
-                if ($txtExcepcionId == 0 || $txtExcepcionId == "" || $txtExcepcionId == "0") {
-                    $insert = $this->model->insertExcepcion(
-                        $txtTipoExcepcion,$txtFicha,$txtAprendiz,$txtFechaInicio,$txtFechaFin,$txtMotivo
-                    );
-                    $option = 1;
-                }else {
-                    $insert = $this->model->updateExcepcion(
-                        $txtTipoExcepcion,$txtFicha,$txtAprendiz,$txtFechaInicio,$txtFechaFin,$txtMotivo,$txtExcepcionId
-                    );
-                    $option = 2;
-                }
-                
-                if (intval($insert) > 0 ) {
-                    if ($option == 1) {
-                        $arrResponse = array('status' => true, 'msg' => 'Excepcion creada correctamente');
+            if ($txtFechaInicio < $txtFechaFin) {
+                try {
+
+                    if ($txtExcepcionId == 0 || $txtExcepcionId == "" || $txtExcepcionId == "0") {
+                        $insert = $this->model->insertExcepcion(
+                            $txtTipoExcepcion,
+                            $txtFicha,
+                            $txtAprendiz,
+                            $txtFechaInicio,
+                            $txtFechaFin,
+                            $txtMotivo
+                        );
+                        $option = 1;
+                    } else {
+                        $insert = $this->model->updateExcepcion(
+                            $txtTipoExcepcion,
+                            $txtFicha,
+                            $txtAprendiz,
+                            $txtFechaInicio,
+                            $txtFechaFin,
+                            $txtMotivo,
+                            $txtExcepcionId
+                        );
+                        $option = 2;
                     }
 
-                    if ($option == 2) {
-                        $arrResponse = array('status' => true, 'msg' => 'Excepcion editada correctamente');
-                    }
-                } else {
-                    $arrResponse = array('status' => false, 'msg' => 'Error al insertar');
-                }
+                    if (intval($insert) > 0) {
+                        if ($option == 1) {
+                            $arrResponse = array('status' => true, 'msg' => 'Excepcion creada correctamente');
+                        }
 
-            } catch (\Throwable $th) {
-                $arrResponse = array('status' => false, 'msg' => "Error desconocido: $th");
+                        if ($option == 2) {
+                            $arrResponse = array('status' => true, 'msg' => 'Excepcion editada correctamente');
+                        }
+                    } else if ($insert == 'existGlobal') {
+                        $arrResponse = array('status' => false, 'msg' => 'Ya se encuentra registrada una excepcion Global en este rango de fechas');
+                    } elseif ($insert == 'existFicha') {
+                        $arrResponse = array('status' => false, 'msg' => 'Ya se encuentra registrada una excepcion de esta Ficha en este rango de fechas');
+                    } elseif ($insert == 'existAprendiz') {
+                        $arrResponse = array('status' => false, 'msg' => 'Ya se encuentra registrada una excepcion de este Aprendiz en este rango de fechas');
+                    } else {
+                        $arrResponse = array('status' => false, 'msg' => 'Error al insertar');
+                    }
+                } catch (\Throwable $th) {
+                    $arrResponse = array('status' => false, 'msg' => "Error desconocido: $th");
+                }
+            } else {
+                $arrResponse = array('status' => false, 'msg' => 'El rango de fechas ingresado no es válido. La fecha de inicio debe ser anterior a la fecha de finalización.');
             }
-        }else {
+        } else {
             $arrResponse = array('status' => false, 'msg' => 'Debe insertar todos los datos');
         }
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
@@ -119,19 +143,20 @@ class Excepciones extends Controllers
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
     }
 
-    public function getExcepcionById($id){
+    public function getExcepcionById($id)
+    {
 
         $intId = intval(strClean($id));
 
         if ($intId > 0) {
             $arrData = $this->model->selectExcepcionById($id);
-        }else{
+        } else {
             $arrResponse = array('status' => false, 'msg' => 'tipo de dato no permitido');
         }
 
         if (!empty($arrData)) {
             $arrResponse = array('status' => true, 'data' => $arrData);
-        }else{
+        } else {
             $arrResponse = array('status' => false, 'msg' => 'No se encontraron datos con este id');
         }
 
@@ -144,14 +169,15 @@ class Excepciones extends Controllers
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
 
-    function deleteExcepciones(){
+    function deleteExcepciones()
+    {
         if ($_POST) {
             $intIdExcepcion = intval($_POST['idExcepcion']);
             $requestDelete = $this->model->deleteExcepcion($intIdExcepcion);
 
             if ($requestDelete) {
                 $arrResponse = array('status' => true, 'msg' => 'Se ha eliminado la excepcion');
-            }else{
+            } else {
                 $arrResponse = array('status' => false, 'msg' => 'Error al eliminar la excepcion');
             }
 

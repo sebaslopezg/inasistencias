@@ -229,7 +229,7 @@ class Fichas extends Controllers
                 } else if ($insert == 'exist') {
                     $arrResponse = array('status' => false, 'msg' => 'Ya ha sido asignado a esta ficha, elija uno diferente ');
                 } else {
-                    $arrResponse = array('status' => false, 'msg' => 'Error al insertar', 'id' => $intIdFicha, 'response_bd' => $insert);
+                    $arrResponse = array('status' => false, 'msg' => 'Error al insertar');
                 }
             } catch (\Throwable $th) {
                 $arrResponse = array('status' => false, 'msg' => "Error desconocido: $th");

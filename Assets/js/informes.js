@@ -7,7 +7,8 @@ let cardInforme = document.querySelector(".class-informes");
 let cardAsistencias = document.querySelector("#cardAsistencias");
 let informeAsistencia = document.querySelector("#informe-asistencia");
 let tablaAsistencias = document.querySelector("#tabla-asistencia");
-
+let codigoFicha = 0;
+let id_Ficha = 0;
 btnCerrarModal.addEventListener("click", () => {
   mostrarInfo.innerHTML = "";
 });
@@ -15,6 +16,36 @@ btnAsistencia.addEventListener("click", () => {
   cardInforme.style.display = "none";
   cardAsistencias.style.display = "block";
   informeAsistencia.style.display = "block";
+
+  fetch(base_url + "/informes/getFechaInstructor/" + codigoFicha)
+    .then((res) => res.json())
+    .then((data) => {
+      /* data.forEach((data) => {
+        let fila = {
+          label: "" + data.nombre_ficha + " - " + data.numeroFicha,
+          value: "" + data.id + "",
+          numeroFicha: "" + data.numeroFicha + "",
+          nombreFicha: "" + data.nombre_ficha + ""
+        }; 
+      
+      });*/
+      console.log(  data);
+    });
+
+  fetch(base_url + "/informes/getAsistencia/" + id_Ficha)
+    .then((res) => res.json())
+    .then((data) => {
+      /* data.forEach((data) => {
+        let fila = {
+          label: "" + data.nombre_ficha + " - " + data.numeroFicha,
+          value: "" + data.id + "",
+          numeroFicha: "" + data.numeroFicha + "",
+          nombreFicha: "" + data.nombre_ficha + ""
+        }; 
+      
+      });*/
+      console.log( data);
+    });
 });
 document.addEventListener("click", (e) => {
   try {
@@ -98,6 +129,8 @@ $(document).ready(function () {
     if ($("#tabla-infoFicha tbody tr").length < 1) {
       tableVisibility.style.display = "block";
       btnAsistencia.style.display = "block";
+      codigoFicha = numeroFicha;
+      id_Ficha = idFicha;
       // Verificar si la Ficha ya está en la tabla
       let fichaYaAgregado = false;
       // Itera sobre cada fila de la tabla para comprobar si el ID del ficha ya existe

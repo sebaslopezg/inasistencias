@@ -2,9 +2,19 @@ let tablaInfoAprendiz = document.querySelector("#tabla-aprendices");
 let tableVisibility = document.querySelector("#tabla-informe");
 let mostrarInfo = document.querySelector("#mostrar-info");
 let btnCerrarModal = document.querySelector("#btnCerrarModal");
+let btnAsistencia = document.querySelector("#btnAsistencia");
+let cardInforme = document.querySelector(".class-informes");
+let cardAsistencias = document.querySelector("#cardAsistencias");
+let informeAsistencia = document.querySelector("#informe-asistencia");
+let tablaAsistencias = document.querySelector("#tabla-asistencia");
 
 btnCerrarModal.addEventListener("click", () => {
   mostrarInfo.innerHTML = "";
+});
+btnAsistencia.addEventListener("click", () => {
+  cardInforme.style.display = "none";
+  cardAsistencias.style.display = "block";
+  informeAsistencia.style.display = "block";
 });
 document.addEventListener("click", (e) => {
   try {
@@ -87,6 +97,7 @@ $(document).ready(function () {
     // Verificar que solo haya eligido 1 Ficha, para evitar Cruce de Informacion.
     if ($("#tabla-infoFicha tbody tr").length < 1) {
       tableVisibility.style.display = "block";
+      btnAsistencia.style.display = "block";
       // Verificar si la Ficha ya está en la tabla
       let fichaYaAgregado = false;
       // Itera sobre cada fila de la tabla para comprobar si el ID del ficha ya existe
@@ -137,7 +148,7 @@ $(document).ready(function () {
   $(document).on("click", ".eliminar-fila", function () {
     $(this).closest("tr").remove();
     tableVisibility.style.display = "none";
-
+    btnAsistencia.style.display = "none";
     $("#tabla-infoFicha tr").each(function () {
       $("#ficha-tr").remove();
     });

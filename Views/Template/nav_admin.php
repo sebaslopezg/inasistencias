@@ -41,7 +41,7 @@
       <!-- Pagina Gestion de Fichas -->
       <li class="nav-item">
         <a class="nav-link <?= $data['page_name'] != 'fichas' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/fichas">
-          <i class="bi bi-person-x"></i>
+        <i class="bi bi-journals"></i>
           <span>Fichas</span>
         </a>
       </li>
@@ -77,7 +77,13 @@
           <span>Ingresos</span>
         </a>
       </li>
-
+      <!-- Pagina de ingresos -->
+      <li class="nav-item">
+        <a class="nav-link <?= $data['page_name'] != 'informes' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/informes">
+          <i class="bi bi-file-earmark-bar-graph"></i>
+          <span>Informes</span>
+        </a>
+      </li>
       <li class="nav-item">
         <a class="nav-link collapsed" href="<?= base_url() ?>/logout">
           <i class="bi bi-box-arrow-in-right"></i>

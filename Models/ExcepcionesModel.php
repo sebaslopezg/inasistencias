@@ -70,7 +70,7 @@ class ExcepcionesModel extends mysql
             $requestFicha = $this->select_all($queryExcep);
         } elseif ($this->txtTipoExcepcion == 1) {
 
-            $queryExcep = "SELECT * FROM excepciones WHERE status > 0 and tipoExcepcion = 3 and fichaId = {$this->txtFicha} and usuarioId = {$this->txtAprendiz}
+            $queryExcep = "SELECT * FROM excepciones WHERE status > 0 and tipoExcepcion = 1 and fichaId = {$this->txtFicha} and usuarioId = {$this->txtAprendiz}
             and (
                 (fechaInicio <= '{$this->txtFechaInicio}' AND fechaFin >= '{$this->txtFechaInicio}') 
                 OR

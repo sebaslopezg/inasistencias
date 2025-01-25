@@ -94,6 +94,7 @@ class Excepciones extends Controllers
                     }
 
                     if (intval($insert) > 0) {
+
                         if ($option == 1) {
                             $arrResponse = array('status' => true, 'msg' => 'Excepcion creada correctamente');
                         }
@@ -101,12 +102,19 @@ class Excepciones extends Controllers
                         if ($option == 2) {
                             $arrResponse = array('status' => true, 'msg' => 'Excepcion editada correctamente');
                         }
+                        
                     } else if ($insert == 'existGlobal') {
+
                         $arrResponse = array('status' => false, 'msg' => 'Ya se encuentra registrada una excepcion Global en este rango de fechas');
+                    
                     } elseif ($insert == 'existFicha') {
+
                         $arrResponse = array('status' => false, 'msg' => 'Ya se encuentra registrada una excepcion de esta Ficha en este rango de fechas');
+                    
                     } elseif ($insert == 'existAprendiz') {
+
                         $arrResponse = array('status' => false, 'msg' => 'Ya se encuentra registrada una excepcion de este Aprendiz en este rango de fechas');
+                    
                     } else {
                         $arrResponse = array('status' => false, 'msg' => 'Error al insertar');
                     }

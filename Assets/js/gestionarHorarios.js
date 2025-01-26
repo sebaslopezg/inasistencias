@@ -1,4 +1,9 @@
 let tablaHorarios;
+const hFecha = document.querySelector('#hFecha')
+const hInstructor = document.querySelector('#hInstructor')
+const hHoraInicio = document.querySelector('#hHoraInicio')
+const hHoraFin = document.querySelector('#hHoraFin')
+const hFicha = document.querySelector('#hFicha')
 
 loadTableHorarios()
 
@@ -32,18 +37,22 @@ document.addEventListener('click', (e)=>{
                         })
                         tablaHorarios.api().ajax.reload(function(){})
                     })
-                } 
+                }
             })
         }
 
         if (action == 'edit') {
-            fetch(base_url + '/usuarios/getUsariosById/'+id)
+            fetch(base_url + '/horario/getHorarioById/'+id)
             .then((res) => res.json())
             .then((data) => {
                 if (data.status) {
                     data = data.data
-                    //console.log(data)
-                    $('#crearUsuarioModal').modal('show')
+                    hFecha.value = data.fecha
+                    hInstructor.value = data.nombre
+                    hHoraInicio.value = data.horaInicio
+                    hHoraFin.value = data.horaFin
+                    hFicha.value = data.ficha
+                    $('#horarioEditarModal').modal('show')
                 }else{
                     Swal.fire({
                         title: "Error",

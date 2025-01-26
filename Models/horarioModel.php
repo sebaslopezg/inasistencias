@@ -74,4 +74,11 @@ class horarioModel extends Mysql{
         return $request;
     }
 
+    public function selectHorario(int $id){
+        $this->intId = $id;
+        $sql = "SELECT fechaInicio, horaInicio, horaFin, ficha, CONCAT(u.nombre, ' ', u.apellido) AS nombre FROM horario h INNER JOIN usuario u ON h.usuarioId = u.idUsuarios WHERE h.idHorario = {$this->intId} AND h.status > 0";
+        $request = $this->select($sql);
+        return $request;
+    }
+
 }

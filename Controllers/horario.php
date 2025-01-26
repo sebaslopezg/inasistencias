@@ -147,4 +147,22 @@ class Horario extends Controllers{
             echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
         }
     }
+
+    public function getHorarioById($id){
+
+        $IntId = intval(strClean($id));
+        $arrData = $this->model->selectHorario($IntId);
+        if (!empty($arrData)) {
+            $arrData['fecha'] = date('d/m/Y', strtotime($arrData['fechaInicio']));
+            $arrData['horaInicio'] = date('H:i', strtotime($arrData['horaInicio']));
+            $arrData['horaFin'] = date('H:i', strtotime($arrData['horaFin']));
+            $arrResponse = array('status' => true, 'data' => $arrData);
+        }else{
+            $arrResponse = array('status' => false, 'msg' => 'No se encontraron datos con ese ID');
+        }
+
+        echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
+        
+        die();
+    }
 }

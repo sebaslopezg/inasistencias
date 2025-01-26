@@ -35,7 +35,10 @@ getModal('informesModal', $data);
                             <button type="button" class="btn btn-danger btn-sm eliminar-fila"><i class="bi bi-x-circle-fill"></i></button>
                         </div>
                     </div>
+
                     <button type="button" style="float: right; display: none;" id="btnAsistencia" class="btn btn-outline-success mb-3"> Asistencia <i class="bi bi-calendar-check"></i></button>
+                    <button type="button" style="float: right; display: none;" id="btnInasistencia" class="btn btn-outline-info mb-3"> Inasistencias <i class="bi bi-calendar-check"></i></button>
+                    <button type="button" style="float: right; display: none; margin-right:5px;" id="btnPdf" class="btn btn-outline-danger mb-3"> <i class="bi bi-filetype-pdf"></i></button>
                 </div>
                 <div class="class-informes" id="tabla-informe" style="display: none;">
 
@@ -71,105 +74,26 @@ getModal('informesModal', $data);
 
             <div class="card-body" id="cardAsistencias" style="display: none;">
                 <div class="form-group">
-                    <button type="button" style="float: right; display: none;" id="btnInasistencia" class="btn btn-outline-danger mb-3"> Inasistencias <i class="bi bi-calendar-check"></i></button>
+
                 </div>
                 <div class="class-informes" id="informe-asistencia" style="display: none;">
 
                     <table class="table table-bordered"
                         id="tabla-asistencia">
                         <thead>
-                            <tr>
+                            <tr id="colum-info-ficha">
                                 <th scope="col" style="text-align: center;"># </th>
                                 <th scope="col" style="text-align: center;"> Aprendiz </th>
                                 <th scope="col" style="text-align: center;"> Fecha</th>
                             </tr>
-                            <tr>
+                            <tr id="fecha-tr">
                                 <th scope="col" style="text-align: center;"> </th>
                                 <th scope="col" style="text-align: center;"> </th>
-                                <th scope="col" style="text-align: center;"> 2024/03/23</th>
-                                <th scope="col" style="text-align: center;"> 2024/03/23</th>
-                                <th scope="col" style="text-align: center;"> 2024/03/23</th>
-                                <th scope="col" style="text-align: center;"> 2024/03/23</th>
-                                <th scope="col" style="text-align: center;"> 2024/03/23</th>
-                                <th scope="col" style="text-align: center;"> 2024/03/23</th>
-                                <th scope="col" style="text-align: center;"> 2024/03/23</th>
-                                <th scope="col" style="text-align: center;"> 2024/03/23</th>
                             </tr>
 
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td scope="col" style="text-align: center;">1 </td>
-                                <td scope="col" style="text-align: center;">Felipe Yusti</td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span> </td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                            </tr>
-                            <tr>
-                                <td scope="col" style="text-align: center;">2 </td>
-                                <td scope="col" style="text-align: center;">Anderson Velez</td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-                            </tr>
-                            <tr>
-                                <td scope="col" style="text-align: center;">3 </td>
-                                <td scope="col" style="text-align: center;">Jose Antonio </td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                            </tr>
-                            <tr>
-                                <td scope="col" style="text-align: center;">4 </td>
-                                <td scope="col" style="text-align: center;">Juan Camilo</td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                            </tr>
-                            <tr>
-                                <td scope="col" style="text-align: center;">5 </td>
-                                <td scope="col" style="text-align: center;">Cristian Jose </td>
+                        <tbody id="colum-aprendiz">
 
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                            </tr>
-                            <tr>
-                                <td scope="col" style="text-align: center;">6 </td>
-                                <td scope="col" style="text-align: center;">Mario Alberto </td>
-
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                            </tr>
-                            <tr>
-                                <td scope="col" style="text-align: center;">7 </td>
-                                <td scope="col" style="text-align: center;">Juan Jose </td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                                <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>

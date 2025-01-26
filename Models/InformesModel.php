@@ -66,30 +66,8 @@ class InformesModel extends Mysql
         $sql = "SELECT CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo , usuario.idUsuarios as id
         FROM usuario_has_ficha INNER JOIN usuario ON usuario.idUsuarios = usuario_has_ficha.usuario_idUsuarios
          WHERE usuario_has_ficha.ficha_idFicha = {$this->idFicha} AND usuario.status = 1 AND usuario.rol = 'APRENDIZ'";
-        $aprendices =  $this->select_all($sql) ;
+        $aprendices =  $this->select_all($sql);
 
-        foreach ($aprendices as $key) {
-            echo $key['id'];
-        }
-
-        for ($i = 0; $i < sizeof($aprendices); $i++) {
-
-            $sql = "SELECT CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo, inasistencias.fecha
-            FROM inasistencias
-            INNER JOIN usuario ON usuario.idUsuarios = inasistencias.usuario_idUsuarios
-            WHERE inasistencias.usuario_idUsuarios = " . $aprendices[$i] . " AND usuario.status = 1 AND usuario.rol = 'APRENDIZ';";
-
-            $res = $this->select_all($sql);
-
-            if (mysqli_num_rows($res) >= 1) {
-
-                $request = $res['check'] = " Falto";
-            } else {
-
-                $request = $res['check'] =  "Asistio";
-            }
-        }
-
-        return $request;
+        return $aprendices;
     }
 }

@@ -3,12 +3,21 @@ let tableVisibility = document.querySelector("#tabla-informe");
 let mostrarInfo = document.querySelector("#mostrar-info");
 let btnCerrarModal = document.querySelector("#btnCerrarModal");
 let btnAsistencia = document.querySelector("#btnAsistencia");
+let btnInasistencia = document.querySelector("#btnInasistencia");
+let btnPdf = document.querySelector("#btnPdf");
 let cardInforme = document.querySelector(".class-informes");
 let cardAsistencias = document.querySelector("#cardAsistencias");
 let informeAsistencia = document.querySelector("#informe-asistencia");
 let tablaAsistencias = document.querySelector("#tabla-asistencia");
+let columFecha = document.querySelector("#fecha-tr");
+let columAprendiz = document.querySelector("#colum-aprendiz");
 let codigoFicha = 0;
 let id_Ficha = 0;
+
+// -----------------------------------
+//             BOTONES
+// -----------------------------------
+
 btnCerrarModal.addEventListener("click", () => {
   mostrarInfo.innerHTML = "";
 });
@@ -16,36 +25,63 @@ btnAsistencia.addEventListener("click", () => {
   cardInforme.style.display = "none";
   cardAsistencias.style.display = "block";
   informeAsistencia.style.display = "block";
+  btnAsistencia.style.display = "none";
+  btnInasistencia.style.display = "block";
+  btnPdf.style.display = "block";
 
+  //
   fetch(base_url + "/informes/getFechaInstructor/" + codigoFicha)
     .then((res) => res.json())
     .then((data) => {
-      /* data.forEach((data) => {
-        let fila = {
-          label: "" + data.nombre_ficha + " - " + data.numeroFicha,
-          value: "" + data.id + "",
-          numeroFicha: "" + data.numeroFicha + "",
-          nombreFicha: "" + data.nombre_ficha + ""
-        }; 
-      
-      });*/
-      console.log(  data);
+      data.forEach((data) => {
+        let fila = `
+           <th scope="col" id="colum-fecha" style="text-align: center;"> ${data.fechaInicio}</th> `;
+        columFecha.innerHTML += fila;
+      });
+
+      console.log(data);
     });
 
   fetch(base_url + "/informes/getAsistencia/" + id_Ficha)
     .then((res) => res.json())
     .then((data) => {
-      /* data.forEach((data) => {
-        let fila = {
-          label: "" + data.nombre_ficha + " - " + data.numeroFicha,
-          value: "" + data.id + "",
-          numeroFicha: "" + data.numeroFicha + "",
-          nombreFicha: "" + data.nombre_ficha + ""
-        }; 
-      
-      });*/
-      console.log( data);
+      data.forEach((data) => {
+        let fila = `
+        <tr id="aprendiz-tr" >
+        <td scope="col" style="text-align: center;">${data.id} </td>
+        <td scope="col" style="text-align: center;">${data.nombre_completo}</td>
+        <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span> </td>
+        <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
+        <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
+        <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
+        <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
+        <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
+           </tr>
+        `;
+        columAprendiz.innerHTML += fila;
+      });
+      console.log(data);
     });
+});
+
+btnInasistencia.addEventListener("click", () => {
+  // -----------------------------------
+  //    DESHABILITAMOS LOS ELEMENTOS (BTN AND TABLE)
+  //  -----------------------------------
+  cardInforme.style.display = "block";
+  cardAsistencias.style.display = "none";
+  informeAsistencia.style.display = "none";
+  btnAsistencia.style.display = "block";
+  btnInasistencia.style.display = "none";
+  btnPdf.style.display = "none";
+
+  // -----------------------------------
+  //    LIMPIAMOS LAS TABLAS
+  //  -----------------------------------
+  $("#tabla-asistencia tr").each(function () {
+    $("#aprendiz-tr").remove();
+    $("#colum-fecha").remove();
+  });
 });
 document.addEventListener("click", (e) => {
   try {
@@ -86,6 +122,8 @@ document.addEventListener("click", (e) => {
     }
   } catch {}
 });
+
+
 $(document).ready(function () {
   // -----------------------------------
   //    VERIFICAR Fichas DISPONIBLES
@@ -180,12 +218,28 @@ $(document).ready(function () {
   }
   $(document).on("click", ".eliminar-fila", function () {
     $(this).closest("tr").remove();
+
+    // -----------------------------------
+    //    DESHABILITAMOS LOS ELEMENTOS (BTN AND TABLE)
+    //  -----------------------------------
+
     tableVisibility.style.display = "none";
     btnAsistencia.style.display = "none";
+    btnInasistencia.style.display = "none";
+    btnPdf.style.display = "none";
+
+    // -----------------------------------
+    //    LIMIPIAMOS LAS TABLAS CON LA INFORMACION IMPRESA
+    // -----------------------------------
     $("#tabla-infoFicha tr").each(function () {
       $("#ficha-tr").remove();
     });
 
+    $("#tabla-asistencia tr").each(function () {
+      $("#aprendiz-tr").remove();
+      $("#colum-fecha").remove();
+      $("#colum-info-ficha").remove();
+    });
     $("#tabla-aprendices tr").each(function () {
       $("#instru-tr").remove();
     });

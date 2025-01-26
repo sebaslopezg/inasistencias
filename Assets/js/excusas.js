@@ -1,11 +1,15 @@
 let tablaExcusas = document.querySelector("#tablaExcusas");
 let frmCrearExcusa = document.querySelector("#frmCrearExcusa");
+let frmCrearObservacion = document.querySelector("#frmObservacion");
 let txtIdExcusa = document.querySelector("#txtIdExcusa");
+let IdExcusa = document.querySelector("#IdExcusa");
 let txtIdInasistencia = document.querySelector("#txtIdInasistencia");
 let txtIdUsuario = document.querySelector("#txtIdUsuario");
 let txtIdInstructor = document.querySelector("#txtIdInstructor");
 let txtArchivo = document.querySelector("#txtArchivo");
 let txtEstado = document.querySelector("#txtEstado");
+let txtObservacion = document.querySelector("#txtObservacion");
+let txtobservacionApre = document.querySelector("#observacionApre");
 let rol;
 
 fetch(base_url + "/excusas/getUsuarioById")
@@ -19,8 +23,8 @@ fetch(base_url + "/excusas/getUsuarioById")
         let thead = document.querySelector("#tablaExcusas thead tr");
 
         thead.children[0].textContent = "Fecha Excusa";
-        thead.children[2].textContent = "Ficha";
-        thead.children[3].textContent = "NumeroFicha";
+        thead.children[2].textContent = "Nombre de Ficha";
+        thead.children[3].textContent = "Ficha";
         thead.children[4].textContent = "Inasistencia";
         const CeldaExc = document.createElement("th");
         CeldaExc.textContent = "Excusa";
@@ -149,9 +153,66 @@ fetch(base_url + "/excusas/getUsuarioById")
                 }
               });
             }
+
+            if (action == "agrObservacion") {
+              fetch(base_url + "/excusas/selectExcusaId/" + id)
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data.status) {
+                    console.log(data);
+                    data = data.data;
+                    txtObservacion.value = data.observacion;
+                    IdExcusa.value = data.idExcusas;
+
+                    $("#modalObsevaciones").modal("show");
+                    tablaExcusas.api().ajax.reload(function () {});
+                  } else {
+                    Swal.fire({
+                      title: "Error",
+                      text: data.msg,
+                      icon: "error"
+                    });
+                  }
+                });
+            }
           } catch {}
         });
+
+        frmCrearObservacion.addEventListener("submit", (e) => {
+          e.preventDefault();
+          let frmObservacion = new FormData(frmCrearObservacion);
+          fetch(base_url + "/excusas/agregarObservacion", {
+            method: "POST",
+            body: frmObservacion
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              if (data.status) {
+                Swal.fire({
+                  title: "Registro Observacion",
+                  text: data.msg,
+                  icon: "success"
+                });
+                $("#modalObsevaciones").modal("hide");
+                clearForm();
+                tablaExcusas.api().ajax.reload(function () {});
+              } else {
+                Swal.fire({
+                  title: "Error",
+                  text: data.msg,
+                  icon: "error"
+                });
+              }
+            });
+        });
+        function clearForm() {
+          IdExcusa.value = "0";
+          txtObservacion.value = "";
+        }
       } else if (rol === "APRENDIZ") {
+        let thead = document.querySelector("#tablaExcusas thead tr");
+        thead.removeChild(thead.children[1]);
         cargarTabla();
         document.addEventListener("click", (e) => {
           try {
@@ -183,37 +244,6 @@ fetch(base_url + "/excusas/getUsuarioById")
                 });
             }
 
-            if (action == "delete") {
-              console.log(id);
-              Swal.fire({
-                title: "Eliminar Excusa",
-                text: "¿Está seguro de eliminar la excusa?",
-                icon: "warning",
-                showDenyButton: true,
-                confirmButtonText: "Sí",
-                denyButtonText: `Cancelar`
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  console.log(id);
-                  let frmData = new FormData();
-                  frmData.append("txtIdExcusa", id);
-                  fetch(base_url + "/excusas/deleteExcusas", {
-                    method: "POST",
-                    body: frmData
-                  })
-                    .then((res) => res.json())
-                    .then((data) => {
-                      Swal.fire({
-                        title: data.status ? "Correcto" : "Error",
-                        text: data.msg,
-                        icon: data.status ? "success" : "error"
-                      });
-                      tablaExcusas.api().ajax.reload(function () {});
-                    });
-                }
-              });
-            }
-
             if (action == "editar") {
               fetch(base_url + "/excusas/selectExcusaId/" + id)
                 .then((res) => res.json())
@@ -223,9 +253,28 @@ fetch(base_url + "/excusas/getUsuarioById")
                     txtIdInasistencia.value = data.inasistencias_idInasistencias;
                     txtIdInstructor.value = data.idInstructor;
                     txtIdUsuario.value = data.usuario_idUsuarios;
-                    (txtIdExcusa.value = data.idExcusas), console.log(id);
-                    /*  txtArchivo.value = data.uriArchivo   */
+                    txtIdExcusa.value = data.idExcusas;
                     $("#crearExcusaModal").modal("show");
+                    tablaExcusas.api().ajax.reload(function () {});
+                  } else {
+                    Swal.fire({
+                      title: "Error",
+                      text: data.msg,
+                      icon: "error"
+                    });
+                  }
+                });
+            }
+
+            if (action == "observacion") {
+              fetch(base_url + "/excusas/selectExcusaId/" + id)
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data.status) {
+                    data = data.data;
+                    txtobservacionApre.value = data.observacion;
+
+                    $("#modalObsApre").modal("show");
                     tablaExcusas.api().ajax.reload(function () {});
                   } else {
                     Swal.fire({
@@ -251,7 +300,7 @@ fetch(base_url + "/excusas/getUsuarioById")
               console.log(data);
               if (data.status) {
                 Swal.fire({
-                  title: "Registro Usuarios",
+                  title: "Registro Excusa",
                   text: data.msg,
                   icon: "success"
                 });
@@ -274,6 +323,7 @@ fetch(base_url + "/excusas/getUsuarioById")
           txtIdInstructor.value = "0";
           txtIdUsuario.value = "0";
           txtIdExcusa.value = "0";
+          txtObservacion.value = "";
         }
 
         function cargarTabla() {
@@ -287,7 +337,6 @@ fetch(base_url + "/excusas/getUsuarioById")
             },
             columns: [
               { data: "fechaCompleta" },
-              { data: "nombreCompleto" },
               { data: "instructor.nombreIntru" },
               { data: "status" },
               { data: "action" }

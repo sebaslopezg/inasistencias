@@ -21,6 +21,7 @@ class Excusas extends Controllers
 
     public function getExcusas()
     {
+        $diasPlazo = 6;
         if ($_SESSION['userData']['rol'] == 'APRENDIZ') {
             $arrData = $this->model->selectInasistencias($_SESSION['userData']['idUsuarios']);
             for ($i = 0; $i < count($arrData); $i++) {
@@ -28,50 +29,119 @@ class Excusas extends Controllers
                 $arrVali[$i]['total'] = $this->model->validacionExcusa($arrData[$i]['Id']);
                 $arrExcu[$i]['excusaId'] = $this->model->selectIdExcusa($arrData[$i]['Id']);
 
-                $arrData[$i]['total'] = $arrVali[$i]['total']['total'];
-
-                if ($arrData[$i]['status'] == 2) {
-                    $arrData[$i]['action'] = '<span class="badge rounded-pill bg-primary">Aprobada</span>';
-                }else if ($arrData[$i]['status'] == 3) {
-                    $arrData[$i]['action'] = '<span class="badge rounded-pill bg-danger">Denegada</span>';
-                }else if (empty($arrData[$i]['total']) || $arrData[$i]['total'] == 0 || empty($arrExcu[$i]['excusaId'])) {
-                    $arrData[$i]['action'] = '
-                <button type="button" data-id="' . $arrData[$i]['Id'] . '" data-action="agregar" class="btn btn-primary"><i class="bi bi-paperclip"></i></button>';
+                if (isset($arrExcu[$i]['excusaId']['excusaId'])) {
+                    $arrData[$i]['excusaId'] = $arrExcu[$i]['excusaId']['excusaId'];
+                    $arrData[$i]['observacion'] = $this->model->selectObsId($arrData[$i]['excusaId']);
+                    $arrExcu[$i]['excusas'] = $this->model->selectExcusasId($arrData[$i]['excusaId']);
                 } else {
+                    $arrData[$i]['excusaId'] = null;
+                    $arrData[$i]['observacion'] = null;
+                }
+
+                $fechaIna = new DateTime($arrData[$i]['fecha']);
+                if (isset($arrExcu[$i]['excusas']['fecha'])) {
+                    $fechaExc = new DateTime($arrExcu[$i]['excusas']['fecha']);
+                } else {
+                    $fechaExc = new DateTime(date('Y-m-d'));
+                }
+
+                $diferencia = $fechaIna->diff($fechaExc);
+                $diasDeDiferencia = (int)$diferencia->days;
+                
+                $arrData[$i]['total'] = $arrVali[$i]['total']['total'];
+                
+                if ($arrData[$i]['status'] == 2) {
+                    $arrData[$i]['action'] = '<div class="w-100 h-50 alert alert-primary" role="alert">
+                La excusa a sido aprobada.
+                </div>
+                ';
+                }else if ($arrData[$i]['status'] == 3 && $diasDeDiferencia < $diasPlazo) {
                     $arrData[$i]['excusaId'] = $arrExcu[$i]['excusaId']['excusaId'];
                     $arrData[$i]['action'] = '
                 <button type="button" data-id="' . $arrData[$i]['excusaId'] . '" data-action="editar" class="btn btn-success"><i class="bi bi-pencil-square"></i></button>
-                <button type="button" data-id="' . $arrData[$i]['excusaId'] . '" data-action="delete" class="btn btn-danger"><i class="bi bi-trash"></i></button>';
+                <button title="Observacion del Instructor" type="button" data-id="' . $arrData[$i]['excusaId'] . '" data-action="observacion" class="btn btn-primary"><i class="bi bi-chat-dots-fill"></i></button>';
+                }else if ((empty($arrData[$i]['total']) || $arrData[$i]['total'] == 0 || empty($arrExcu[$i]['excusaId'])) && $diasDeDiferencia < $diasPlazo) {
+                    $arrData[$i]['action'] = '
+                <button type="button" data-id="' . $arrData[$i]['Id'] . '" data-action="agregar" class="btn btn-primary"><i class="bi bi-paperclip"></i></button>';
+                } else if($arrData[$i]['status'] == 1 && empty($arrData[$i]['observacion']['observacion']) && $diasDeDiferencia < $diasPlazo){
+                    $arrData[$i]['excusaId'] = $arrExcu[$i]['excusaId']['excusaId'];
+                    $arrData[$i]['action'] = '
+                <button type="button" data-id="' . $arrData[$i]['excusaId'] . '" data-action="editar" class="btn btn-success"><i class="bi bi-pencil-square"></i></button>';
+                }else if($arrData[$i]['status'] == 1 && !empty($arrData[$i]['observacion']['observacion']) && $diasDeDiferencia < $diasPlazo){
+                    $arrData[$i]['excusaId'] = $arrExcu[$i]['excusaId']['excusaId'];
+                    $arrData[$i]['action'] = '
+                <button type="button" data-id="' . $arrData[$i]['excusaId'] . '" data-action="editar" class="btn btn-success"><i class="bi bi-pencil-square"></i></button>
+                <button title="Observacion del Instructor" type="button" data-id="' . $arrData[$i]['excusaId'] . '" data-action="observacion" class="btn btn-primary"><i class="bi bi-chat-dots-fill"></i></button>';
+                }else {
+                    $arrData[$i]['action'] = '<div class="w-100 h-50 alert alert-danger" role="alert">
+                    El plazo maximo de envio fue sobrepasado.
+                    </div>
+                    ';
+                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Expirado</span>';
                 }
 
-                if ($arrData[$i]['status'] == 1 || $arrData[$i]['status'] == 3) {
-                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-success">Activo</span>';
-                }else {
-                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Inactiva</span>';
+                if ($arrData[$i]['status'] == 1 && $diasDeDiferencia < $diasPlazo) {
+                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-warning">Pendiente</span>';
+                }else if ($arrData[$i]['status'] == 3 && $diasDeDiferencia < $diasPlazo) {
+                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Denegada</span>';
+                }else if($arrData[$i]['status'] == 2){
+                $arrData[$i]['status'] = '<span class="badge rounded-pill bg-primary">Aprobada</span>';
+                }else{
+                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Expirado</span>';
                 }
-              /*   if ($arrData[$i]['status'] == 2) {
-                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-primary">Aprobada</span>';
-                }
-                if ($arrData[$i]['status'] == 3) {
-                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Desaprobada</span>';
-                } */
             }
+
             echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
         } elseif ($_SESSION['userData']['rol'] == 'INSTRUCTOR') {
             $arrData = $this->model->selectInasistenciasPorInstru($_SESSION['userData']['idUsuarios']);
 
             for ($i = 0; $i < count($arrData); $i++) {
-                $arrData[$i]['fileExc'] = '
-                <button type="button" data-id="' . $arrData[$i]['idExcusas'] . '" data-action="descargar" class="btn btn-primary"><i class="bi bi-file-earmark-ruled-fill"></i></button>';
-                $arrData[$i]['action'] = '
-                <button type="button" data-id="' . $arrData[$i]['idInasistencias'] . '" data-action="aprobar" class="btn btn-success"><i class="bi bi-check-circle"></i></button>
-                <button type="button" data-id="' . $arrData[$i]['idInasistencias'] . '" data-action="denegar" class="btn btn-danger"><i class="bi bi-x-circle"></i></button>';
-          
-                if ($arrData[$i]['status'] == 1) {
-                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-success">Activo</span>';
+
+                $fechaIna = new DateTime($arrData[$i]['fechaIna']);
+                $fechaExc = new DateTime($arrData[$i]['feExc']);
+
+                $diferencia = $fechaIna->diff($fechaExc);
+                $diasDeDiferencia = (int)$diferencia->days;
+
+
+               
+                if ($arrData[$i]['estIna'] == 1 && $arrData[$i]['observacion'] !== null && $diasDeDiferencia < $diasPlazo) {
+                    $arrData[$i]['fileExc'] = '
+                    <button type="button" data-id="' . $arrData[$i]['idExcusas'] . '" data-action="descargar" class="btn btn-primary"><i class="bi bi-file-earmark-text-fill"></i></button>';
+                    $arrData[$i]['action'] = '
+                    <button type="button" data-id="' . $arrData[$i]['idInasistencias'] . '" data-action="aprobar" class="btn btn-success"><i class="bi bi-check-circle-fill"></i></button>
+                    <button type="button" data-id="' . $arrData[$i]['idInasistencias'] . '" data-action="denegar" class="btn btn-danger"><i class="bi bi-x-circle"></i></button>';
+                }else if ($arrData[$i]['estIna'] == 1 && $arrData[$i]['observacion'] == null && $diasDeDiferencia < $diasPlazo) {
+                    $arrData[$i]['fileExc'] = '
+                    <button type="button" data-id="' . $arrData[$i]['idExcusas'] . '" data-action="descargar" class="btn btn-primary"><i class="bi bi-file-earmark-text-fill"></i></button>';
+                    $arrData[$i]['action'] = '
+                    <button type="button" data-id="' . $arrData[$i]['idInasistencias'] . '" data-action="aprobar" class="btn btn-success"><i class="bi bi-check-circle-fill"></i></button>
+                    <button type="button" data-id="' . $arrData[$i]['idExcusas'] . '" data-action="agrObservacion" class="btn btn-primary"><i class="bi bi-chat-dots-fill"></i></button>';
+                }elseif ($arrData[$i]['estIna'] == 2) {
+                    $arrData[$i]['fileExc'] = '
+                    <i class="bi bi-file-earmark-text-fill text-primary fs-2"></i>';
+                    $arrData[$i]['action'] = '<i class="bi bi-check-circle text-success fs-2"></i>';
+                }else if($arrData[$i]['estIna'] == 3 && $diasDeDiferencia < $diasPlazo){
+                    $arrData[$i]['fileExc'] = '
+                    <button type="button" data-id="' . $arrData[$i]['idExcusas'] . '" data-action="descargar" class="btn btn-primary"><i class="bi bi-file-earmark-text-fill"></i></button>';
+                    $arrData[$i]['action'] = '<button type="button" data-id="' . $arrData[$i]['idInasistencias'] . '" data-action="aprobar" class="btn btn-success"><i class="bi bi-check-circle-fill"></i></button>';
+                }else {
+                    $arrData[$i]['action'] = '<div class="w-100 h-50 alert alert-danger" role="alert">
+                    El plazo maximo de envio fue sobrepasado.
+                    </div>
+                    ';
+                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Expirado</span>';
                 }
-                if ($arrData[$i]['status'] == 2) {
-                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Inactivo</span>';
+               
+          
+                if ($arrData[$i]['estIna'] == 1 && $diasDeDiferencia < $diasPlazo) {
+                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-warning">Pendiente</span>';
+                }else if ($arrData[$i]['estIna'] == 2) {
+                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-primary">Aprobada</span>';
+                }else if ($arrData[$i]['estIna'] == 3 && $diasDeDiferencia < $diasPlazo) {
+                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Denegada</span>';
+                }else {
+                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Expirado</span>';
                 }
             }
             echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
@@ -152,7 +222,7 @@ class Excusas extends Controllers
         $intExc = intval(strClean($id));
 
         if ($intExc > 0) {
-            $arrData = $this->model->selectExcusaId($id);
+            $arrData = $this->model->selectExcusasId($id);
         } else {
             $arrResponse = array('status' => false, 'msg' => 'tipo de dato no permitido');
         }
@@ -165,8 +235,6 @@ class Excusas extends Controllers
 
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
     }
-
-
 
     public function setExcusas()
     {
@@ -203,11 +271,14 @@ class Excusas extends Controllers
                         $intInasistencia,
                         $intIdUsuario,
                         $intIdInstructor,
-                        $fileName,
                         $fileRuta,
                     );
                     $option = 1;
                 } else {
+                    $insert = $this->model->cambiarEstIna(
+                        $intInasistencia
+                    );
+
                     $insert = $this->model->updateExcusa(
                         $intExcusa,
                         $fileRuta,
@@ -215,7 +286,7 @@ class Excusas extends Controllers
                     $option = 2;
                 }
 
-                if (intval($insert) > 0) {
+                if (intval($insert) > 0 ) {
                     if ($option == 1) {
                         $arrResponse = array('status' => true, 'msg' => 'Excusa enviada correctamente');
                     }
@@ -236,16 +307,17 @@ class Excusas extends Controllers
     }
 
 
-    function deleteExcusas()
+    function agregarObservacion()
     {
         if ($_POST) {
-            $intIdExcusa = intval($_POST['txtIdExcusa']);
-            $requestDelete = $this->model->deleteExcusa($intIdExcusa);
+            $intIdExcusa = intval($_POST['IdExcusa']);
+            $strObservacion = strClean($_POST['txtObservacion']);
+            $requestDelete = $this->model->updateObservacion($intIdExcusa,$strObservacion);
 
             if ($requestDelete) {
-                $arrResponse = array('status' => true, 'msg' => 'se ha eliminado la excusa');
+                $arrResponse = array('status' => true, 'msg' => 'se ha agregado la observacion');
             } else {
-                $arrResponse = array('status' => true, 'msg' => 'error al eliminar la excusa');
+                $arrResponse = array('status' => true, 'msg' => 'error al agregar la observacion');
             }
             echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
         }

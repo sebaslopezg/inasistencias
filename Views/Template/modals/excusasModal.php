@@ -2,8 +2,8 @@
 <div class="modal fade" id="crearExcusaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Agregar Excusa</h1>
+      <div class="modal-header" style="background-color: #00AA00;">
+        <h1 class="modal-title fs-5 text-light" id="exampleModalLabel">Agregar Excusa</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -41,3 +41,56 @@
     </div>
   </div>
 </div>
+<!-- FIN DE MODAL DE AGREGAR EXCUSA -->
+
+<!-- Modal observaciones-->
+<div class="modal fade" id="modalObsevaciones" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #00AA00;">
+        <h1 class="modal-title fs-5 text-light" id="exampleModalLabel">Agregar Observacion</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="frmObservacion" method="post">
+      <div class="modal-body">
+      <div class="col-12 "><label for="txtNombre" class="form-label" style="display: none;">IdExcusa</label>
+         <input type="hidden" class="form-control" id="IdExcusa" name="IdExcusa" value="0">
+      </div>
+      <div class="form-floating">
+        <textarea class="form-control" placeholder="Leave a comment here" id="txtObservacion" name="txtObservacion" style="height: 100px" required></textarea>
+        <label for="floatingTextarea2">Observacion</label>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Agregar</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- fin de modal observaciones -->
+
+<!-- Modal observaciones(APRENDIZ)-->
+<div class="modal fade" id="modalObsApre" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #00AA00;">
+        <h1 class="modal-title fs-5 text-light" id="exampleModalLabel">Ver Observacion</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="frmObservacion" method="post">
+      <div class="modal-body">
+      <div class="form-floating">
+        <textarea class="form-control" id="observacionApre" style="height: 100px" readonly></textarea>
+        <label for="floatingTextarea2">Observacion</label>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- fin de modal observaciones -->

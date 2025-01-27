@@ -346,7 +346,7 @@ BEGIN
     SELECT 
         CURDATE() AS fecha,               
         CURTIME() AS hora,                
-        1 AS codigoNovedad,               
+        0 AS codigoNovedad,               
         u.idUsuarios AS usuario_idUsuarios,
         NULL AS idInstructor,             
         1 AS status                       

@@ -25,7 +25,7 @@ class InformesModel extends Mysql
         $sql = "SELECT CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo, usuario.correo,usuario.idUsuarios as id, COUNT(usuario_idUsuarios) as faltas 
         FROM inasistencias
         INNER JOIN usuario ON usuario.idUsuarios = inasistencias.usuario_idUsuarios
-        WHERE inasistencias.idInstructor = {$this->idInstructor} AND usuario.status = 1 AND usuario.rol = 'APRENDIZ'
+        WHERE inasistencias.idInstructor = {$this->idInstructor} AND usuario.status = 1 AND usuario.rol = 'APRENDIZ'AND inasistencias.status = 1
         AND  EXISTS ( SELECT 1 FROM usuario_has_ficha 
         WHERE usuario_has_ficha.usuario_idUsuarios = usuario.idUsuarios 
         AND usuario_has_ficha.ficha_idFicha = {$this->idFicha} ) GROUP BY inasistencias.usuario_idUsuarios ORDER BY COUNT(usuario_idUsuarios) DESC ";
@@ -62,10 +62,9 @@ class InformesModel extends Mysql
 
 
         $this->idFicha = $idFicha;
-        $request = array();
-        $sql = "SELECT CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo , usuario.idUsuarios as id
-        FROM usuario_has_ficha INNER JOIN usuario ON usuario.idUsuarios = usuario_has_ficha.usuario_idUsuarios
-         WHERE usuario_has_ficha.ficha_idFicha = {$this->idFicha} AND usuario.status = 1 AND usuario.rol = 'APRENDIZ'";
+        $sql = "SELECT usuario.idUsuarios as id, CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo , inasistencias.fecha, inasistencias.status
+        FROM inasistencias INNER JOIN usuario ON usuario.idUsuarios = inasistencias.usuario_idUsuarios
+        WHERE usuario.status = 1 AND usuario.rol = 'APRENDIZ' ORDER BY inasistencias.fecha ASC";
         $aprendices =  $this->select_all($sql);
 
         return $aprendices;

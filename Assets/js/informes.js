@@ -9,7 +9,7 @@ let cardInforme = document.querySelector(".class-informes");
 let cardAsistencias = document.querySelector("#cardAsistencias");
 let informeAsistencia = document.querySelector("#informe-asistencia");
 let tablaAsistencias = document.querySelector("#tabla-asistencia");
-let columFecha = document.querySelector("#fecha-tr");
+let fechaTr = document.querySelector("#fecha-tr");
 let columAprendiz = document.querySelector("#colum-aprendiz");
 let codigoFicha = 0;
 let id_Ficha = 0;
@@ -35,32 +35,26 @@ btnAsistencia.addEventListener("click", () => {
     .then((data) => {
       data.forEach((data) => {
         let fila = `
-           <th scope="col" id="colum-fecha" style="text-align: center;"> ${data.fechaInicio}</th> `;
-        columFecha.innerHTML += fila;
+           <th scope="col" class="cosa" id="colum-fecha" style="text-align: center;"  > ${data.fechaInicio}</th> `;
+        fechaTr.innerHTML += fila;
       });
-
-      console.log(data);
     });
 
   fetch(base_url + "/informes/getAsistencia/" + id_Ficha)
     .then((res) => res.json())
     .then((data) => {
+      const info = data.filter((aprendiz) => aprendiz.fecha === "2025-10-17");
+
       data.forEach((data) => {
         let fila = `
         <tr id="aprendiz-tr" >
         <td scope="col" style="text-align: center;">${data.id} </td>
         <td scope="col" style="text-align: center;">${data.nombre_completo}</td>
-        <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span> </td>
-        <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-        <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-danger">Falto</span></td>
-        <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-        <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-        <td scope="col" style="text-align: center;"> <span class="badge rounded-pill bg-success">Asistio</span></td>
-           </tr>
+        <td scope="col" style="text-align: center;">${data.status}</td>
+        </tr>
         `;
         columAprendiz.innerHTML += fila;
       });
-      console.log(data);
     });
 });
 
@@ -122,7 +116,6 @@ document.addEventListener("click", (e) => {
     }
   } catch {}
 });
-
 
 $(document).ready(function () {
   // -----------------------------------

@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="modalInfo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalInfo" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-dark text-white" id="tituloModalFicha">
@@ -8,7 +8,7 @@
             </div>
             </>
             <div class="modal-body" id="mostrar-info">
-
+                <button type="button" style="float: right;margin-right:5px;" id="btnPDFmodal" class="btn btn-outline-danger mb-3"> <i class="bi bi-filetype-pdf" style="font-size:larger;"></i></button>
             </div>
         </div>
     </div>

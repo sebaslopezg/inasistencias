@@ -5,13 +5,13 @@ let btnCerrarModal = document.querySelector("#btnCerrarModal");
 let btnAsistencia = document.querySelector("#btnAsistencia");
 let btnInasistencia = document.querySelector("#btnInasistencia");
 let btnPdf = document.querySelector("#btnPdf");
+let btnPdfM = document.querySelector("#btnPdfmodal");
 let cardInforme = document.querySelector(".class-informes");
 let cardAsistencias = document.querySelector("#cardAsistencias");
 let informeAsistencia = document.querySelector("#informe-asistencia");
 let tablaAsistencias = document.querySelector("#tabla-asistencia");
 let fechaTr = document.querySelector("#fecha-tr");
 let columAprendiz = document.querySelector("#colum-aprendiz");
-let columFecha = document.querySelector("#aprendiz-tr");
 let codigoFicha = 0;
 let id_Ficha = 0;
 
@@ -22,6 +22,7 @@ let id_Ficha = 0;
 btnCerrarModal.addEventListener("click", () => {
   mostrarInfo.innerHTML = "";
 });
+
 btnAsistencia.addEventListener("click", () => {
   cardInforme.style.display = "none";
   cardAsistencias.style.display = "block";
@@ -36,18 +37,20 @@ btnAsistencia.addEventListener("click", () => {
   fetch(base_url + "/informes/getFechaInstructor/" + codigoFicha)
     .then((res) => res.json())
     .then((data) => {
+      console.log(data);
       data.forEach((data) => {
         let fila = `
            <th scope="col" class="cosa" id="colum-fecha" style="text-align: center;"  > ${data.fechaInicio}</th> `;
         fechaTr.innerHTML += fila;
       });
     });
+
   // -----------------------------------
   //    TRAEMOS LOS NOMBRES DE LOS APRENDICES DE LA TABLA ASISTENCIAS
   // -----------------------------------
 
   let nombres = [];
-  fetch(base_url + "/informes/getAprendices/" + codigoFicha)
+  fetch(base_url + "/informes/getAprendices/" + id_Ficha)
     .then((res) => res.json())
     .then((data) => {
       data.forEach((data) => {
@@ -65,10 +68,10 @@ btnAsistencia.addEventListener("click", () => {
       let info = [];
       for (let i = 0; i < nombres.length; i++) {
         info = data.filter((aprendiz) => aprendiz.nombre_completo === `${nombres[i]}`);
-        console.log(info);
+        //console.log(info);
         let fila = `
           <tr id="aprendiz-tr${i}">
-          <td scope="col" style="text-align: center;">${info[0].id} </td>
+          <td scope="col" style="text-align: center;">${i + 1} </td>
           <td scope="col" style="text-align: center;">${nombres[i]}</td>
           </tr>
           `;
@@ -77,7 +80,6 @@ btnAsistencia.addEventListener("click", () => {
           let celda = ` <td scope="col" style="text-align: center;">${info[index].status}</td>`;
           $(`#aprendiz-tr${i}`).append(celda);
         }
-        info = [];
       }
     });
 });
@@ -96,9 +98,11 @@ btnInasistencia.addEventListener("click", () => {
   // -----------------------------------
   //    LIMPIAMOS LAS TABLAS
   //  -----------------------------------
-  $("#tabla-asistencia tr").each(function () {
+  let i = 0;
+  $(`#tabla-asistencia tr${i + 1}`).each(function () {
     $("#aprendiz-tr").remove();
     $("#colum-fecha").remove();
+    $("#colum-info-ficha").remove();
   });
 });
 document.addEventListener("click", (e) => {
@@ -252,8 +256,9 @@ $(document).ready(function () {
       $("#ficha-tr").remove();
     });
 
+    let i = 0;
     $("#tabla-asistencia tr").each(function () {
-      $("#aprendiz-tr").remove();
+      $(`#aprendiz-tr${i + 1}`).remove();
       $("#colum-fecha").remove();
       $("#colum-info-ficha").remove();
     });

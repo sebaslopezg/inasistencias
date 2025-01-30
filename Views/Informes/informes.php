@@ -37,8 +37,8 @@ getModal('informesModal', $data);
                     </div>
 
                     <button type="button" style="float: right; display: none;" id="btnAsistencia" class="btn btn-outline-success mb-3"> Asistencia <i class="bi bi-calendar-check"></i></button>
-                    <button type="button" style="float: right; display: none;" id="btnInasistencia" class="btn btn-outline-info mb-3"> Inasistencias <i class="bi bi-calendar-check"></i></button>
-                    <button type="button" style="float: right; display: none; margin-right:5px;" id="btnPdf" class="btn btn-outline-danger mb-3"> <i class="bi bi-filetype-pdf"></i></button>
+                    <button type="button" style="float: right; display: none; font-size:larger;" id="btnInasistencia" class="btn btn-outline-info mb-3"> Inasistencias <i class="bi bi-calendar-check"></i></button>
+                    <button type="button" style="float: right; display: none; margin-right:5px;" id="btnPdf" class="btn btn-outline-danger mb-3"> <i class="bi bi-filetype-pdf" style="font-size:larger;"></i></button>
                 </div>
                 <div class="class-informes" id="tabla-informe" style="display: none;">
 
@@ -60,7 +60,7 @@ getModal('informesModal', $data);
                             <tr>
                                 <th scope="col"><i class="bi bi-mortarboard-fill"></i> Aprendiz</th>
                                 <th scope="col"><i class="bi bi-envelope-fill"></i> Correo </th>
-                                <th scope="col" style="text-align: center;"><i class="bi bi-ban"></i> Inasistencia </th>
+                                <th scope="col" style="text-align: center;"><i class="bi bi-ban"></i> Inasistencias </th>
                                 <th scope="col" style="text-align: center;"><i class="bi bi-info-circle-fill"></i> Info </th>
                             </tr>
                         </thead>

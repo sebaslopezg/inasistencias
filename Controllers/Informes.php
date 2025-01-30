@@ -60,10 +60,10 @@ class Informes extends Controllers
         for ($i = 0; $i < count($arrData); $i++) {
 
 
-            if ($arrData[$i]['status'] == 0) {
+            if ($arrData[$i]['status'] == 0 || $arrData[$i]['status'] == 2) {
                 $arrData[$i]['status'] = '<span class="badge rounded-pill bg-success">Asistio</span>';
             }
-            if ($arrData[$i]['status'] == 1) {
+            if ($arrData[$i]['status'] == 1 || $arrData[$i]['status'] == 3) {
                 $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Falto</span>';
             }
         }

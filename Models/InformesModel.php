@@ -57,14 +57,28 @@ class InformesModel extends Mysql
         return $request;
     }
 
-    public function selectAprendices(int $idFicha)
+    public function selectInfoAprendiz(int $idInstructor, int $idFicha)
     {
 
-
         $this->idFicha = $idFicha;
+        $this->idInstructor = $idInstructor;
         $sql = "SELECT usuario.idUsuarios as id, CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo , inasistencias.fecha, inasistencias.status
         FROM inasistencias INNER JOIN usuario ON usuario.idUsuarios = inasistencias.usuario_idUsuarios
-        WHERE usuario.status = 1 AND usuario.rol = 'APRENDIZ' ORDER BY inasistencias.fecha ASC";
+        WHERE usuario.status = 1 AND usuario.rol = 'APRENDIZ' AND   inasistencias.idInstructor  = {$this->idInstructor}
+        ORDER BY inasistencias.fecha ASC";
+        $aprendices =  $this->select_all($sql);
+
+        return $aprendices;
+    }
+    public function selectNombreAprendices(int $idFicha)
+    {
+
+        $this->idFicha = $idFicha;
+        $sql = "SELECT usuario.idUsuarios as id, CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo
+        FROM inasistencias INNER JOIN usuario ON usuario.idUsuarios = inasistencias.usuario_idUsuarios
+        WHERE usuario.status = 1 AND usuario.rol = 'APRENDIZ'
+        GROUP BY usuario.nombre
+        ORDER BY inasistencias.fecha ASC";
         $aprendices =  $this->select_all($sql);
 
         return $aprendices;

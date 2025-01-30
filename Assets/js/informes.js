@@ -11,6 +11,7 @@ let informeAsistencia = document.querySelector("#informe-asistencia");
 let tablaAsistencias = document.querySelector("#tabla-asistencia");
 let fechaTr = document.querySelector("#fecha-tr");
 let columAprendiz = document.querySelector("#colum-aprendiz");
+let columFecha = document.querySelector("#aprendiz-tr");
 let codigoFicha = 0;
 let id_Ficha = 0;
 
@@ -29,7 +30,9 @@ btnAsistencia.addEventListener("click", () => {
   btnInasistencia.style.display = "block";
   btnPdf.style.display = "block";
 
-  //
+  // -----------------------------------
+  //   TRAEMOS LAS FECHAS DEL HORARIO DEL INSTRUCTOR
+  // -----------------------------------
   fetch(base_url + "/informes/getFechaInstructor/" + codigoFicha)
     .then((res) => res.json())
     .then((data) => {
@@ -39,22 +42,43 @@ btnAsistencia.addEventListener("click", () => {
         fechaTr.innerHTML += fila;
       });
     });
+  // -----------------------------------
+  //    TRAEMOS LOS NOMBRES DE LOS APRENDICES DE LA TABLA ASISTENCIAS
+  // -----------------------------------
+
+  let nombres = [];
+  fetch(base_url + "/informes/getAprendices/" + codigoFicha)
+    .then((res) => res.json())
+    .then((data) => {
+      data.forEach((data) => {
+        nombres.push(data.nombre_completo);
+      });
+    });
+
+  // -----------------------------------
+  //    MOSTRARMOS LA CONTROL DE ASITENCIAS DE LA FICHA
+  // -----------------------------------
 
   fetch(base_url + "/informes/getAsistencia/" + id_Ficha)
     .then((res) => res.json())
     .then((data) => {
-      const info = data.filter((aprendiz) => aprendiz.fecha === "2025-10-17");
-
-      data.forEach((data) => {
+      let info = [];
+      for (let i = 0; i < nombres.length; i++) {
+        info = data.filter((aprendiz) => aprendiz.nombre_completo === `${nombres[i]}`);
+        console.log(info);
         let fila = `
-        <tr id="aprendiz-tr" >
-        <td scope="col" style="text-align: center;">${data.id} </td>
-        <td scope="col" style="text-align: center;">${data.nombre_completo}</td>
-        <td scope="col" style="text-align: center;">${data.status}</td>
-        </tr>
-        `;
+          <tr id="aprendiz-tr${i}">
+          <td scope="col" style="text-align: center;">${info[0].id} </td>
+          <td scope="col" style="text-align: center;">${nombres[i]}</td>
+          </tr>
+          `;
         columAprendiz.innerHTML += fila;
-      });
+        for (let index = 0; index < info.length; index++) {
+          let celda = ` <td scope="col" style="text-align: center;">${info[index].status}</td>`;
+          $(`#aprendiz-tr${i}`).append(celda);
+        }
+        info = [];
+      }
     });
 });
 

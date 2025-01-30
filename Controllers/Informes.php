@@ -53,8 +53,8 @@ class Informes extends Controllers
     }
     public function getAsistencia(int $idFicha)
     {
-
-        $arrData = $this->model->selectAprendices($idFicha);
+        $idInstructor = $_SESSION['idUsuarios'];
+        $arrData = $this->model->selectInfoAprendiz($idInstructor, $idFicha);
 
 
         for ($i = 0; $i < count($arrData); $i++) {
@@ -67,6 +67,14 @@ class Informes extends Controllers
                 $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Falto</span>';
             }
         }
+
+        echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function getAprendices(int $idFicha)
+    {
+        $idInstructor = $_SESSION['idUsuarios'];
+        $arrData = $this->model->selectNombreAprendices($idFicha);
 
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }

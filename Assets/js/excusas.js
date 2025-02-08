@@ -10,6 +10,9 @@ let txtArchivo = document.querySelector("#txtArchivo");
 let txtEstado = document.querySelector("#txtEstado");
 let txtObservacion = document.querySelector("#txtObservacion");
 let txtobservacionApre = document.querySelector("#observacionApre");
+let ulNotificacion = document.querySelector("#ulNotificacion");
+let spanNoti = document.querySelector("#spanNoti");
+let headerLi = document.querySelector("#headerLi");
 let rol;
 
 fetch(base_url + "/excusas/getUsuarioById")
@@ -18,6 +21,50 @@ fetch(base_url + "/excusas/getUsuarioById")
     if (data.status) {
       data = data.data;
       rol = data[0].rol;
+
+      function MostrarNoti() {
+        fetch(base_url + "/excusas/getNotificaciones")
+          .then((res) => res.json())
+          .then((data) => {
+            if (Array.isArray(data) && data.length > 0) {
+              let numNotifica = data.length;
+              spanNoti.innerHTML = numNotifica;
+              data.map((noti) => {
+                let liHeader = `
+                  Tienes ${data.length} notificaciones nuevas
+                  <span class="badge rounded-pill bg-primary p-2 ms-2"><i class="bi bi-envelope"></i></span>
+               `;
+                headerLi.innerHTML = liHeader;
+                let li = `
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <a href="${noti.link}" style="color: black; text-decoration: none;">
+                <li class="notification-item">
+                         ${noti.icono}
+
+                          <div>
+                            <h4>${noti.tipoNovedad}</h4>
+                            <p>${noti.mensaje}</p>
+                            <p>30 min. ago</p>
+                          </div>
+                        </li>
+                        </a>
+                `;
+                ulNotificacion.innerHTML += li;
+              });
+            } else {
+              let numNotifica = data.length;
+              spanNoti.innerHTML = numNotifica;
+              let liHeader = `
+                  Tienes ${data.length} notificaciones nuevas
+                  <span class="badge rounded-pill bg-primary p-2 ms-2"><i class="bi bi-envelope"></i></span>
+               `;
+              headerLi.innerHTML = liHeader;
+            }
+          });
+      }
+      MostrarNoti();
 
       if (rol === "INSTRUCTOR") {
         let thead = document.querySelector("#tablaExcusas thead tr");

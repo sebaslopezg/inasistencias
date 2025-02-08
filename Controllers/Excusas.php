@@ -1,7 +1,10 @@
 <?php
+require_once __DIR__ . '/../Models/NotificacionesModel.php';
 
 class Excusas extends Controllers
 {
+
+    private $NotificacionesModel;
     public function __construct()
     {
         parent::__construct();
@@ -9,6 +12,7 @@ class Excusas extends Controllers
         if (empty($_SESSION['login'])) {
             header('Location: ' . base_url() . '/login');
         }
+        $this->NotificacionesModel = new NotificacionesModel();
     }
 
     public function excusas()
@@ -49,7 +53,6 @@ class Excusas extends Controllers
                 $diasDeDiferencia = (int)$diferencia->days;
                 
                 $arrData[$i]['total'] = $arrVali[$i]['total']['total'];
-                
                 if ($arrData[$i]['status'] == 2) {
                     $arrData[$i]['action'] = '<div class="w-100 h-50 alert alert-primary" role="alert">
                 La excusa a sido aprobada.
@@ -124,7 +127,7 @@ class Excusas extends Controllers
                 }else if($arrData[$i]['estIna'] == 3 && $diasDeDiferencia < $diasPlazo){
                     $arrData[$i]['fileExc'] = '
                     <button type="button" data-id="' . $arrData[$i]['idExcusas'] . '" data-action="descargar" class="btn btn-primary"><i class="bi bi-file-earmark-text-fill"></i></button>';
-                    $arrData[$i]['action'] = '<button type="button" data-id="' . $arrData[$i]['idInasistencias'] . '" data-action="aprobar" class="btn btn-success"><i class="bi bi-check-circle-fill"></i></button>';
+                    $arrData[$i]['action'] = ' <button type="button" data-id="' . $arrData[$i]['idExcusas'] . '" data-action="agrObservacion" class="btn btn-primary"><i class="bi bi-chat-dots-fill"></i></button>';
                 }else {
                     $arrData[$i]['action'] = '<div class="w-100 h-50 alert alert-danger" role="alert">
                     El plazo maximo de envio fue sobrepasado.
@@ -146,6 +149,40 @@ class Excusas extends Controllers
             }
             echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
         }
+    }
+
+    function getNotificaciones(){
+
+        $arrData = $this->NotificacionesModel->NotiSelect($_SESSION['userData']['idUsuarios']);
+
+        for ($i=0; $i < count($arrData); $i++) { 
+            if ($arrData[$i]['tipoNovedad'] == 'registro_inasistencia') {
+                $arrData[$i]['tipoNovedad'] = 'Inasistencia';
+                $arrData[$i]['icono'] = ' <i class="bi bi-person-x text-warning"></i>';
+                $arrData[$i]['link'] = 'http://localhost/inasistencias/excusas';
+            }else  if ($arrData[$i]['tipoNovedad'] == 'Nueva_excusa') {
+                $arrData[$i]['tipoNovedad'] = 'Excusa';
+                $arrData[$i]['icono'] = '<i class="bi bi-file-earmark-text text-primary"></i>';
+                $arrData[$i]['link'] = 'http://localhost/inasistencias/excusas';
+            }else  if ($arrData[$i]['tipoNovedad'] == 'Nueva_observacion') {
+                $arrData[$i]['tipoNovedad'] = 'Observacion';
+                $arrData[$i]['icono'] = ' <i class="bi bi-chat-left-text text-primary"></i>';
+                $arrData[$i]['link'] = 'http://localhost/inasistencias/excusas';
+            }else  if ($arrData[$i]['tipoNovedad'] == 'Nueva_Denegacion') {
+                $arrData[$i]['tipoNovedad'] = 'Excusa Denegada';
+                $arrData[$i]['icono'] = '<i class="bi bi-file-earmark-x text-danger"></i>';
+                $arrData[$i]['link'] = 'http://localhost/inasistencias/excusas';
+            }else  if ($arrData[$i]['tipoNovedad'] == 'Nueva_Aprobacion') {
+                $arrData[$i]['tipoNovedad'] = 'Excusa Aprovada';
+                $arrData[$i]['icono'] = '<i class="bi bi-file-earmark-check text-primary"></i>';
+                $arrData[$i]['link'] = 'http://localhost/inasistencias/excusas';
+            }else  if ($arrData[$i]['tipoNovedad'] == 'plazo_excusas') {
+                $arrData[$i]['tipoNovedad'] = 'Recordatorio Excusa';
+                $arrData[$i]['icono'] = '<i class="bi bi-alarm text-danger"></i>';
+                $arrData[$i]['link'] = 'http://localhost/inasistencias/excusas';
+            }
+        }
+        echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
 
     public function descargarArchivo() {
@@ -267,6 +304,7 @@ class Excusas extends Controllers
 
                 $fileName = basename($_FILES['txtArchivo']["name"]);
                 if ($intExcusa == 0 || $intExcusa == "" || $intExcusa == "0") {
+                    $this->NotificacionesModel->NotiExcusa('Nueva_excusa','Una nueva excusa se encuentra pendiente',$intIdInstructor);
                     $insert = $this->model->insertExcusas(
                         $intInasistencia,
                         $intIdUsuario,
@@ -306,13 +344,17 @@ class Excusas extends Controllers
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
     }
 
-
     function agregarObservacion()
     {
         if ($_POST) {
             $intIdExcusa = intval($_POST['IdExcusa']);
             $strObservacion = strClean($_POST['txtObservacion']);
+            $arrData = $this->model->selectExcusasId($intIdExcusa);
             $requestDelete = $this->model->updateObservacion($intIdExcusa,$strObservacion);
+            $userId = $arrData['usuario_idUsuarios'];
+            $this->NotificacionesModel->NotiExcusa('Nueva_observacion','Una nueva observacion se agregado a tu excusa',$userId);
+
+            
 
             if ($requestDelete) {
                 $arrResponse = array('status' => true, 'msg' => 'se ha agregado la observacion');
@@ -327,8 +369,14 @@ class Excusas extends Controllers
     function aceptarExcusas()
     {
         if ($_POST) {
-            $intIdExcusa = intval($_POST['txtIdInasistencia']);
-            $requestDelete = $this->model->aceptarExcusa($intIdExcusa);
+            $idInasistencia = intval($_POST['txtIdInasistencia']);
+            $arrExcusa = $this->model->selectIdExcusa($idInasistencia);
+            $idExcusa = $arrExcusa['excusaId'];
+            $arrData = $this->model->selectExcusasId($idExcusa);
+            $requestDelete = $this->model->aceptarExcusa($idInasistencia);
+            $userId = $arrData['usuario_idUsuarios'];
+            $this->NotificacionesModel->NotiExcusa('Nueva_Aprobacion','Tras la revision de tu excusa, el instructor ha determinado que la inasistencia esta debidamente justificada.',$userId);
+            
 
             if ($requestDelete) {
                 $arrResponse = array('status' => true, 'msg' => 'se ha eliminado la inasistencia');
@@ -343,8 +391,13 @@ class Excusas extends Controllers
     function denegarExcusas()
     {
         if ($_POST) {
-            $intIdExcusa = intval($_POST['txtIdInasistencia']);
-            $requestDelete = $this->model->denegarExcusa($intIdExcusa);
+            $idInasistencia = intval($_POST['txtIdInasistencia']);
+            $arrExcusa = $this->model->selectIdExcusa($idInasistencia);
+            $idExcusa = $arrExcusa['excusaId'];
+            $arrData = $this->model->selectExcusasId($idExcusa);
+            $requestDelete = $this->model->denegarExcusa($idInasistencia);
+            $userId = $arrData['usuario_idUsuarios'];
+            $this->NotificacionesModel->NotiExcusa('Nueva_Denegacion','Tras la revision de tu excusa, el instructor ha determinado que la inasistencia no queda debidamente justificada.',$userId);
             
 
             if ($requestDelete) {

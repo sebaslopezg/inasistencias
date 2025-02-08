@@ -366,6 +366,28 @@ BEGIN
         AND e.idExcepciones IS NULL;      
 END;
 
+--
+--  Eventos 'registrar notificaciones de recordatorio de limite de plazo'
+--
+
+CREATE DEFINER=`root`@`localhost` EVENT `verificar_plazo_excusas` ON SCHEDULE EVERY 1 DAY STARTS '2025-02-07 15:34:06' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+    INSERT INTO notificaciones (tipoNovedad, fecha, hora, mensaje, usuarioId, status)
+    SELECT 
+        'plazo_excusas',                     
+        CURDATE(),                          
+        CURTIME(),                           
+        CONCAT('Recuerda que mañana vence el plazo para subir la excusa de tu inasistencia del ', 
+               DATE_FORMAT(i.fecha, '%Y-%m-%d')), 
+        i.usuario_idUsuarios,                
+        1                                     
+    FROM inasistencias i
+    LEFT JOIN excusas e ON i.idInasistencias = e.inasistencias_idInasistencias
+    WHERE i.fecha = DATE_SUB(CURDATE(), INTERVAL 4 DAY)
+      AND e.idExcusas IS NULL
+      AND i.status = 1;
+END
+
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

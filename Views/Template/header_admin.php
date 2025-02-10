@@ -65,10 +65,8 @@
             <span class="badge bg-primary badge-number" id="spanNoti">4</span>
           </a><!-- End Notification Icon -->
 
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications" id="ulNotificacion" style="max-height: 600px; overflow-y: auto;">
-            
-          <li class="dropdown-header" id="headerLi"></li>
-        
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications" id="ulNotificacion" style="max-height: 565px; min-width: 350px; overflow-y: auto;">
+            <li class="dropdown-header" id="headerLi"></li>
           </ul><!-- End Notification Dropdown Items -->
 
         </li><!-- End Notification Nav -->

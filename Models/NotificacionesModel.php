@@ -23,10 +23,22 @@ class NotificacionesModel extends Mysql{
 
     public function NotiSelect (int $usuarioId){
         $this->usuarioId = $usuarioId;
-        $sql = "SELECT * FROM notificaciones WHERE usuarioId = {$this->usuarioId}";
+        $sql = "SELECT * FROM notificaciones WHERE usuarioId = {$this->usuarioId} AND status = 1";
         $request = $this->select_all($sql);
 
         return $request;
     }
     
+    public function NotiDelet(int $idNoti)
+    {
+        $this->idNoti = $idNoti;
+        $this->status = 0;
+
+        $sql = "UPDATE notificaciones set status = ? where idNotificaciones = ?";
+        $arrData = array($this->status,$this->idNoti);
+        $reques_insert = $this->update($sql, $arrData);
+        $respuesta = $reques_insert;
+
+        return $respuesta;
+    }
 }

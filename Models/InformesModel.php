@@ -38,12 +38,9 @@ class InformesModel extends Mysql
     public function selectFechasFaltas(int $idAprendiz)
     {
         $this->idAprendiz = $idAprendiz;
-        $sql = "SELECT CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo, inasistencias.fecha
-        FROM inasistencias
+        $sql = "SELECT CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo, inasistencias.fecha FROM inasistencias
         INNER JOIN usuario ON usuario.idUsuarios = inasistencias.usuario_idUsuarios
-        WHERE inasistencias.usuario_idUsuarios = {$this->idAprendiz}
-         AND usuario.status = 1 AND inasistencias.status = 1 OR inasistencias.status = 3
-          AND usuario.rol = 'APRENDIZ';";
+        WHERE  inasistencias.usuario_idUsuarios = {$this->idAprendiz} AND usuario.status = 1 AND inasistencias.status = 1 OR inasistencias.status = 3 AND usuario.rol = 'APRENDIZ' AND EXISTS ( SELECT 1 FROM inasistencias WHERE usuario.idUsuarios = {$this->idAprendiz});";
         $request = $this->select_all($sql);
         return $request;
     }

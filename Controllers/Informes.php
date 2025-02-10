@@ -1,10 +1,13 @@
+
 <?php
+require_once './Controllers/Reportes.php';
 class Informes extends Controllers
 {
 
     private $idInstru;
     public function __construct()
     {
+        $this->controller = new Reportes();
         parent::__construct();
         session_start();
         if (empty($_SESSION['login'])) {
@@ -69,6 +72,19 @@ class Informes extends Controllers
         }
 
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function generarPdf(int $data)
+    {
+
+        $arrData = $this->controller->generarPdfAprendiz($data);
+        echo $arrData;
+    }
+    public function generarPdfAsi(int $data)
+    {
+
+        $arrData = $this->controller->generarPdfAsistencia($data);
+        echo $arrData;
     }
 
     public function getAprendices(int $idFicha)

@@ -1,9 +1,11 @@
+
 let tablaInfoAprendiz = document.querySelector("#tabla-aprendices");
 let tableVisibility = document.querySelector("#tabla-informe");
 let mostrarInfo = document.querySelector("#mostrar-info");
 let btnCerrarModal = document.querySelector("#btnCerrarModal");
 let btnAsistencia = document.querySelector("#btnAsistencia");
 let btnInasistencia = document.querySelector("#btnInasistencia");
+let mostrarBtn = document.querySelector("#mostrar-btn");
 let btnPdf = document.querySelector("#btnPdf");
 let btnPdfM = document.querySelector("#btnPdfmodal");
 let cardInforme = document.querySelector(".class-informes");
@@ -14,15 +16,29 @@ let fechaTr = document.querySelector("#fecha-tr");
 let columAprendiz = document.querySelector("#colum-aprendiz");
 let codigoFicha = 0;
 let id_Ficha = 0;
-
 // -----------------------------------
 //             BOTONES
 // -----------------------------------
+
 
 btnCerrarModal.addEventListener("click", () => {
   mostrarInfo.innerHTML = "";
 });
 
+/*
+btnPdf.addEventListener("click", () => {
+  fetch(base_url + "/informes/generarPdf/pdfAsistencia/" + id_Ficha)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      /*   data.forEach((data) => {
+      let fila = `
+         <th scope="col" class="cosa" id="colum-fecha" style="text-align: center;"  > ${data.fechaInicio}</th> `;
+      fechaTr.innerHTML += fila;
+    });
+  });
+});
+*/
 btnAsistencia.addEventListener("click", () => {
   cardInforme.style.display = "none";
   cardAsistencias.style.display = "block";
@@ -34,10 +50,10 @@ btnAsistencia.addEventListener("click", () => {
   // -----------------------------------
   //   TRAEMOS LAS FECHAS DEL HORARIO DEL INSTRUCTOR
   // -----------------------------------
+
   fetch(base_url + "/informes/getFechaInstructor/" + codigoFicha)
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
       data.forEach((data) => {
         let fila = `
            <th scope="col" class="cosa" id="colum-fecha" style="text-align: center;"  > ${data.fechaInicio}</th> `;
@@ -59,7 +75,7 @@ btnAsistencia.addEventListener("click", () => {
     });
 
   // -----------------------------------
-  //    MOSTRARMOS LA CONTROL DE ASITENCIAS DE LA FICHA
+  //  MOSTRARMOS LA CONTROL DE ASITENCIAS DE LA FICHA
   // -----------------------------------
 
   fetch(base_url + "/informes/getAsistencia/" + id_Ficha)
@@ -70,18 +86,25 @@ btnAsistencia.addEventListener("click", () => {
         info = data.filter((aprendiz) => aprendiz.nombre_completo === `${nombres[i]}`);
         //console.log(info);
         let fila = `
-          <tr id="aprendiz-tr${i}">
+          <tr id="aprendiz-tr${i}"  >
           <td scope="col" style="text-align: center;">${i + 1} </td>
           <td scope="col" style="text-align: center;">${nombres[i]}</td>
           </tr>
           `;
         columAprendiz.innerHTML += fila;
         for (let index = 0; index < info.length; index++) {
-          let celda = ` <td scope="col" style="text-align: center;">${info[index].status}</td>`;
+          let celda = ` <td scope="col" name="col-fecha" style="text-align: center;">${info[index].status}</td>`;
           $(`#aprendiz-tr${i}`).append(celda);
         }
       }
     });
+
+  $("#tabla-asistencia tbody tr").each(function () {
+    let datos = [];
+    let obtenerFila = $this.find("td[name='col-fecha']").val();
+
+    console.log(obtenerFila);
+  });
 });
 
 btnInasistencia.addEventListener("click", () => {
@@ -108,12 +131,16 @@ btnInasistencia.addEventListener("click", () => {
 document.addEventListener("click", (e) => {
   try {
     let action = e.target.closest("button").getAttribute("data-action");
-    let id = e.target.closest("button").getAttribute("data-id");
+    let idAprendiz = e.target.closest("button").getAttribute("data-id");
 
-    if (action == "info") {
-      fetch(base_url + "/informes/getFaltas/" + id)
+    if (action === "info") {
+      fetch(base_url + "/informes/getFaltas/" + idAprendiz)
         .then((res) => res.json())
         .then((data) => {
+          let elemento = `
+           <button type="button" style="float:right; margin-right:5px;" id="btnPDFmodal" data-action="pdf" data-id="${idAprendiz}"  class="btn btn-outline-danger mb-3"> <i class="bi bi-filetype-pdf" style="font-size:larger;"></i></button>
+          `;
+          mostrarBtn.innerHTML = elemento;
           data.forEach((data) => {
             let row = `
             <div class="row">
@@ -140,7 +167,15 @@ document.addEventListener("click", (e) => {
             mostrarInfo.innerHTML += row;
           });
         });
+
       $("#modalInfo").modal("show");
+    } else if (action === "pdf") {
+      let idAprendiz = e.target.closest("button").getAttribute("data-id");
+      fetch(base_url + "/informes/generarPdf/" + idAprendiz)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+        });
     }
   } catch {}
 });
@@ -194,7 +229,7 @@ $(document).ready(function () {
       let fichaYaAgregado = false;
       // Itera sobre cada fila de la tabla para comprobar si el ID del ficha ya existe
       $("#tabla-infoFicha tbody tr").each(function () {
-        if ($(this).find("input[name='idFicha[]']").val() == idFicha) {
+        if ($(this).find("[name='idFicha[]']").val() == idFicha) {
           // Si encuentra una coincidencia de ID, marca fichaYaAgregado como true
           fichaYaAgregado = true;
           // Sale del ciclo

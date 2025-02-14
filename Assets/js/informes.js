@@ -1,4 +1,3 @@
-
 let tablaInfoAprendiz = document.querySelector("#tabla-aprendices");
 let tableVisibility = document.querySelector("#tabla-informe");
 let mostrarInfo = document.querySelector("#mostrar-info");
@@ -16,10 +15,10 @@ let fechaTr = document.querySelector("#fecha-tr");
 let columAprendiz = document.querySelector("#colum-aprendiz");
 let codigoFicha = 0;
 let id_Ficha = 0;
+let bandera = false;
 // -----------------------------------
 //             BOTONES
 // -----------------------------------
-
 
 btnCerrarModal.addEventListener("click", () => {
   mostrarInfo.innerHTML = "";
@@ -39,7 +38,9 @@ btnPdf.addEventListener("click", () => {
   });
 });
 */
+
 btnAsistencia.addEventListener("click", () => {
+  bandera = true;
   cardInforme.style.display = "none";
   cardAsistencias.style.display = "block";
   informeAsistencia.style.display = "block";
@@ -47,64 +48,10 @@ btnAsistencia.addEventListener("click", () => {
   btnInasistencia.style.display = "block";
   btnPdf.style.display = "block";
 
-  // -----------------------------------
-  //   TRAEMOS LAS FECHAS DEL HORARIO DEL INSTRUCTOR
-  // -----------------------------------
-
-  fetch(base_url + "/informes/getFechaInstructor/" + codigoFicha)
-    .then((res) => res.json())
-    .then((data) => {
-      data.forEach((data) => {
-        let fila = `
-           <th scope="col" class="cosa" id="colum-fecha" style="text-align: center;"  > ${data.fechaInicio}</th> `;
-        fechaTr.innerHTML += fila;
-      });
-    });
-
-  // -----------------------------------
-  //    TRAEMOS LOS NOMBRES DE LOS APRENDICES DE LA TABLA ASISTENCIAS
-  // -----------------------------------
-
-  let nombres = [];
-  fetch(base_url + "/informes/getAprendices/" + id_Ficha)
-    .then((res) => res.json())
-    .then((data) => {
-      data.forEach((data) => {
-        nombres.push(data.nombre_completo);
-      });
-    });
-
-  // -----------------------------------
-  //  MOSTRARMOS LA CONTROL DE ASITENCIAS DE LA FICHA
-  // -----------------------------------
-
-  fetch(base_url + "/informes/getAsistencia/" + id_Ficha)
-    .then((res) => res.json())
-    .then((data) => {
-      let info = [];
-      for (let i = 0; i < nombres.length; i++) {
-        info = data.filter((aprendiz) => aprendiz.nombre_completo === `${nombres[i]}`);
-        //console.log(info);
-        let fila = `
-          <tr id="aprendiz-tr${i}"  >
-          <td scope="col" style="text-align: center;">${i + 1} </td>
-          <td scope="col" style="text-align: center;">${nombres[i]}</td>
-          </tr>
-          `;
-        columAprendiz.innerHTML += fila;
-        for (let index = 0; index < info.length; index++) {
-          let celda = ` <td scope="col" name="col-fecha" style="text-align: center;">${info[index].status}</td>`;
-          $(`#aprendiz-tr${i}`).append(celda);
-        }
-      }
-    });
-
-  $("#tabla-asistencia tbody tr").each(function () {
-    let datos = [];
+  /*   $("#tabla-asistencia tbody tr").each(function () {
     let obtenerFila = $this.find("td[name='col-fecha']").val();
-
     console.log(obtenerFila);
-  });
+  }); */
 });
 
 btnInasistencia.addEventListener("click", () => {
@@ -122,12 +69,16 @@ btnInasistencia.addEventListener("click", () => {
   //    LIMPIAMOS LAS TABLAS
   //  -----------------------------------
   let i = 0;
+  let indice = 0;
   $(`#tabla-asistencia tr${i + 1}`).each(function () {
-    $("#aprendiz-tr").remove();
+    $(`#aprendiz-tr${indice}`).remove();
     $("#colum-fecha").remove();
+
     $("#colum-info-ficha").remove();
+    indice++;
   });
 });
+
 document.addEventListener("click", (e) => {
   try {
     let action = e.target.closest("button").getAttribute("data-action");
@@ -251,18 +202,50 @@ $(document).ready(function () {
           .then((res) => res.json())
           .then((data) => {
             data.forEach((data) => {
-              let texto = ` <tr id="instru-tr"><td>${data.nombre_completo}</td><td>${data.correo}</td><td style="text-align: center;">${data.faltas}</td><td style="text-align: center;">${data.accion}</td></tr>  `;
-              tablaInfoAprendiz.innerHTML += texto;
+              let tr = document.createElement("tr");
+              let th1 = document.createElement("th");
+              let th2 = document.createElement("th");
+              let th3 = document.createElement("th");
+              let th4 = document.createElement("th");
+              let text1 = document.createTextNode(`${data.nombre_completo}`);
+              let text2 = document.createTextNode(`${data.correo}`);
+              let text3 = document.createTextNode(`${data.faltas}`);
+              let text4 = document.cr(`${data.accion}`);
+
+              tr.setAttribute("id", "instru-tr");
+              th1.appendChild(text1);
+
+              th2.appendChild(text2);
+
+              th3.appendChild(text3);
+              th1.setAttribute("style", "ont-size: large; text-align: center;");
+
+              th4.appendChild(text4);
+
+              tr.appendChild(th1);
+              tr.appendChild(th2);
+              tr.appendChild(th3);
+              tr.appendChild(th4);
+
+              /*  let texto = ` <tr id="instru-tr"><td>${data.nombre_completo}</td><td>${data.correo}</td><td style="text-align: center;">${data.faltas}</td><td style="text-align: center;">${data.accion}</td></tr>  `; */
+              tablaInfoAprendiz.append(tr);
             });
           });
 
-        let filaFicha = `
-            <tr id="ficha-tr" >
-              <td style="font-size: large; text-align: center;">${nombreFicha}</td>
-              <td style="font-size: large; text-align: center;">${numeroFicha}</td>
-           </tr>
-        `;
-        $("#tabla-infoFicha tbody").append(filaFicha);
+        let tr = document.createElement("tr");
+        let th1 = document.createElement("th");
+        let th2 = document.createElement("th");
+        let text1 = document.createTextNode(`${nombreFicha}`);
+        let text2 = document.createTextNode(`${numeroFicha}`);
+
+        th1.appendChild(text1);
+        th1.setAttribute("style", "ont-size: large; text-align: center;");
+        th2.appendChild(text2);
+        th2.setAttribute("style", "ont-size: large; text-align: center;");
+        tr.appendChild(th1);
+        tr.appendChild(th2);
+        $("#tabla-infoFicha tbody").append(tr);
+        tablaAsistencias();
       }
     } else {
       Swal.fire({
@@ -272,6 +255,63 @@ $(document).ready(function () {
       });
     }
   }
+  function tablaAsistencias() {
+    // -----------------------------------
+    //   TRAEMOS LAS FECHAS DEL HORARIO DEL INSTRUCTOR
+    // -----------------------------------
+
+    fetch(base_url + "/informes/getFechaInstructor/" + codigoFicha)
+      .then((res) => res.json())
+      .then((data) => {
+        data.forEach((data) => {
+          let th = document.createElement("th");
+          let text = document.createTextNode(`${data.fechaInicio}`);
+          th.appendChild(text);
+          th.setAttribute("scope", "col");
+          th.setAttribute("id", "colum-fecha");
+          fechaTr.appendChild(th);
+        });
+      });
+
+    // -----------------------------------
+    //    TRAEMOS LOS NOMBRES DE LOS APRENDICES DE LA TABLA ASISTENCIAS
+    // -----------------------------------
+
+    let nombres = [];
+    fetch(base_url + "/informes/getAprendices/" + id_Ficha)
+      .then((res) => res.json())
+      .then((data) => {
+        data.forEach((data) => {
+          nombres.push(data.nombre_completo);
+        });
+      });
+
+    // -----------------------------------
+    //  MOSTRAMOS LA CONTROL DE ASISTENCIAS DE LA FICHA
+    // -----------------------------------
+
+    fetch(base_url + "/informes/getAsistencia/" + id_Ficha)
+      .then((res) => res.json())
+      .then((data) => {
+        let info = [];
+        for (let i = 0; i < nombres.length; i++) {
+          info = data.filter((aprendiz) => aprendiz.nombre_completo === `${nombres[i]}`);
+          //console.log(info);
+          let fila = `
+          <tr id="aprendiz-tr${i}"  >
+          <td scope="col" style="text-align: center;">${i + 1} </td>
+          <td scope="col" style="text-align: center;">${nombres[i]}</td>
+          </tr>
+          `;
+          columAprendiz.innerHTML += fila;
+          for (let index = 0; index < info.length; index++) {
+            let celda = ` <td scope="col" name="col-fecha" style="text-align: center;">${info[index].status}</td>`;
+            $(`#aprendiz-tr${i}`).append(celda);
+          }
+        }
+      });
+  }
+
   $(document).on("click", ".eliminar-fila", function () {
     $(this).closest("tr").remove();
 

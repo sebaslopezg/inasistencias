@@ -31,7 +31,6 @@ getModal('informesModal', $data);
                                     placeholder="Ingrese el nombre de la ficha.."
                                     aria-describedby="basic-addon1" />
                             </div>
-
                         </div>
                         <div class="col-2">
                             <button type="button" class="btn btn-danger btn-sm eliminar-fila"><i class="bi bi-x-circle-fill"></i></button>
@@ -80,7 +79,7 @@ getModal('informesModal', $data);
                                 <input type="month" class="form-control" name="filtroFecha" id="filtroFecha">
                             </div>
                         </div>
-                        <div class="col-2  mt-2">
+                        <div class="col-2 mb-3">
                             <button type="button" class="btn btn-danger btn-sm"><i class="bi bi-x-circle-fill"></i></button>
                         </div>
                     </div>

@@ -51,31 +51,31 @@ class Excusas extends Controllers
 
                 $diferencia = $fechaIna->diff($fechaExc);
                 $diasDeDiferencia = (int)$diferencia->days;
-                
+
                 $arrData[$i]['total'] = $arrVali[$i]['total']['total'];
                 if ($arrData[$i]['status'] == 2) {
                     $arrData[$i]['action'] = '<div class="w-100 h-50 alert alert-primary" role="alert">
                 La excusa a sido aprobada.
                 </div>
                 ';
-                }else if ($arrData[$i]['status'] == 3 && $diasDeDiferencia < $diasPlazo) {
+                } else if ($arrData[$i]['status'] == 3 && $diasDeDiferencia < $diasPlazo) {
                     $arrData[$i]['excusaId'] = $arrExcu[$i]['excusaId']['excusaId'];
                     $arrData[$i]['action'] = '
                 <button type="button" data-id="' . $arrData[$i]['excusaId'] . '" data-action="editar" class="btn btn-success"><i class="bi bi-pencil-square"></i></button>
                 <button title="Observacion del Instructor" type="button" data-id="' . $arrData[$i]['excusaId'] . '" data-action="observacion" class="btn btn-primary"><i class="bi bi-chat-dots-fill"></i></button>';
-                }else if ((empty($arrData[$i]['total']) || $arrData[$i]['total'] == 0 || empty($arrExcu[$i]['excusaId'])) && $diasDeDiferencia < $diasPlazo) {
+                } else if ((empty($arrData[$i]['total']) || $arrData[$i]['total'] == 0 || empty($arrExcu[$i]['excusaId'])) && $diasDeDiferencia < $diasPlazo) {
                     $arrData[$i]['action'] = '
                 <button type="button" data-id="' . $arrData[$i]['Id'] . '" data-action="agregar" class="btn btn-primary"><i class="bi bi-paperclip"></i></button>';
-                } else if($arrData[$i]['status'] == 1 && empty($arrData[$i]['observacion']['observacion']) && $diasDeDiferencia < $diasPlazo){
+                } else if ($arrData[$i]['status'] == 1 && empty($arrData[$i]['observacion']['observacion']) && $diasDeDiferencia < $diasPlazo) {
                     $arrData[$i]['excusaId'] = $arrExcu[$i]['excusaId']['excusaId'];
                     $arrData[$i]['action'] = '
                 <button type="button" data-id="' . $arrData[$i]['excusaId'] . '" data-action="editar" class="btn btn-success"><i class="bi bi-pencil-square"></i></button>';
-                }else if($arrData[$i]['status'] == 1 && !empty($arrData[$i]['observacion']['observacion']) && $diasDeDiferencia < $diasPlazo){
+                } else if ($arrData[$i]['status'] == 1 && !empty($arrData[$i]['observacion']['observacion']) && $diasDeDiferencia < $diasPlazo) {
                     $arrData[$i]['excusaId'] = $arrExcu[$i]['excusaId']['excusaId'];
                     $arrData[$i]['action'] = '
                 <button type="button" data-id="' . $arrData[$i]['excusaId'] . '" data-action="editar" class="btn btn-success"><i class="bi bi-pencil-square"></i></button>
                 <button title="Observacion del Instructor" type="button" data-id="' . $arrData[$i]['excusaId'] . '" data-action="observacion" class="btn btn-primary"><i class="bi bi-chat-dots-fill"></i></button>';
-                }else {
+                } else {
                     $arrData[$i]['action'] = '<div class="w-100 h-50 alert alert-danger" role="alert">
                     El plazo maximo de envio fue sobrepasado.
                     </div>
@@ -85,11 +85,11 @@ class Excusas extends Controllers
 
                 if ($arrData[$i]['status'] == 1 && $diasDeDiferencia < $diasPlazo) {
                     $arrData[$i]['status'] = '<span class="badge rounded-pill bg-warning">Pendiente</span>';
-                }else if ($arrData[$i]['status'] == 3 && $diasDeDiferencia < $diasPlazo) {
+                } else if ($arrData[$i]['status'] == 3 && $diasDeDiferencia < $diasPlazo) {
                     $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Denegada</span>';
-                }else if($arrData[$i]['status'] == 2){
-                $arrData[$i]['status'] = '<span class="badge rounded-pill bg-primary">Aprobada</span>';
-                }else{
+                } else if ($arrData[$i]['status'] == 2) {
+                    $arrData[$i]['status'] = '<span class="badge rounded-pill bg-primary">Aprobada</span>';
+                } else {
                     $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Expirado</span>';
                 }
             }
@@ -107,43 +107,43 @@ class Excusas extends Controllers
                 $diasDeDiferencia = (int)$diferencia->days;
 
 
-               
+
                 if ($arrData[$i]['estIna'] == 1 && $arrData[$i]['observacion'] !== null && $diasDeDiferencia < $diasPlazo) {
                     $arrData[$i]['fileExc'] = '
                     <button type="button" data-id="' . $arrData[$i]['idExcusas'] . '" data-action="descargar" class="btn btn-primary"><i class="bi bi-file-earmark-text-fill"></i></button>';
                     $arrData[$i]['action'] = '
                     <button type="button" data-id="' . $arrData[$i]['idInasistencias'] . '" data-action="aprobar" class="btn btn-success"><i class="bi bi-check-circle-fill"></i></button>
                     <button type="button" data-id="' . $arrData[$i]['idInasistencias'] . '" data-action="denegar" class="btn btn-danger"><i class="bi bi-x-circle"></i></button>';
-                }else if ($arrData[$i]['estIna'] == 1 && $arrData[$i]['observacion'] == null && $diasDeDiferencia < $diasPlazo) {
+                } else if ($arrData[$i]['estIna'] == 1 && $arrData[$i]['observacion'] == null && $diasDeDiferencia < $diasPlazo) {
                     $arrData[$i]['fileExc'] = '
                     <button type="button" data-id="' . $arrData[$i]['idExcusas'] . '" data-action="descargar" class="btn btn-primary"><i class="bi bi-file-earmark-text-fill"></i></button>';
                     $arrData[$i]['action'] = '
                     <button type="button" data-id="' . $arrData[$i]['idInasistencias'] . '" data-action="aprobar" class="btn btn-success"><i class="bi bi-check-circle-fill"></i></button>
                     <button type="button" data-id="' . $arrData[$i]['idExcusas'] . '" data-action="agrObservacion" class="btn btn-primary"><i class="bi bi-chat-dots-fill"></i></button>';
-                }elseif ($arrData[$i]['estIna'] == 2) {
+                } elseif ($arrData[$i]['estIna'] == 2) {
                     $arrData[$i]['fileExc'] = '
                     <i class="bi bi-file-earmark-text-fill text-primary fs-2"></i>';
                     $arrData[$i]['action'] = '<i class="bi bi-check-circle text-success fs-2"></i>';
-                }else if($arrData[$i]['estIna'] == 3 && $diasDeDiferencia < $diasPlazo){
+                } else if ($arrData[$i]['estIna'] == 3 && $diasDeDiferencia < $diasPlazo) {
                     $arrData[$i]['fileExc'] = '
                     <button type="button" data-id="' . $arrData[$i]['idExcusas'] . '" data-action="descargar" class="btn btn-primary"><i class="bi bi-file-earmark-text-fill"></i></button>';
                     $arrData[$i]['action'] = ' <button type="button" data-id="' . $arrData[$i]['idExcusas'] . '" data-action="agrObservacion" class="btn btn-primary"><i class="bi bi-chat-dots-fill"></i></button>';
-                }else {
+                } else {
                     $arrData[$i]['action'] = '<div class="w-100 h-50 alert alert-danger" role="alert">
                     El plazo maximo de envio fue sobrepasado.
                     </div>
                     ';
                     $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Expirado</span>';
                 }
-               
-          
+
+
                 if ($arrData[$i]['estIna'] == 1 && $diasDeDiferencia < $diasPlazo) {
                     $arrData[$i]['status'] = '<span class="badge rounded-pill bg-warning">Pendiente</span>';
-                }else if ($arrData[$i]['estIna'] == 2) {
+                } else if ($arrData[$i]['estIna'] == 2) {
                     $arrData[$i]['status'] = '<span class="badge rounded-pill bg-primary">Aprobada</span>';
-                }else if ($arrData[$i]['estIna'] == 3 && $diasDeDiferencia < $diasPlazo) {
+                } else if ($arrData[$i]['estIna'] == 3 && $diasDeDiferencia < $diasPlazo) {
                     $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Denegada</span>';
-                }else {
+                } else {
                     $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Expirado</span>';
                 }
             }
@@ -151,37 +151,38 @@ class Excusas extends Controllers
         }
     }
 
-    function getNotificaciones(){
+    function getNotificaciones()
+    {
 
         $arrData = $this->NotificacionesModel->NotiSelect($_SESSION['userData']['idUsuarios']);
 
-        for ($i=0; $i < count($arrData); $i++) { 
+        for ($i = 0; $i < count($arrData); $i++) {
             if ($arrData[$i]['tipoNovedad'] == 'registro_inasistencia') {
                 $arrData[$i]['tipoNovedad'] = 'Inasistencia';
                 $arrData[$i]['icono'] = ' <i class="bi bi-person-x text-warning"></i>';
                 $arrData[$i]['link'] = 'http://localhost/inasistencias/excusas';
                 $arrData[$i]['action'] = $arrData[$i]['idNotificaciones'];
-            }else  if ($arrData[$i]['tipoNovedad'] == 'Nueva_excusa')       {
+            } else  if ($arrData[$i]['tipoNovedad'] == 'Nueva_excusa') {
                 $arrData[$i]['tipoNovedad'] = 'Excusa';
                 $arrData[$i]['icono'] = '<i class="bi bi-file-earmark-text text-primary"></i>';
                 $arrData[$i]['link'] = 'http://localhost/inasistencias/excusas';
                 $arrData[$i]['action'] = $arrData[$i]['idNotificaciones'];
-            }else  if ($arrData[$i]['tipoNovedad'] == 'Nueva_observacion') {
+            } else  if ($arrData[$i]['tipoNovedad'] == 'Nueva_observacion') {
                 $arrData[$i]['tipoNovedad'] = 'Observacion';
                 $arrData[$i]['icono'] = ' <i class="bi bi-chat-left-text text-primary"></i>';
                 $arrData[$i]['link'] = 'http://localhost/inasistencias/excusas';
                 $arrData[$i]['action'] = $arrData[$i]['idNotificaciones'];
-            }else  if ($arrData[$i]['tipoNovedad'] == 'Nueva_Denegacion') {
+            } else  if ($arrData[$i]['tipoNovedad'] == 'Nueva_Denegacion') {
                 $arrData[$i]['tipoNovedad'] = 'Excusa Denegada';
                 $arrData[$i]['icono'] = '<i class="bi bi-file-earmark-x text-danger"></i>';
                 $arrData[$i]['link'] = 'http://localhost/inasistencias/excusas';
                 $arrData[$i]['action'] = $arrData[$i]['idNotificaciones'];
-            }else  if ($arrData[$i]['tipoNovedad'] == 'Nueva_Aprobacion') {
+            } else  if ($arrData[$i]['tipoNovedad'] == 'Nueva_Aprobacion') {
                 $arrData[$i]['tipoNovedad'] = 'Excusa Aprovada';
                 $arrData[$i]['icono'] = '<i class="bi bi-file-earmark-check text-primary"></i>';
                 $arrData[$i]['link'] = 'http://localhost/inasistencias/excusas';
                 $arrData[$i]['action'] = $arrData[$i]['idNotificaciones'];
-            }else  if ($arrData[$i]['tipoNovedad'] == 'plazo_excusas') {
+            } else  if ($arrData[$i]['tipoNovedad'] == 'plazo_excusas') {
                 $arrData[$i]['tipoNovedad'] = 'Recordatorio Excusa';
                 $arrData[$i]['icono'] = '<i class="bi bi-alarm text-danger"></i>';
                 $arrData[$i]['link'] = 'http://localhost/inasistencias/excusas';
@@ -194,39 +195,38 @@ class Excusas extends Controllers
     function eliminarNoti()
     {
         if ($_POST) {
-           
-                $idNoti = intval($_POST['idNoti']);
-                $requestDelete = $this->NotificacionesModel->NotiDelet($idNoti);
-    
-                if ($requestDelete) {
-                    $arrResponse = array('status' => true, 'msg' => 'Se ha eliminado la notificacion');
-                } else {
-                    $arrResponse = array('status' => false, 'msg' => 'Error al eliminar la notificacion');
-                }
-    
-                echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
-            
+
+            $idNoti = intval($_POST['idNoti']);
+            $requestDelete = $this->NotificacionesModel->NotiDelet($idNoti);
+
+            if ($requestDelete) {
+                $arrResponse = array('status' => true, 'msg' => 'Se ha eliminado la notificacion');
+            } else {
+                $arrResponse = array('status' => false, 'msg' => 'Error al eliminar la notificacion');
+            }
+
+            echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
         }
-        
     }
 
-    public function descargarArchivo() {
-        
+    public function descargarArchivo()
+    {
+
         if (isset($_GET['download'])) {
             // Obtener el ID del archivo desde la URL
             $id = $_GET['download'];
             $file = $this->model->selectFilePorId($id);
-    
+
             if ($file && isset($file['uriArchivo'])) {
                 $filepath = $file['uriArchivo'];
-                
+
                 // Verificar si el archivo existe en el sistema de archivos
                 if (file_exists($filepath)) {
                     // Forzar la descarga del archivo
-                    header('Content-Type: application/pdf'); 
+                    header('Content-Type: application/pdf');
                     header('Content-Disposition: attachment; filename="' . basename($filepath) . '"');
                     header('Content-Length: ' . filesize($filepath));
-    
+
                     // Enviar el archivo al navegador
                     readfile($filepath);
                     exit;  // Asegura que el script termine aquí para evitar que se envíen más datos
@@ -324,12 +324,12 @@ class Excusas extends Controllers
                     $fileRuta = $responseData['filePath'];
                 } else {
                     echo json_encode(array('status' => false, 'msg' => $responseData['msg']));
-                return; 
+                    return;
                 }
 
                 $fileName = basename($_FILES['txtArchivo']["name"]);
                 if ($intExcusa == 0 || $intExcusa == "" || $intExcusa == "0") {
-                    $this->NotificacionesModel->NotiExcusa('Nueva_excusa','Una nueva excusa se encuentra pendiente',$intIdInstructor);
+                    $this->NotificacionesModel->NotiExcusa('Nueva_excusa', 'Una nueva excusa se encuentra pendiente', $intIdInstructor);
                     $insert = $this->model->insertExcusas(
                         $intInasistencia,
                         $intIdUsuario,
@@ -349,7 +349,7 @@ class Excusas extends Controllers
                     $option = 2;
                 }
 
-                if (intval($insert) > 0 ) {
+                if (intval($insert) > 0) {
                     if ($option == 1) {
                         $arrResponse = array('status' => true, 'msg' => 'Excusa enviada correctamente');
                     }
@@ -375,11 +375,11 @@ class Excusas extends Controllers
             $intIdExcusa = intval($_POST['IdExcusa']);
             $strObservacion = strClean($_POST['txtObservacion']);
             $arrData = $this->model->selectExcusasId($intIdExcusa);
-            $requestDelete = $this->model->updateObservacion($intIdExcusa,$strObservacion);
+            $requestDelete = $this->model->updateObservacion($intIdExcusa, $strObservacion);
             $userId = $arrData['usuario_idUsuarios'];
-            $this->NotificacionesModel->NotiExcusa('Nueva_observacion','Una nueva observacion se agregado a tu excusa',$userId);
+            $this->NotificacionesModel->NotiExcusa('Nueva_observacion', 'Una nueva observacion se agregado a tu excusa', $userId);
 
-            
+
 
             if ($requestDelete) {
                 $arrResponse = array('status' => true, 'msg' => 'se ha agregado la observacion');
@@ -400,8 +400,8 @@ class Excusas extends Controllers
             $arrData = $this->model->selectExcusasId($idExcusa);
             $requestDelete = $this->model->aceptarExcusa($idInasistencia);
             $userId = $arrData['usuario_idUsuarios'];
-            $this->NotificacionesModel->NotiExcusa('Nueva_Aprobacion','Tras la revision de tu excusa, el instructor ha determinado que la inasistencia esta debidamente justificada.',$userId);
-            
+            $this->NotificacionesModel->NotiExcusa('Nueva_Aprobacion', 'Tras la revision de tu excusa, el instructor ha determinado que la inasistencia esta debidamente justificada.', $userId);
+
 
             if ($requestDelete) {
                 $arrResponse = array('status' => true, 'msg' => 'se ha eliminado la inasistencia');
@@ -422,8 +422,8 @@ class Excusas extends Controllers
             $arrData = $this->model->selectExcusasId($idExcusa);
             $requestDelete = $this->model->denegarExcusa($idInasistencia);
             $userId = $arrData['usuario_idUsuarios'];
-            $this->NotificacionesModel->NotiExcusa('Nueva_Denegacion','Tras la revision de tu excusa, el instructor ha determinado que la inasistencia no queda debidamente justificada.',$userId);
-            
+            $this->NotificacionesModel->NotiExcusa('Nueva_Denegacion', 'Tras la revision de tu excusa, el instructor ha determinado que la inasistencia no queda debidamente justificada.', $userId);
+
 
             if ($requestDelete) {
                 $arrResponse = array('status' => true, 'msg' => 'se ha denegado la excusa');
@@ -432,6 +432,5 @@ class Excusas extends Controllers
             }
             echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
         }
-        
     }
 }

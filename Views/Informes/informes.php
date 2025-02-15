@@ -26,24 +26,24 @@ getModal('informesModal', $data);
                                     type="text"
                                     class="form-control"
                                     id="ficha"
+                                    style="display:block"
                                     name="search_Ficha"
                                     placeholder="Ingrese el nombre de la ficha.."
                                     aria-describedby="basic-addon1" />
                             </div>
+
                         </div>
                         <div class="col-2">
                             <button type="button" class="btn btn-danger btn-sm eliminar-fila"><i class="bi bi-x-circle-fill"></i></button>
                         </div>
                     </div>
-
                     <button type="button" style="float: right; display: none;" id="btnAsistencia" class="btn btn-outline-success mb-3"> Asistencia <i class="bi bi-calendar-check"></i></button>
                     <button type="button" style="float: right; display: none; font-size:larger;" id="btnInasistencia" class="btn btn-outline-info mb-3"> Inasistencias <i class="bi bi-calendar-check"></i></button>
                     <button type="button" style="float: right; display: none; margin-right:5px;" id="btnPdf" class="btn btn-outline-danger mb-3"> <i class="bi bi-filetype-pdf" style="font-size:larger;"></i></button>
                 </div>
                 <div class="class-informes" id="tabla-informe" style="display: none;">
 
-                    <table class="table table-bordered"
-                        id="tabla-infoFicha">
+                    <table class="table table-bordered" id="tabla-infoFicha">
                         <thead>
                             <tr>
                                 <th scope="col" style="text-align: center;"><i class="bi bi-person-fill"></i> Ficha</th>
@@ -64,8 +64,7 @@ getModal('informesModal', $data);
                                 <th scope="col" style="text-align: center;"><i class="bi bi-info-circle-fill"></i> Info </th>
                             </tr>
                         </thead>
-                        <tbody>
-
+                        <tbody id="infoAprendiz">
                         </tbody>
                     </table>
                 </div>
@@ -74,8 +73,19 @@ getModal('informesModal', $data);
 
             <div class="card-body" id="cardAsistencias" style="display: none;">
                 <div class="form-group">
-
+                    <div class="row" style="display: flex; flex-direction: row;">
+                        <div class="col-2 mb-3">
+                            <div class="form-group">
+                                <label for="Filtro"></label>
+                                <input type="month" class="form-control" name="filtroFecha" id="filtroFecha">
+                            </div>
+                        </div>
+                        <div class="col-2  mt-2">
+                            <button type="button" class="btn btn-danger btn-sm"><i class="bi bi-x-circle-fill"></i></button>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="class-informes" id="informe-asistencia" style="display: none;">
 
                     <table class="table table-bordered"
@@ -90,7 +100,6 @@ getModal('informesModal', $data);
                                 <th scope="col" style="text-align: center;"> </th>
                                 <th scope="col" style="text-align: center;"> </th>
                             </tr>
-
                         </thead>
                         <tbody id="colum-aprendiz">
 

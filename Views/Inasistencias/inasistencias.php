@@ -1,5 +1,9 @@
 <?php header_admin($data); ?>
   <main id="main" class="main">
+  <div class="tenor-gif-embed" data-postid="13888958" data-share-method="host" data-aspect-ratio="4.705" data-width="100%"><a href="https://tenor.com/view/baggizmo-rfid-zone-gif-13888958">Baggizmo Rfid Zone GIF</a>from 
+    <a href="https://tenor.com/search/baggizmo-gifs">Baggizmo GIFs
+    </a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+
 
   <form action="" id="frmInasistencias">
     <div class="row">

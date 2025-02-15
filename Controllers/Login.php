@@ -31,13 +31,8 @@ class Login extends Controllers
                 $strPassword = hash("SHA256", $_POST['txtPassword']);
                 $requestUser = $this->model->loginUser($strUsuario, $strPassword);
                 if (empty($requestUser)) {
-<<<<<<< HEAD
                     $arrResponse = array('status' => false, 'msg' => 'El usuario o la contraseña es incorrecto');
                 } else {
-=======
-                    $arrResponse = array('status' => false, 'msg' => 'El usuario o la contraseña es incorrecto',  'pass'=> $strPassword );
-                }else{
->>>>>>> Yusti
                     $arrData = $requestUser;
                     if ($arrData['status'] == 1) {
                         $_SESSION['idUsuarios'] = $arrData['idUsuarios'];

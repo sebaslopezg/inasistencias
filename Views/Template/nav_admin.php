@@ -40,8 +40,8 @@
 
     <!-- Pagina Gestion de Fichas -->
     <li class="nav-item">
-      <a class="nav-link <?= $data['page_name'] != '' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/">
-        <i class="bi bi-person-x"></i>
+      <a class="nav-link <?= $data['page_name'] != 'fichas' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/fichas">
+        <i class="bi bi-journals"></i>
         <span>Fichas</span>
       </a>
     </li>

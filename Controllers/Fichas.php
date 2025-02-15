@@ -6,9 +6,9 @@ class Fichas extends Controllers
     {
         parent::__construct();
         session_start();
-        /* if (!empty($_SESSION['login'])) {
-            header('location:'.base_url().'/login');
-        } */
+        if (empty($_SESSION['login'])) {
+            header('Location: ' . base_url() . '/login');
+        }
     }
     public function fichas()
     {

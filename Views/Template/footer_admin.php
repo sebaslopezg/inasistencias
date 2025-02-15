@@ -21,8 +21,6 @@
   <script src="<?= media() ?>/vendor/sweetalert/sweetalert2.all.min.js"></script>
   <script src="<?= media() ?>/vendor/datatables/datatables.min.js"></script>
   <script src="<?= media() ?>/vendor/jquery/jquery-ui.js"></script>
-
-
   <!--
   <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
   <script src="assets/vendor/chart.js/chart.umd.js"></script>
@@ -35,7 +33,7 @@
 
   <!-- Template Main JS File -->
   <script src="<?= media() ?>/js/main.js"></script>
-  <?php if(isset($data['script'])): ?>
+  <?php if (isset($data['script'])): ?>
     <script src="<?= media() ?>/js/<?= $data['script'] ?>.js"></script>
   <?php endif; ?>
 

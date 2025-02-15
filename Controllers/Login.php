@@ -1,34 +1,38 @@
-<?php 
+<?php
 
-class Login extends Controllers{
-    public function __construct(){
+class Login extends Controllers
+{
+    public function __construct()
+    {
         parent::__construct();
         session_start();
-        if(isset($_SESSION['login'])){
-            header('Location: ' . base_url().'/dashboard' );
+        if (isset($_SESSION['login'])) {
+            header('Location: ' . base_url() . '/dashboard');
         }
     }
-    public function login(){
+    public function login()
+    {
 
 
         $data['page_title'] = "Página de inasistencias";
         $data['page_name'] = "login";
         $data['script'] = "login";
-        $this->views->getView($this,"login", $data);
+        $this->views->getView($this, "login", $data);
     }
 
-    public function loginUser(){
+    public function loginUser()
+    {
         if ($_POST) {
-            $arrPost = ['txtDocumento','txtPassword'];
+            $arrPost = ['txtDocumento', 'txtPassword'];
             if (!check_post($arrPost)) {
                 $arrResponse = array('status' => false, 'msg' => 'Error de datos');
-            }else{
+            } else {
                 $strUsuario = strClean($_POST['txtDocumento']);
                 $strPassword = hash("SHA256", $_POST['txtPassword']);
                 $requestUser = $this->model->loginUser($strUsuario, $strPassword);
                 if (empty($requestUser)) {
                     $arrResponse = array('status' => false, 'msg' => 'El usuario o la contraseña es incorrecto');
-                }else{
+                } else {
                     $arrData = $requestUser;
                     if ($arrData['status'] == 1) {
                         $_SESSION['idUsuarios'] = $arrData['idUsuarios'];
@@ -38,7 +42,7 @@ class Login extends Controllers{
                         $_SESSION['userData'] = $arrData;
 
                         $arrResponse = array('status' => true, 'msg' => 'ok');
-                    }else{
+                    } else {
                         $arrResponse = array('status' => false, 'msg' => 'Usuario inactivo');
                     }
                 }

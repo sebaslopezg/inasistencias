@@ -332,6 +332,62 @@ ALTER TABLE `usuario_has_ficha`
   ADD CONSTRAINT `fk_Usuario_has_Ficha_Usuario` FOREIGN KEY (`usuario_idUsuarios`) REFERENCES `usuario` (`idUsuarios`);
 COMMIT;
 
+--
+--  Eventos 'registrar inasistencias excluyendo a los que cuentas con excepciones'
+--
+
+CREATE EVENT registrar_inasistencias
+ON SCHEDULE EVERY 1 DAY 
+STARTS '2025-01-25 05:40:00' 
+DO
+BEGIN
+   
+    INSERT INTO inasistencias (fecha, hora, codigoNovedad, usuario_idUsuarios, idInstructor, status)
+    SELECT 
+        CURDATE() AS fecha,               
+        CURTIME() AS hora,                
+        0 AS codigoNovedad,               
+        u.idUsuarios AS usuario_idUsuarios,
+        NULL AS idInstructor,             
+        1 AS status                       
+    FROM 
+        usuario u
+    LEFT JOIN excepciones e
+        ON (
+            (e.usuarioId = u.idUsuarios AND CURDATE() BETWEEN DATE(e.fechaInicio) AND DATE(e.fechaFin)) 
+            OR 
+            (e.fichaId IN (SELECT ficha_idFicha FROM usuario_has_ficha WHERE usuario_idUsuarios = u.idUsuarios) AND CURDATE() BETWEEN DATE(e.fechaInicio) AND DATE(e.fechaFin)) 
+            OR
+            (e.usuarioId IS NULL AND e.fichaId IS NULL AND CURDATE() BETWEEN DATE(e.fechaInicio) AND DATE(e.fechaFin))
+        )
+    WHERE 
+        u.rol = 'APRENDIZ'                
+        AND u.status = 1                  
+        AND e.idExcepciones IS NULL;      
+END;
+
+--
+--  Eventos 'registrar notificaciones de recordatorio de limite de plazo'
+--
+
+CREATE DEFINER=`root`@`localhost` EVENT `verificar_plazo_excusas` ON SCHEDULE EVERY 1 DAY STARTS '2025-02-07 15:34:06' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+    INSERT INTO notificaciones (tipoNovedad, fecha, hora, mensaje, usuarioId, status)
+    SELECT 
+        'plazo_excusas',                     
+        CURDATE(),                          
+        CURTIME(),                           
+        CONCAT('Recuerda que mañana vence el plazo para subir la excusa de tu inasistencia del ', 
+               DATE_FORMAT(i.fecha, '%Y-%m-%d')), 
+        i.usuario_idUsuarios,                
+        1                                     
+    FROM inasistencias i
+    LEFT JOIN excusas e ON i.idInasistencias = e.inasistencias_idInasistencias
+    WHERE i.fecha = DATE_SUB(CURDATE(), INTERVAL 4 DAY)
+      AND e.idExcusas IS NULL
+      AND i.status = 1;
+END
+
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

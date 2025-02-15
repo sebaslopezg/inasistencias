@@ -14,7 +14,7 @@ class ExcepcionesModel extends mysql
         $request = $this->select_all($sql);
         return $request;
     }
-    public function selectExcepcionById(int $idExcepcion)
+    public function selectExcepcionById(int $idExcepcion)   
     {
         $this->idExcepcion = $idExcepcion;
         $sql = "SELECT * FROM excepciones where status > 0 and idExcepciones = '{$this->idExcepcion}'";

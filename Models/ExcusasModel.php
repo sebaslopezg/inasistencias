@@ -11,7 +11,7 @@ class ExcusasModel extends mysql
     public function selectInasistencias($idUsuario)
     {
         $this->$idUsuario = $idUsuario;
-        $sql = "SELECT i.idInasistencias as Id,concat(i.fecha,' ', i.hora) as fechaCompleta,i.fecha,concat(u.nombre,' ',u.apellido) as nombreCompleto,i.idInstructor,i.status FROM inasistencias i JOIN usuario u on u.idUsuarios = i.usuario_idUsuarios WHERE i.codigoNovedad = 0 and i.status > 0 AND u.idUsuarios = {$this->$idUsuario};";
+        $sql = "SELECT i.idInasistencias as Id,concat(i.fecha,' ', i.hora) as fechaCompleta,i.fecha,concat(u.nombre,' ',u.apellido) as nombreCompleto,i.idInstructor,i.status,usuario_idUsuarios FROM inasistencias i JOIN usuario u on u.idUsuarios = i.usuario_idUsuarios WHERE i.codigoNovedad = 0 and i.status > 0 AND u.idUsuarios = {$this->$idUsuario};";
         $request = $this->select_all($sql);
         return $request;
     }
@@ -43,10 +43,10 @@ class ExcusasModel extends mysql
         $request = $this->select($sql);
         return $request;
     }
-    public function selectObsId(int $idInasistencia)
+    public function selectObsId(int $excusaId)
     {
-        $this->$idInasistencia = $idInasistencia;
-        $sql = "SELECT e.observacion from excusas e WHERE e.status > 0 and e.idExcusas = '{$this->$idInasistencia}'";
+        $this->$excusaId = $excusaId;
+        $sql = "SELECT e.observacion from excusas e WHERE e.status > 0 and e.idExcusas = '{$this->$excusaId}'";
         $request = $this->select($sql);
         return $request;
     }

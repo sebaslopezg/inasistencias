@@ -1,13 +1,19 @@
+
 <?php
+require_once './Controllers/Reportes.php';
 class Informes extends Controllers
 {
+
+    private $idInstru;
     public function __construct()
     {
+        $this->controller = new Reportes();
         parent::__construct();
         session_start();
-        /* if (!empty($_SESSION['login'])) {
-            header('location:'.base_url().'/login');
-        } */
+        if (empty($_SESSION['login'])) {
+
+            header('location:' . base_url() . '/login');
+        }
     }
     public function informes()
     {
@@ -17,16 +23,16 @@ class Informes extends Controllers
         $this->views->getView($this, "informes", $data);
     }
 
-
-
     public function getFichas()
     {
-        $arrData = $this->model->selectFicha();
+        $idInstructor = $_SESSION['idUsuarios'];
+        $arrData = $this->model->selectFicha($idInstructor);
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
     public function getInfoAprendicesFicha(int $idFicha)
     {
-        $arrData = $this->model->selectInfoAprendicesById($idFicha);
+        $idInstructor = $_SESSION['idUsuarios'];
+        $arrData = $this->model->selectInfoAprendicesById($idFicha, $idInstructor);
 
         for ($i = 0; $i < count($arrData); $i++) {
             $arrData[$i]['accion'] = '
@@ -38,6 +44,53 @@ class Informes extends Controllers
     public function getFaltas(int $idAprendiz)
     {
         $arrData = $this->model->selectFechasFaltas($idAprendiz);
+
+        echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function getFechaInstructor(int $numeroFicha)
+    {
+        $idInstructor = $_SESSION['idUsuarios'];
+        $arrData = $this->model->selectFechaHorario($numeroFicha, $idInstructor);
+        echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
+    }
+    public function getAsistencia(int $idFicha)
+    {
+        $idInstructor = $_SESSION['idUsuarios'];
+        $arrData = $this->model->selectInfoAprendiz($idInstructor, $idFicha);
+
+
+        for ($i = 0; $i < count($arrData); $i++) {
+
+
+            if ($arrData[$i]['status'] == 0 || $arrData[$i]['status'] == 2) {
+                $arrData[$i]['status'] = '<span class="badge rounded-pill bg-success">Asistio</span>';
+            }
+            if ($arrData[$i]['status'] == 1 || $arrData[$i]['status'] == 3) {
+                $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Falto</span>';
+            }
+        }
+
+        echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function generarPdf(int $data)
+    {
+
+        $arrData = $this->controller->generarPdfAprendiz($data);
+        echo $arrData;
+    }
+    public function generarPdfAsi(int $data)
+    {
+
+        $arrData = $this->controller->generarPdfAsistencia($data);
+        echo $arrData;
+    }
+
+    public function getAprendices(int $idFicha)
+    {
+        $idInstructor = $_SESSION['idUsuarios'];
+        $arrData = $this->model->selectNombreAprendices($idFicha);
 
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }

@@ -45,11 +45,11 @@ btnAsistencia.addEventListener("click", () => {
   btnPdf.style.display = "block";
 });
 
-/* $(document).on("click", "#filtroFecha", function () {
-  let info = document.getElementById(filtroFecha);
+$(document).on("click", "#filtroFecha", function () {
+  let info = document.getElementById(filtroFecha).value;
 
   console.log("click fecha: " + info);
-}); */
+});
 btnInasistencia.addEventListener("click", () => {
   // -----------------------------------
   //    DESHABILITAMOS LOS ELEMENTOS (BTN AND TABLE)

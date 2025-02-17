@@ -64,15 +64,16 @@ class InformesModel extends Mysql
 
         $this->idFicha = $idFicha;
         $this->idInstructor = $idInstructor;
-        $sql = "SELECT  CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo , inasistencias.fecha, inasistencias.status
-        FROM inasistencias 
-        INNER JOIN usuario ON usuario.idUsuarios = inasistencias.usuario_idUsuarios
-        WHERE usuario.status = 1 OR inasistencias.status = 3 
-        AND usuario.rol = 'APRENDIZ' AND   inasistencias.idInstructor  = {$idInstructor}
+        $sql = "SELECT CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo , inasistencias.fecha, inasistencias.status FROM inasistencias INNER JOIN usuario ON usuario.idUsuarios = inasistencias.usuario_idUsuarios
+        WHERE inasistencias.fecha >=  AND inasistencias.fecha <= 
+        AND (usuario.status = 1 OR inasistencias.status = 3 )
+        AND usuario.rol = 'APRENDIZ'
+        AND inasistencias.idInstructor = 2
         AND EXISTS ( SELECT 1 FROM usuario_has_ficha 
-        WHERE usuario_has_ficha.usuario_idUsuarios = usuario.idUsuarios 
-        AND usuario_has_ficha.ficha_idFicha = {$this->idFicha})
-        ORDER BY inasistencias.fecha ASC";
+        WHERE usuario_has_ficha.usuario_idUsuarios = usuario.idUsuarios
+        AND usuario_has_ficha.ficha_idFicha = 1 )
+        ORDER BY inasistencias.fecha ASC
+        ";
         $aprendices =  $this->select_all($sql);
 
         return $aprendices;

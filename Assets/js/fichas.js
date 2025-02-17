@@ -138,6 +138,19 @@ document.addEventListener("click", (e) => {
       });
     }
 
+    if (action == "deleteNoti") {
+      let frmData = new FormData();
+      frmData.append("idNoti", id);
+      fetch(base_url + "/fichas/eliminarNoti", {
+        method: "POST",
+        body: frmData
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          MostrarNoti();
+        });
+    }
+
     if (action == "edit") {
       fetch(base_url + "/fichas/getFichaById/" + id)
         .then((res) => res.json())

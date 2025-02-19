@@ -4,6 +4,7 @@ let mostrarInfo = document.querySelector("#mostrar-info");
 let btnCerrarModal = document.querySelector("#btnCerrarModal");
 let btnAsistencia = document.querySelector("#btnAsistencia");
 let btnInasistencia = document.querySelector("#btnInasistencia");
+let btnFecha = document.querySelector("#btnFecha");
 let mostrarBtn = document.querySelector("#mostrar-btn");
 let btnPdf = document.querySelector("#btnPdf");
 let btnPdfM = document.querySelector("#btnPdfmodal");
@@ -45,11 +46,15 @@ btnAsistencia.addEventListener("click", () => {
   btnPdf.style.display = "block";
 });
 
-$(document).on("click", "#filtroFecha", function () {
-  let info = document.getElementById(filtroFecha).value;
-
-  console.log("click fecha: " + info);
+btnFecha.addEventListener("click", function () {
+  let info = document.getElementById("filtroFecha").value;
+  if (info.length > 0) {
+    renderTablaAsistencia(info);
+  } else {
+    console.log("esta vacido.");
+  }
 });
+
 btnInasistencia.addEventListener("click", () => {
   // -----------------------------------
   //    DESHABILITAMOS LOS ELEMENTOS (BTN AND TABLE)
@@ -123,7 +128,67 @@ document.addEventListener("click", (e) => {
     }
   } catch {}
 });
+function renderTablaAsistencia(fecha) {
+  // -----------------------------------
+  //   TRAEMOS LAS FECHAS DEL HORARIO DEL INSTRUCTOR
+  // -----------------------------------
+  let reqInfo = `${codigoFicha},${fecha}`;
+  fetch(base_url + "/informes/getFechaInstructor/" + reqInfo)
+    .then((res) => res.json())
+    .then((data) => {
+      data.forEach((data) => {
+        let th = document.createElement("th");
+        let text = document.createTextNode(`${data.fechaInicio}`);
+        th.appendChild(text);
+        th.setAttribute("scope", "col");
+        th.setAttribute("style", "text-align: center;");
+        th.setAttribute("id", "colum-fecha");
+        fechaTr.appendChild(th);
+      });
+    });
 
+  // -----------------------------------
+  //    TRAEMOS LOS NOMBRES DE LOS APRENDICES DE LA TABLA ASISTENCIAS
+  // -----------------------------------
+
+  let nombres = [];
+  fetch(base_url + "/informes/getAprendices/" + id_Ficha)
+    .then((res) => res.json())
+    .then((data) => {
+      data.forEach((data) => {
+        nombres.push(data.nombre_completo);
+      });
+    });
+
+  // -----------------------------------
+  //  MOSTRAMOS LA CONTROL DE ASISTENCIAS DE LA FICHA
+  // -----------------------------------
+  let reqData = `${id_Ficha},${fecha}`;
+
+  fetch(base_url + "/informes/getAsistencia/" + reqData)
+    .then((res) => res.json())
+    .then((data) => {
+      let info = [];
+      for (let i = 0; i < nombres.length; i++) {
+        info = data.filter(
+          (aprendiz) => aprendiz.nombre_completo === `${nombres[i]}`
+        );
+
+        let fila = `
+        <tr id="aprendiz-tr${i}">
+        <td scope="col" style="text-align: center;">${i + 1} </td>
+        <td scope="col" style="text-align: center;">${nombres[i]}</td>
+        </tr>
+        `;
+        //console.log(info);
+        columAprendiz.innerHTML += fila;
+        for (let index = 0; index < info.length; index++) {
+          let celda = ` <td scope="col" name="col-fecha" style="text-align: center;">${info[index].status}</td>`;
+          $(`#aprendiz-tr${i}`).append(celda);
+        }
+      }
+    });
+}
 $(document).ready(function () {
   // -----------------------------------
   //    VERIFICAR Fichas DISPONIBLES
@@ -214,13 +279,15 @@ $(document).ready(function () {
         let text2 = document.createTextNode(`${numeroFicha}`);
 
         th1.appendChild(text1);
-        th1.setAttribute("style", "ont-size: large; text-align: center;");
+        // th1.setAttribute("id", "thNombreFicha");
+        th1.setAttribute("class", "ont-size: large; text-align: center;");
         th2.appendChild(text2);
+        // th2.setAttribute("id", "thNumeroFicha");
         th2.setAttribute("style", "ont-size: large; text-align: center;");
         tr.appendChild(th1);
+        tr.setAttribute("id", "trInfoFicha");
         tr.appendChild(th2);
         $("#tabla-infoFicha tbody").append(tr);
-        tablaAsistencias();
       }
     } else {
       Swal.fire({
@@ -230,67 +297,6 @@ $(document).ready(function () {
       });
     }
   }
-  function tablaAsistencias() {
-    // -----------------------------------
-    //   TRAEMOS LAS FECHAS DEL HORARIO DEL INSTRUCTOR
-    // -----------------------------------
-
-    fetch(base_url + "/informes/getFechaInstructor/" + codigoFicha)
-      .then((res) => res.json())
-      .then((data) => {
-        data.forEach((data) => {
-          let th = document.createElement("th");
-          let text = document.createTextNode(`${data.fechaInicio}`);
-          th.appendChild(text);
-          th.setAttribute("scope", "col");
-          th.setAttribute("style", "text-align: center;");
-          th.setAttribute("id", "colum-fecha");
-          fechaTr.appendChild(th);
-        });
-      });
-
-    // -----------------------------------
-    //    TRAEMOS LOS NOMBRES DE LOS APRENDICES DE LA TABLA ASISTENCIAS
-    // -----------------------------------
-
-    let nombres = [];
-    fetch(base_url + "/informes/getAprendices/" + id_Ficha)
-      .then((res) => res.json())
-      .then((data) => {
-        data.forEach((data) => {
-          nombres.push(data.nombre_completo);
-        });
-      });
-
-    // -----------------------------------
-    //  MOSTRAMOS LA CONTROL DE ASISTENCIAS DE LA FICHA
-    // -----------------------------------
-
-    fetch(base_url + "/informes/getAsistencia/" + id_Ficha)
-      .then((res) => res.json())
-      .then((data) => {
-        let info = [];
-        for (let i = 0; i < nombres.length; i++) {
-          info = data.filter(
-            (aprendiz) => aprendiz.nombre_completo === `${nombres[i]}`
-          );
-
-          let fila = `
-          <tr id="aprendiz-tr${i}">
-          <td scope="col" style="text-align: center;">${i + 1} </td>
-          <td scope="col" style="text-align: center;">${nombres[i]}</td>
-          </tr>
-          `;
-          //console.log(info);
-          columAprendiz.innerHTML += fila;
-          for (let index = 0; index < info.length; index++) {
-            let celda = ` <td scope="col" name="col-fecha" style="text-align: center;">${info[index].status}</td>`;
-            $(`#aprendiz-tr${i}`).append(celda);
-          }
-        }
-      });
-  }
-
   $(document).on("click", ".eliminar-fila", function () {
     $(this).closest("tr").remove();
 
@@ -304,21 +310,27 @@ $(document).ready(function () {
     btnPdf.style.display = "none";
 
     // -----------------------------------
-    //    LIMIPIAMOS LAS TABLAS CON LA INFORMACION IMPRESA
+    //    LIMIPIAMOS LA TABLA INFORME
     // -----------------------------------
     $("#tabla-infoFicha tr").each(function () {
       $("#ficha-tr").remove();
+      $("#trInfoFicha").remove();
+      /* $("#thNumeroFicha").remove(); */
     });
 
+    $("#tabla-aprendices tr").each(function () {
+      $("#instru-tr").remove();
+      $(`#aprendiz-tr`).remove();
+    });
+    // -----------------------------------
+    //    LIMIPIAMOS LA TABLA ASISTENCIA
+    // -----------------------------------
     let i = 0;
     let indice = 0;
     $(`#tabla-asistencia tr${i + 1}`).each(function () {
       $(`#aprendiz-tr${indice + 1}`).remove();
       $("#colum-fecha").remove();
       $("#colum-info-ficha").remove();
-    });
-    $("#tabla-aprendices tr").each(function () {
-      $("#instru-tr").remove();
     });
   });
 });

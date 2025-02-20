@@ -61,7 +61,7 @@ class Correo extends Controllers
         } catch (Exception $e) {
 
             $arrResponse = array('status' => false, 'msg' => 'Error al enviar el correo' . $this->mail->ErrorInfo . $this->mail->Host .
-                $this->mail->SMTPAuth . $this->mail->Username . $this->mail->Password . $this->mail->SMTPSecure . $this->mail->Port);
+                $this->mail->SMTPAuth . $this->mail->Username . $this->mail->Password . $this->mail->SMTPSecure . $this->mail->Port . $destinatario . $asunto);
         }
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
     }
@@ -75,35 +75,26 @@ class Correo extends Controllers
         $insert = $this->LoginModel->insertRecuperacion($correo, $codigo);
 
         // Crear el enlace con el código de recuperación
-        $enlace = "http://localhost/Email_ejemplo/recuperar.php?codigo=" . $codigo . "&correo=" . urlencode($correo);
+        $enlace = "http://localhost/inasistencias/recuperar?codigo=" . $codigo . "&correo=" . urlencode($correo);
 
         // Enviar el correo con el enlace de recuperación
-        $asunto = 'Recuperación de Contraseña';
+        $asunto = 'Recuperacion de Contrasena';
         $mensaje = "Haz clic en el siguiente enlace para recuperar tu contraseña: <a href='" . $enlace . "'>Recuperar Contraseña</a>";
         // Llamar a la función de enviarCorreo
         $this->enviarCorreo($correo, $asunto, $mensaje);
-
-        if (intval($insert) > 0) {
-
-            $arrResponse = array('status' => true, 'msg' => 'Codigo de recuperacion generado correctamente');
-        } else {
-            $arrResponse = array('status' => false, 'msg' => 'Error al generar el codigo de recuperacion');
-        }
-
-        echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
     }
 
     public function sendEmail()
     {
         // Verificamos si el formulario fue enviado
-        $strCorreo = strClean($_POST['correo']);
+        $strCorreo = strClean($_POST['txtCorreo']);
 
-        $arrPost = ['correo'];
+        $arrPost = ['txtCorreo'];
         if (!check_post($arrPost)) {
             $arrResponse = array('status' => false, 'msg' => 'El correo es obligatorio');
         } else {
             // Recibimos los datos del formulario
-            $correoDestino = filter_var($_POST['correo'], FILTER_SANITIZE_EMAIL);
+            $correoDestino = filter_var($_POST['txtCorreo'], FILTER_SANITIZE_EMAIL);
 
             // Verificamos que la dirección de correo sea válida
             if (filter_var($correoDestino, FILTER_VALIDATE_EMAIL)) {
@@ -111,10 +102,7 @@ class Correo extends Controllers
                 $correo = new Correo();
                 // Llamamos al método para manejar la recuperación de contraseña
                 $correo->recuperarContrasena($correoDestino);  // Este método se encarga de todo el flujo
-            } else {
-                $arrResponse = array('status' => false, 'msg' => 'La dirección de correo no es válida');
             }
         }
-        echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
     }
 }

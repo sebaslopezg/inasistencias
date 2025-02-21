@@ -40,6 +40,8 @@ class Recuperar extends Controllers
                                         <label for="yourUsername" class="form-label">Contraseña</label>
                                         <div class="input-group has-validation">
                                             <input type="email" name="nueva_contraseña" class="form-control" id="nueva_contraseña" required>
+                                             <input type="text" name="txtCorreo" class="form-control" id="txtCorreo" required hidden>
+                                             <input type="text" name="txtCodigo" class="form-control" id="txtCodigo" required hidden>
                                         </div>
                                     </div>
                                     <div class="col-12">
@@ -70,8 +72,8 @@ class Recuperar extends Controllers
             if ($resultado->num_rows > 0) { */
                 // Si el código y el correo existen, mostrar el formulario para cambiar la contraseña
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                    $codigo = $_GET['codigo'];
-                    $correo = $_GET['correo'];
+                    $codigo = $_POST['txtCodigo'];
+                    $correo = $_POST['txtCorreo'];
                     // Recibir y asegurar que la nueva contraseña se haya proporcionado
                     $nueva_contraseña = $_POST['nueva_contraseña'];
 

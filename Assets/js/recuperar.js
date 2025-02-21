@@ -58,11 +58,7 @@ fetch(base_url + "/recuperar/verificarToken?codigo=" + codigo + "&correo=" + cor
         });
       }
     } else {
-      Swal.fire({
-        title: "Error",
-        text: data.msg,
-        icon: "error"
-      });
+      document.querySelector("#container").innerHTML = `${data.action}`;
     }
   })
   .catch((error) => {

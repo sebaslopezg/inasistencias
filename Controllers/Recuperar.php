@@ -50,10 +50,54 @@ class Recuperar extends Controllers
                                  </form>'
                 );
             } else {
-                $arrResponse = array('status' => false, 'msg' => 'El código o el correo no existen');
+                $arrResponse = array('status' => false, 'msg' => 'El token o el correo no existen', 'action' => '
+                <title>Token o Correo No Encontrado</title>
+                <body class="bg-light d-flex align-items-center" style="min-height: 100vh;">
+                <div class="container">
+                    <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-4">
+                            <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 4rem;"></i>
+                            </div>
+                            <h1 class="card-title">Token o correo no encontrado</h1>
+                            <p class="card-text text-muted">
+                            El enlace que intentaste usar no es válido o ha caducado. Por favor, verifica la información o contacta a soporte.
+                            </p>
+                            <a href="http://localhost/inasistencias/login" class="btn btn-primary mt-3">Volver al inicio</a>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </body>
+                ');
             }
         } else {
-            $arrResponse = array('status' => false, 'msg' => 'El código o el correo no se encuentran en la url');
+            $arrResponse = array('status' => false, 'msg' => 'El token o el correo no se encuentran en la url','action' => '
+                <title>Token o Correo No Encontrado</title>
+                <body class="bg-light d-flex align-items-center" style="min-height: 100vh;">
+                <div class="container">
+                    <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-4">
+                            <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 4rem;"></i>
+                            </div>
+                            <h1 class="card-title">Token o correo no encontrado</h1>
+                            <p class="card-text text-muted">
+                            El enlace que intentaste usar no es válido o ha caducado. Por favor, verifica la información o contacta a soporte.
+                            </p>
+                            <a href="/" class="btn btn-primary mt-3">Volver al inicio</a>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </body>
+                ');
         }
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
     }

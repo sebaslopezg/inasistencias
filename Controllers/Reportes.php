@@ -21,13 +21,13 @@ class Reportes extends Controllers
     {
 
         $info = $this->model->selectFechasFaltas($idAprendiz);
-        $this->nPdf->tabla("Reporte de Inasistencias del Aprendiz", ['Nombre del Aprendiz', 'Fecha'], [40, 90, 60], $info, 'D');
+        return  $this->nPdf->tabla("Reporte de Inasistencias del Aprendiz", ['Nombre del Aprendiz', 'Fecha'], [40, 90, 60], $info, 'D');
     }
 
-    public function generarPdfAsistencia(int $Ficha)
+    /*  public function generarPdfAsistencia(int $Ficha)
     {
         $this->Ficha->$Ficha;
         $info = $this->model->getAprendicesReporte($this->Ficha);
-        $this->nPdf->tabla("Formato de Asistencia", ['Nombre', 'Apellido', 'Documento', 'Correo'], [50, 50, 40, 50], $aprendicesData, 'D');
-    }
+        return  $this->nPdf->tabla("Formato de Asistencia", ['Nombre', 'Apellido', 'Documento', 'Correo'], [50, 50, 40, 50], $aprendicesData, 'D');
+    } */
 }

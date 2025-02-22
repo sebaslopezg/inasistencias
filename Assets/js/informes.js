@@ -87,7 +87,9 @@ document.addEventListener("click", (e) => {
         .then((res) => res.json())
         .then((data) => {
           let elemento = `
-           <button type="button" style="float:right; margin-right:5px;" id="btnPDFmodal" data-action="pdf" data-id="${idAprendiz}"  class="btn btn-outline-danger mb-3"> <i class="bi bi-filetype-pdf" style="font-size:larger;"></i></button>
+           <button type="button" style="float:right; margin-right:5px;" id="btnPDFmodal" data-action="pdf" data-id="${idAprendiz}" 
+           class="btn btn-outline-danger mb-3"> <i class="bi bi-filetype-pdf" style="font-size:larger;">
+           </i></button>
           `;
           mostrarBtn.innerHTML = elemento;
           data.forEach((data) => {
@@ -121,9 +123,13 @@ document.addEventListener("click", (e) => {
     } else if (action === "pdf") {
       let idAprendiz = e.target.closest("button").getAttribute("data-id");
       fetch(base_url + "/informes/generarPdf/" + idAprendiz)
-        .then((res) => res.json())
+        .then(
+          (res) => {
+            console.log(res);
+          } /* res.json() */
+        )
         .then((data) => {
-          console.log(data);
+          console.log(data.url);
         });
     }
   } catch {}

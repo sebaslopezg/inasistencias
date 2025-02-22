@@ -79,7 +79,7 @@ class Informes extends Controllers
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
 
-    /* public function generarPdf(int $data)
+    public function generarPdf(int $data)
     {
 
         $arrData = $this->controller->generarPdfAprendiz($data);
@@ -90,7 +90,7 @@ class Informes extends Controllers
 
         $arrData = $this->controller->generarPdfAsistencia($data);
         echo $arrData;
-    } */
+    }
 
     public function getAprendices(int $idFicha)
     {

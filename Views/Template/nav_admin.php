@@ -38,7 +38,6 @@
       </ul>
     </li><!-- End Gestion de horarios -->
 
-<<<<<<< HEAD
     <!-- Pagina Gestion de Fichas -->
     <li class="nav-item">
       <a class="nav-link <?= $data['page_name'] != 'fichas' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/fichas">
@@ -46,15 +45,6 @@
         <span>Fichas</span>
       </a>
     </li>
-=======
-      <!-- Pagina Gestion de Fichas -->
-      <li class="nav-item">
-        <a class="nav-link <?= $data['page_name'] != 'fichas' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/fichas">
-          <i class="bi bi-journals"></i>
-          <span>Fichas</span>
-        </a>
-      </li>
->>>>>>> Yusti
 
     <?php if ($_SESSION['userData']['rol'] == 'INSTRUCTOR' || $_SESSION['userData']['rol'] == 'APRENDIZ') : ?>
       <!-- Pagina Gestion de Excusas -->

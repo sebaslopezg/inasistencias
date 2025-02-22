@@ -17,7 +17,6 @@ let columAprendiz = document.querySelector("#colum-aprendiz");
 let codigoFicha = 0;
 let id_Ficha = 0;
 
-
 function MostrarNoti() {
   let ulNotificacion = document.querySelector("#ulNotificacion");
   let spanNoti = document.querySelector("#spanNoti");
@@ -173,10 +172,12 @@ document.addEventListener("click", (e) => {
       fetch(base_url + "/informes/getFaltas/" + idAprendiz)
         .then((res) => res.json())
         .then((data) => {
-          let elemento = `
-           <button type="button" style="float:right; margin-right:5px;" id="btnPDFmodal" data-action="pdf" data-id="${idAprendiz}"  class="btn btn-outline-danger mb-3"> <i class="bi bi-filetype-pdf" style="font-size:larger;"></i></button>
+          let btnPdfModal = `
+           <a type="button" style="float:right; margin-right:5px;" id="btnPDFmodal" data-action="pdf" data-id="${id_Ficha}" 
+            class="btn btn-outline-danger mb-3"> <i class="bi bi-filetype-pdf" style="font-size:larger;"></i></a>
           `;
-          mostrarBtn.innerHTML = elemento;
+
+          mostrarBtn.innerHTML = btnPdfModal;
           data.forEach((data) => {
             let row = `
             <div class="row">
@@ -219,7 +220,7 @@ document.addEventListener("click", (e) => {
       frmData.append("idNoti", id);
       fetch(base_url + "/informes/eliminarNoti", {
         method: "POST",
-        body: frmData
+        body: frmData,
       })
         .then((res) => res.json())
         .then((data) => {

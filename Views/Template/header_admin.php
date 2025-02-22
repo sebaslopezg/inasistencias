@@ -62,7 +62,7 @@
 
           <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-bell"></i>
-            <span class="badge bg-primary badge-number" id="spanNoti">4</span>
+            <span class="badge bg-primary badge-number" id="spanNoti">0</span>
           </a><!-- End Notification Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications" id="ulNotificacion" style="max-height: 565px; min-width: 350px; overflow-y: auto;">
@@ -145,7 +145,7 @@
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6><?= isset($_SESSION) ? $_SESSION['userData']['nombre']." ".$_SESSION['userData']['apellido'] : "Informacion no disponible" ?></h6>
+              <h6><?= isset($_SESSION) ? $_SESSION['userData']['nombre'] . " " . $_SESSION['userData']['apellido'] : "Informacion no disponible" ?></h6>
               <span><?= isset($_SESSION) ? $_SESSION['userData']['rol'] : "Informacion no disponible" ?></span>
             </li>
             <li>

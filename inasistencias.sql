@@ -387,6 +387,20 @@ CREATE DEFINER=`root`@`localhost` EVENT `verificar_plazo_excusas` ON SCHEDULE EV
       AND i.status = 1;
 END
 
+-- evento crear notificacion de i
+CREATE TRIGGER `NotificacionInasistencia` AFTER INSERT ON `inasistencias`
+ FOR EACH ROW BEGIN 
+ INSERT INTO notificaciones (tipoNovedad, fecha, hora, mensaje, usuarioId, status)
+    VALUES (
+        'registro_inasistencia',           
+        CURDATE(),                        
+        CURTIME(),                        
+        CONCAT('Se ha registrado una nueva inasistencia para ti.'),
+        NEW.usuario_idUsuarios,           
+        1                                 
+    );
+END
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

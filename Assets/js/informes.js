@@ -25,17 +25,13 @@ btnCerrarModal.addEventListener("click", () => {
   mostrarInfo.innerHTML = "";
 });
 
-/*
-btnPdf.addEventListener("click", () => {
+/* btnPdf.addEventListener("click", () => {
   fetch(base_url + "/informes/generarPdf/pdfAsistencia/" + id_Ficha)
     .then((res) => res.json())
     .then((data) => {
       console.log(data);
-      
     });
-  });
-});
-*/
+}); */
 
 btnAsistencia.addEventListener("click", () => {
   cardInforme.style.display = "none";
@@ -47,11 +43,15 @@ btnAsistencia.addEventListener("click", () => {
 });
 
 btnFecha.addEventListener("click", function () {
-  let info = document.getElementById("filtroFecha").value;
-  if (info.length > 0) {
-    renderTablaAsistencia(info);
+  let fecha = document.getElementById("filtroFecha").value;
+  if (fecha.length > 0) {
+    renderTablaAsistencia(fecha);
   } else {
-    console.log("esta vacido.");
+    Swal.fire({
+      icon: "warning",
+      title: "Fecha no valida",
+      text: "Seleccione una fecha valida.",
+    });
   }
 });
 
@@ -306,16 +306,16 @@ $(document).ready(function () {
 
     tableVisibility.style.display = "none";
     btnAsistencia.style.display = "none";
+    btnAsistencia.style.display = "none";
     btnInasistencia.style.display = "none";
     btnPdf.style.display = "none";
-
+    fechaTr.style.display = "none";
     // -----------------------------------
     //    LIMIPIAMOS LA TABLA INFORME
     // -----------------------------------
     $("#tabla-infoFicha tr").each(function () {
       $("#ficha-tr").remove();
       $("#trInfoFicha").remove();
-      /* $("#thNumeroFicha").remove(); */
     });
 
     $("#tabla-aprendices tr").each(function () {
@@ -330,6 +330,8 @@ $(document).ready(function () {
     $(`#tabla-asistencia tr${i + 1}`).each(function () {
       $(`#aprendiz-tr${indice + 1}`).remove();
       $("#colum-fecha").remove();
+    });
+    $(`#tabla-asistencia thead tr`).each(function () {
       $("#colum-info-ficha").remove();
     });
   });

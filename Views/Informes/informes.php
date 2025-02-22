@@ -92,8 +92,8 @@ getModal('informesModal', $data);
                                 <th scope="col" style="text-align: center;"> Fecha</th>
                             </tr>
                             <tr id="fecha-tr">
-                                <th scope="col" style="text-align: center;"> </th>
-                                <th scope="col" style="text-align: center;"> </th>
+                                <th scope="col" id="thVacio" style="text-align: center;"> </th>
+                                <th scope="col" id="thVacio" style="text-align: center;"> </th>
                             </tr>
                         </thead>
                         <tbody id="colum-aprendiz">

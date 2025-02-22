@@ -122,15 +122,11 @@ document.addEventListener("click", (e) => {
       $("#modalInfo").modal("show");
     } else if (action === "pdf") {
       let idAprendiz = e.target.closest("button").getAttribute("data-id");
-      fetch(base_url + "/informes/generarPdf/" + idAprendiz)
-        .then(
-          (res) => {
-            console.log(res);
-          } /* res.json() */
-        )
-        .then((data) => {
-          console.log(data.url);
-        });
+      fetch(base_url + "/informes/generarPdf/" + idAprendiz).then(
+        (res) => {
+          console.log(res);
+        } /* res.json() */
+      );
     }
   } catch {}
 });

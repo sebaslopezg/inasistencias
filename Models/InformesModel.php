@@ -26,7 +26,7 @@ class InformesModel extends Mysql
         FROM inasistencias
         INNER JOIN usuario ON usuario.idUsuarios = inasistencias.usuario_idUsuarios
         WHERE inasistencias.idInstructor = {$this->idInstructor} AND usuario.status = 1 AND usuario.rol = 'APRENDIZ'
-        AND inasistencias.status = 1 OR inasistencias.status = 3
+        AND (inasistencias.status = 1 OR inasistencias.status = 3)
         AND  EXISTS ( SELECT 1 FROM usuario_has_ficha 
         WHERE usuario_has_ficha.usuario_idUsuarios = usuario.idUsuarios 
         AND usuario_has_ficha.ficha_idFicha = {$this->idFicha} ) 
@@ -40,41 +40,49 @@ class InformesModel extends Mysql
         $this->idAprendiz = $idAprendiz;
         $sql = "SELECT CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo, inasistencias.fecha FROM inasistencias
         INNER JOIN usuario ON usuario.idUsuarios = inasistencias.usuario_idUsuarios
-        WHERE  inasistencias.usuario_idUsuarios = {$this->idAprendiz} AND usuario.status = 1 AND inasistencias.status = 1 OR inasistencias.status = 3 AND usuario.rol = 'APRENDIZ' AND EXISTS ( SELECT 1 FROM inasistencias WHERE usuario.idUsuarios = {$this->idAprendiz});";
+        WHERE  inasistencias.usuario_idUsuarios = {$this->idAprendiz} AND usuario.status = 1 AND inasistencias.status = 1 OR inasistencias.status = 3 
+        AND usuario.rol = 'APRENDIZ' AND EXISTS ( SELECT 1 FROM inasistencias WHERE usuario.idUsuarios = {$this->idAprendiz});";
         $request = $this->select_all($sql);
         return $request;
     }
 
-    public function selectFechaHorario(int $numeroFicha, int $idInstructor)
+    public function selectFechaHorario(string $numeroFicha, string $idInstructor, string $Fecha)
     {
         $this->numeroFicha = $numeroFicha;
+        $this->Fecha = $Fecha;
         $this->idInstructor = $idInstructor;
         $sql = "SELECT  CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo, horario.fechaInicio,  Ficha.nombre,Ficha.numeroFicha
         FROM horario 
         INNER JOIN usuario ON usuario.idUsuarios = horario.usuarioId 
         INNER JOIN usuario_has_ficha ON usuario_has_ficha.usuario_idUsuarios = horario.usuarioId 
         INNER JOIN Ficha ON Ficha.idFicha = usuario_has_ficha.ficha_idFicha 
-        WHERE horario.usuarioId = {$this->idInstructor} AND ficha.numeroFicha = {$this->numeroFicha} AND  horario.status = 1";
+        WHERE  horario.fechaInicio >= '{$this->Fecha}-01' 
+        AND horario.fechaInicio <= '{$this->Fecha}-31' 
+        AND horario.usuarioId = {$this->idInstructor} 
+        AND ficha.numeroFicha = {$this->numeroFicha} 
+        AND  horario.status = 1";
         $request = $this->select_all($sql);
         return $request;
     }
 
-    public function selectInfoAprendiz(int $idInstructor, int $idFicha)
+    public function selectInfoAprendiz(int $idInstructor, string $idFicha, string $Fecha)
     {
-
         $this->idFicha = $idFicha;
+        $this->Fecha = $Fecha;
         $this->idInstructor = $idInstructor;
-        $sql = "SELECT  CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo , inasistencias.fecha, inasistencias.status
-        FROM inasistencias 
-        INNER JOIN usuario ON usuario.idUsuarios = inasistencias.usuario_idUsuarios
-        WHERE usuario.status = 1 OR inasistencias.status = 3 
-        AND usuario.rol = 'APRENDIZ' AND   inasistencias.idInstructor  = {$idInstructor}
+        $sql = "SELECT CONCAT(usuario.nombre, ' ', usuario.apellido) AS nombre_completo , inasistencias.fecha, inasistencias.status 
+        FROM inasistencias INNER JOIN usuario ON usuario.idUsuarios = inasistencias.usuario_idUsuarios
+        WHERE inasistencias.fecha >= '{$this->Fecha}-01' 
+        AND inasistencias.fecha <= '{$this->Fecha}-31' 
+        AND (usuario.status = 1 OR inasistencias.status = 3 )
+        AND usuario.rol = 'APRENDIZ'
+        AND inasistencias.idInstructor = {$this->idInstructor}
         AND EXISTS ( SELECT 1 FROM usuario_has_ficha 
-        WHERE usuario_has_ficha.usuario_idUsuarios = usuario.idUsuarios 
+        WHERE usuario_has_ficha.usuario_idUsuarios = usuario.idUsuarios
         AND usuario_has_ficha.ficha_idFicha = {$this->idFicha})
-        ORDER BY inasistencias.fecha ASC";
+        ORDER BY inasistencias.fecha ASC
+        ";
         $aprendices =  $this->select_all($sql);
-
         return $aprendices;
     }
     public function selectNombreAprendices(int $idFicha)

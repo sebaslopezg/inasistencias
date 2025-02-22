@@ -27,6 +27,7 @@ class Informes extends Controllers
     {
         $idInstructor = $_SESSION['idUsuarios'];
         $arrData = $this->model->selectFicha($idInstructor);
+
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
     public function getInfoAprendicesFicha(int $idFicha)
@@ -39,6 +40,7 @@ class Informes extends Controllers
             <button type="button" data-action="info" data-id="' . $arrData[$i]['id'] . '" class="btn btn-primary"><i class="bi bi-info-circle-fill"></i></button>
             ';
         }
+
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
     public function getFaltas(int $idAprendiz)
@@ -48,17 +50,20 @@ class Informes extends Controllers
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
 
-    public function getFechaInstructor(int $numeroFicha)
+    public function getFechaInstructor(string $data)
     {
         $idInstructor = $_SESSION['idUsuarios'];
-        $arrData = $this->model->selectFechaHorario($numeroFicha, $idInstructor);
+        $info = explode(',', $data);
+        $arrData = $this->model->selectFechaHorario($info[0], $idInstructor, $info[1]);
+
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
-    public function getAsistencia(int $idFicha)
+    public function getAsistencia(string $data)
     {
         $idInstructor = $_SESSION['idUsuarios'];
-        $arrData = $this->model->selectInfoAprendiz($idInstructor, $idFicha);
+        $info = explode(',', $data);
 
+        $arrData = $this->model->selectInfoAprendiz($idInstructor, $info[0], $info[1]);
 
         for ($i = 0; $i < count($arrData); $i++) {
 
@@ -74,7 +79,7 @@ class Informes extends Controllers
         echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
     }
 
-    public function generarPdf(int $data)
+    /* public function generarPdf(int $data)
     {
 
         $arrData = $this->controller->generarPdfAprendiz($data);
@@ -85,7 +90,7 @@ class Informes extends Controllers
 
         $arrData = $this->controller->generarPdfAsistencia($data);
         echo $arrData;
-    }
+    } */
 
     public function getAprendices(int $idFicha)
     {

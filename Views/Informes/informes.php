@@ -68,25 +68,21 @@ getModal('informesModal', $data);
                     </table>
                 </div>
             </div>
-
-
             <div class="card-body" id="cardAsistencias" style="display: none;">
                 <div class="form-group">
-                    <div class="row" style="display: flex; flex-direction: row;">
-                        <div class="col-2 mb-3">
-                            <div class="form-group">
+                    <div class="row">
+                        <div class="col-4 mb-3">
+                            <div class="input-group">
                                 <label for="Filtro"></label>
                                 <input type="month" class="form-control" name="filtroFecha" id="filtroFecha">
                             </div>
                         </div>
-                        <div class="col-2 mb-3">
-                            <button type="button" class="btn btn-danger btn-sm"><i class="bi bi-x-circle-fill"></i></button>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-outline-primary rounded-pill btn-sm" id="btnFecha"><i class="bi bi-check2"></i></button>
                         </div>
                     </div>
                 </div>
-
                 <div class="class-informes" id="informe-asistencia" style="display: none;">
-
                     <table class="table table-bordered"
                         id="tabla-asistencia">
                         <thead>
@@ -96,8 +92,8 @@ getModal('informesModal', $data);
                                 <th scope="col" style="text-align: center;"> Fecha</th>
                             </tr>
                             <tr id="fecha-tr">
-                                <th scope="col" style="text-align: center;"> </th>
-                                <th scope="col" style="text-align: center;"> </th>
+                                <th scope="col" id="thVacio" style="text-align: center;"> </th>
+                                <th scope="col" id="thVacio" style="text-align: center;"> </th>
                             </tr>
                         </thead>
                         <tbody id="colum-aprendiz">

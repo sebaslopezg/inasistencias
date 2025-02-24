@@ -37,7 +37,7 @@ class Informes extends Controllers
 
         for ($i = 0; $i < count($arrData); $i++) {
             $arrData[$i]['accion'] = '
-            <button type="button" data-action="info" data-id="' . $arrData[$i]['id'] . '" class="btn btn-primary"><i class="bi bi-info-circle-fill"></i></button>
+            <button type="button"  data-action="info" data-id="' . $arrData[$i]['id'] . '" class="btn btn-primary rounded-pill"><i class="bi bi-info-circle-fill"></i></button>
             ';
         }
 
@@ -85,10 +85,13 @@ class Informes extends Controllers
         $arrData = $this->controller->generarPdfAprendiz($data);
         echo $arrData;
     }
-    public function generarPdfAsi(int $data)
+    public function generarPdfAsi()
     {
-
-        $arrData = $this->controller->generarPdfAsistencia($data);
+        $idFicha = $_POST['idFicha'];
+        $idInstructor = $_SESSION['idUsuarios'];
+        $fechaFiltro = $_POST['fecha'];
+        $infoFicha = array("nombre" => $_POST['nombreFicha'], "numero" => $_POST['numeroFicha']);
+        $arrData = $this->controller->generarPdfAsistencia($idFicha, $idInstructor, $fechaFiltro, $infoFicha);
         echo $arrData;
     }
 

@@ -21,13 +21,24 @@ class Reportes extends Controllers
     {
 
         $info = $this->model->selectFechasFaltas($idAprendiz);
-        return  $this->nPdf->tabla("Reporte de Inasistencias del Aprendiz", ['Nombre del Aprendiz', 'Fecha'], [40, 90, 60], $info, 'D');
+        return  $this->nPdf->tabla("Reporte de Inasistencias del Aprendiz.", ['Nombre del Aprendiz', 'Fecha - Inasistencia'], [80, 70], $info, 'D');
     }
 
-    /*  public function generarPdfAsistencia(int $Ficha)
+    public function generarPdfAsistencia($idFicha, $idInstructor, $fechaFiltro, $info)
     {
-        $this->Ficha->$Ficha;
-        $info = $this->model->getAprendicesReporte($this->Ficha);
-        return  $this->nPdf->tabla("Formato de Asistencia", ['Nombre', 'Apellido', 'Documento', 'Correo'], [50, 50, 40, 50], $aprendicesData, 'D');
-    } */
+
+        $infoFicha = $info;
+        $data = $this->model->selectInfoAprendiz($idFicha, $idInstructor, $fechaFiltro);
+
+
+        for ($i = 0; $i < count($data); $i++) {
+            if ($data[$i]['status'] == 0 || $data[$i]['status'] == 2) {
+                $data[$i]['status'] = 'Falto';
+            }
+            if ($data[$i]['status'] == 1 || $data[$i]['status'] == 3) {
+                $data[$i]['status'] = 'No Asistio';
+            }
+        }
+        return  $this->nPdf->formatoAsistencia($infoFicha, [50, 50, 40, 50], $data, 'D');
+    }
 }

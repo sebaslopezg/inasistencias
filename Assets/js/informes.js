@@ -14,8 +14,10 @@ let informeAsistencia = document.querySelector("#informe-asistencia");
 let tablaAsistencias = document.querySelector("#tabla-asistencia");
 let fechaTr = document.querySelector("#fecha-tr");
 let columAprendiz = document.querySelector("#colum-aprendiz");
-let codigoFicha = 0;
-let id_Ficha = 0;
+let GB_codigoFicha = 0;
+let GB_idFicha = 0; // GB : Variable "Global o Publica", esta varible podemos utilizarla en cualquier parte del Documento.
+let GB_fechaFiltro = 0;
+let GB_nombreFicha = "";
 
 // -----------------------------------
 //             BOTONES
@@ -25,13 +27,106 @@ btnCerrarModal.addEventListener("click", () => {
   mostrarInfo.innerHTML = "";
 });
 
-/* btnPdf.addEventListener("click", () => {
-  fetch(base_url + "/informes/generarPdf/pdfAsistencia/" + id_Ficha)
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-    });
-}); */
+//let reqData = { GB_idFicha };
+btnPdf.addEventListener("click", () => {
+  /* let infoGeneral = {
+    idFicha: GB_idFicha,
+    fecha: GB_fechaFiltro,
+    infoFicha: {
+      nombreFicha: GB_nombreFicha,
+      numeroFicha: GB_codigoFicha
+    }
+  }; */
+  const tabla = document.querySelector("#tabla-asistencia");
+  const trAprendiz = tabla.querySelectorAll("tbody tr");
+  const thFecha = tabla.querySelectorAll("thead th");
+
+  let InfoTabla = [];
+  let fechas = [];
+  for (let i = 5; i < thFecha.length; i++) {
+    fechas.push(thFecha[i].innerText.trim());
+  }
+
+  trAprendiz.forEach((tr) => {
+    let td = tr.querySelectorAll("td");
+    let trInfoData = {
+      aprendiz: td[1].innerText.trim(),
+      asistencias: []
+    };
+
+    for (let i = 2; i < td.length; i++) {
+      trInfoData.asistencias.push({
+        fecha: fechas[i - 2],
+        estado: td[i].innerText.trim()
+      });
+    }
+
+    InfoTabla.push(trInfoData);
+  });
+
+  console.log(InfoTabla);
+
+  let formData = new FormData();
+  formData.append("idFicha", GB_idFicha);
+  formData.append("fecha", GB_fechaFiltro);
+  formData.append("numero", GB_codigoFicha);
+  formData.append("nombre", GB_nombreFicha);
+  formData.append("infoGeneral", InfoTabla);
+  console.log(formData.get("infoGeneral"));
+
+  /*  $.ajax({
+    // Método de envío
+    type: "POST",
+    // URL del script de PHP que procesará la venta
+    url: " " + base_url + "/informes/generarPdfAsi/",
+    data: formData,
+    // No procesar los datos (ya se usa FormData)
+    processData: false,
+    // No establecer el tipo de contenido (ya se establece con FormData)
+    contentType: false,
+    success: function (response) {
+      response.blob();
+      (blob) => {
+        // Crear un enlace temporal para forzar la descarga
+        const link = document.createElement("a");
+        const url = window.URL.createObjectURL(blob);
+        link.href = url;
+        link.download = "Asistencia.pdf"; // Puedes asignar el nombre del archivo que deseas descargar
+        link.click();
+        window.URL.revokeObjectURL(url); // Limpiar la URL del objeto después de la descarga
+      };
+    },
+    error: function (xhr, status, error) {
+      // Manejar errores en la solicitud AJAX
+      throw new Error("No se pudo encontrar el archivo");
+    }
+  }); */
+  /*  fetch(base_url + "/informes/generarPdfAsi/" + GB_idFicha)
+    .then((res) => {
+      if (res) {
+        // Si la respuesta es exitosa (archivo encontrado), procesar la descarga
+        return res.blob(); // Convertimos la respuesta en un Blob (archivo)
+      } else {
+        throw new Error("No se pudo encontrar el archivo");
+      }
+    })
+    .then((blob) => {
+      // Crear un enlace temporal para forzar la descarga
+      const link = document.createElement("a");
+      const url = window.URL.createObjectURL(blob);
+      link.href = url;
+      link.download = "Asistencia.pdf"; // Puedes asignar el nombre del archivo que deseas descargar
+      link.click();
+      window.URL.revokeObjectURL(url); // Limpiar la URL del objeto después de la descarga
+    })
+    .catch((error) => {
+      Swal.fire({
+        title: "Error",
+        text: error.message,
+        icon: "error"
+      });
+    }); */
+});
 
 btnAsistencia.addEventListener("click", () => {
   cardInforme.style.display = "none";
@@ -50,7 +145,7 @@ btnFecha.addEventListener("click", function () {
     Swal.fire({
       icon: "warning",
       title: "Fecha no valida",
-      text: "Seleccione una fecha valida.",
+      text: "Seleccione una fecha valida."
     });
   }
 });
@@ -86,12 +181,14 @@ document.addEventListener("click", (e) => {
       fetch(base_url + "/informes/getFaltas/" + idAprendiz)
         .then((res) => res.json())
         .then((data) => {
-          let elemento = `
-           <button type="button" style="float:right; margin-right:5px;" id="btnPDFmodal" data-action="pdf" data-id="${idAprendiz}" 
-           class="btn btn-outline-danger mb-3"> <i class="bi bi-filetype-pdf" style="font-size:larger;">
-           </i></button>
-          `;
-          mostrarBtn.innerHTML = elemento;
+          let btnModalPdf = `
+            <button type="button" style="float:right; margin-right:5px;" id="btnPDFmodal" data-action="pdf" data-id="${idAprendiz}" 
+            class="btn btn-outline-danger rounded-pill mb-3"> <i class="bi bi-filetype-pdf" style="font-size:larger;">
+            </i></button>
+            `;
+          mostrarBtn.innerHTML = btnModalPdf;
+          /*     let btnModalPdf = creartBtn("btnPDFmodal", `${idAprendiz}`);
+          mostrarBtn.appendChild(btnModalPdf); */
           data.forEach((data) => {
             let row = `
             <div class="row">
@@ -122,19 +219,50 @@ document.addEventListener("click", (e) => {
       $("#modalInfo").modal("show");
     } else if (action === "pdf") {
       let idAprendiz = e.target.closest("button").getAttribute("data-id");
-      fetch(base_url + "/informes/generarPdf/" + idAprendiz).then(
-        (res) => {
-          console.log(res);
-        } /* res.json() */
-      );
+      fetch(base_url + "/informes/generarPdf/" + idAprendiz)
+        .then((res) => {
+          if (res) {
+            // Si la respuesta es exitosa (archivo encontrado), procesar la descarga
+            return res.blob(); // Convertimos la respuesta en un Blob (archivo)
+          } else {
+            throw new Error("No se pudo encontrar el archivo");
+          }
+        })
+        .then((blob) => {
+          // Crear un enlace temporal para forzar la descarga
+          const link = document.createElement("a");
+          const url = window.URL.createObjectURL(blob);
+          link.href = url;
+          link.download = "Informe de Inasistencias.pdf"; // Puedes asignar el nombre del archivo que deseas descargar
+          link.click();
+          window.URL.revokeObjectURL(url); // Limpiar la URL del objeto después de la descarga
+        })
+        .catch((error) => {
+          Swal.fire({
+            title: "Error",
+            text: error.message,
+            icon: "error"
+          });
+        });
     }
   } catch {}
 });
+/* function creartBtn(id, dataId) {
+  let btnPdfMod = document.createElement("button");
+  btnPdfMod.setAttribute("class", "btn btn-outline-danger rounded-pill mb-3");
+  btnPdfMod.setAttribute("style", "float:right; margin-right:5px;");
+  btnPdfMod.setAttribute("id", `${id}`);
+  btnPdfMod.setAttribute("data-action", "pdf");
+  btnPdfMod.setAttribute("data-id", `${dataId}`);
+  btnPdfMod.innerHTML = `<i class="bi bi-filetype-pdf" style="font-size:larger;"></i>`;
+  return btnPdfMod;
+} */
 function renderTablaAsistencia(fecha) {
   // -----------------------------------
   //   TRAEMOS LAS FECHAS DEL HORARIO DEL INSTRUCTOR
   // -----------------------------------
-  let reqInfo = `${codigoFicha},${fecha}`;
+  let reqInfo = `${GB_codigoFicha},${fecha}`;
+  GB_fechaFiltro = fecha; // capturamos la fecha seleccionada, para hacer el filtrado de la tabla asistencia.
   fetch(base_url + "/informes/getFechaInstructor/" + reqInfo)
     .then((res) => res.json())
     .then((data) => {
@@ -154,7 +282,7 @@ function renderTablaAsistencia(fecha) {
   // -----------------------------------
 
   let nombres = [];
-  fetch(base_url + "/informes/getAprendices/" + id_Ficha)
+  fetch(base_url + "/informes/getAprendices/" + GB_idFicha)
     .then((res) => res.json())
     .then((data) => {
       data.forEach((data) => {
@@ -165,16 +293,14 @@ function renderTablaAsistencia(fecha) {
   // -----------------------------------
   //  MOSTRAMOS LA CONTROL DE ASISTENCIAS DE LA FICHA
   // -----------------------------------
-  let reqData = `${id_Ficha},${fecha}`;
+  let reqData = `${GB_idFicha},${fecha}`;
 
   fetch(base_url + "/informes/getAsistencia/" + reqData)
     .then((res) => res.json())
     .then((data) => {
       let info = [];
       for (let i = 0; i < nombres.length; i++) {
-        info = data.filter(
-          (aprendiz) => aprendiz.nombre_completo === `${nombres[i]}`
-        );
+        info = data.filter((aprendiz) => aprendiz.nombre_completo === `${nombres[i]}`);
 
         let fila = `
         <tr id="aprendiz-tr${i}">
@@ -204,7 +330,7 @@ $(document).ready(function () {
           label: "" + data.nombre_ficha + " - " + data.numeroFicha,
           value: "" + data.id + "",
           numeroFicha: "" + data.numeroFicha + "",
-          nombreFicha: "" + data.nombre_ficha + "",
+          nombreFicha: "" + data.nombre_ficha + ""
         };
         availableFichas.push(fila);
       });
@@ -222,16 +348,11 @@ $(document).ready(function () {
     // Define la función que se ejecuta al seleccionar un producto de la lista de autocompletado
     select: function (event, ui) {
       // Pasa el idFicha (ui.item.value), el nombre(ui.item.label), el numeroFicha (ui.item.precio), como argumentos.
-      agregarFicha(
-        ui.item.value,
-        ui.item.label,
-        ui.item.numeroFicha,
-        ui.item.nombreFicha
-      );
+      agregarFicha(ui.item.value, ui.item.label, ui.item.numeroFicha, ui.item.nombreFicha);
       // Limpia el campo de entrada después de que se haya seleccionado un Ficha
       $("#ficha").val("");
       return false;
-    },
+    }
   });
 
   function agregarFicha(idFicha, label, numeroFicha, nombreFicha) {
@@ -239,8 +360,9 @@ $(document).ready(function () {
     if ($("#tabla-infoFicha tbody tr").length < 1) {
       tableVisibility.style.display = "block";
       btnAsistencia.style.display = "block";
-      codigoFicha = numeroFicha;
-      id_Ficha = idFicha;
+      GB_nombreFicha = nombreFicha;
+      GB_codigoFicha = numeroFicha;
+      GB_idFicha = idFicha;
       // Verificar si la Ficha ya está en la tabla
       let fichaYaAgregado = false;
       // Itera sobre cada fila de la tabla para comprobar si el ID del ficha ya existe
@@ -258,11 +380,10 @@ $(document).ready(function () {
         Swal.fire({
           icon: "warning",
           title: "Ficha ya agregada ",
-          text: "La Ficha ya está selecionada en la tabla de Fichas.",
+          text: "La Ficha ya está selecionada en la tabla de Fichas."
         });
       } else {
         // traemos los APRENDICES disponibles para asignarlos a la ficha Seleccionada.
-
         fetch(base_url + "/informes/getInfoAprendicesFicha/" + idFicha)
           .then((res) => res.json())
           .then((data) => {
@@ -281,11 +402,11 @@ $(document).ready(function () {
         let text2 = document.createTextNode(`${numeroFicha}`);
 
         th1.appendChild(text1);
-        // th1.setAttribute("id", "thNombreFicha");
-        th1.setAttribute("class", "ont-size: large; text-align: center;");
+
+        th1.setAttribute("style", "font-size: large; text-align: center;");
         th2.appendChild(text2);
-        // th2.setAttribute("id", "thNumeroFicha");
-        th2.setAttribute("style", "ont-size: large; text-align: center;");
+
+        th2.setAttribute("style", "font-size: large; text-align: center;");
         tr.appendChild(th1);
         tr.setAttribute("id", "trInfoFicha");
         tr.appendChild(th2);
@@ -295,7 +416,7 @@ $(document).ready(function () {
       Swal.fire({
         icon: "warning",
         title: "¡ Ya hay una ficha selecionada !",
-        text: "Elimina la ficha anterior, para eligir una nueva ficha.",
+        text: "Elimina la ficha anterior, para eligir una nueva ficha."
       });
     }
   }

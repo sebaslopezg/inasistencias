@@ -7,8 +7,13 @@
                 <button type="button" class="btn-close" id="btnCerrarModal" data-bs-dismiss="modal" aria-label="Close" style="color: white;float:right;"> <i class="bi bi-x-lg"></i> </button>
             </div>
             </>
-            <div class="modal-body" id="mostrar-info">
-                <div class="class" id="mostrar-btn">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="class" id="mostrar-btn">
+
+                    </div>
+                </div>
+                <div class="class" id="mostrar-info">
 
                 </div>
             </div>

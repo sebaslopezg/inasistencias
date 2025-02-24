@@ -64,60 +64,32 @@ btnPdf.addEventListener("click", () => {
     InfoTabla.push(trInfoData);
   });
 
-  console.log(InfoTabla);
-
   let formData = new FormData();
-  formData.append("idFicha", GB_idFicha);
-  formData.append("fecha", GB_fechaFiltro);
   formData.append("numero", GB_codigoFicha);
   formData.append("nombre", GB_nombreFicha);
-  formData.append("infoGeneral", InfoTabla);
-  console.log(formData.get("infoGeneral"));
+  formData.append("infoGeneral", JSON.stringify(InfoTabla));
 
-  /*  $.ajax({
-    // Método de envío
-    type: "POST",
-    // URL del script de PHP que procesará la venta
-    url: " " + base_url + "/informes/generarPdfAsi/",
-    data: formData,
-    // No procesar los datos (ya se usa FormData)
-    processData: false,
-    // No establecer el tipo de contenido (ya se establece con FormData)
-    contentType: false,
-    success: function (response) {
-      response.blob();
-      (blob) => {
-        // Crear un enlace temporal para forzar la descarga
-        const link = document.createElement("a");
-        const url = window.URL.createObjectURL(blob);
-        link.href = url;
-        link.download = "Asistencia.pdf"; // Puedes asignar el nombre del archivo que deseas descargar
-        link.click();
-        window.URL.revokeObjectURL(url); // Limpiar la URL del objeto después de la descarga
-      };
+  fetch(" " + base_url + "/informes/generarPdfAsi/", {
+    body: formData,
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
     },
-    error: function (xhr, status, error) {
-      // Manejar errores en la solicitud AJAX
-      throw new Error("No se pudo encontrar el archivo");
-    }
-  }); */
-  /*  fetch(base_url + "/informes/generarPdfAsi/" + GB_idFicha)
+    method: "POST"
+  })
     .then((res) => {
       if (res) {
-        // Si la respuesta es exitosa (archivo encontrado), procesar la descarga
-        return res.blob(); // Convertimos la respuesta en un Blob (archivo)
+        return res.blob();
       } else {
         throw new Error("No se pudo encontrar el archivo");
       }
     })
     .then((blob) => {
-      // Crear un enlace temporal para forzar la descarga
       const link = document.createElement("a");
       const url = window.URL.createObjectURL(blob);
       link.href = url;
-      link.download = "Asistencia.pdf"; // Puedes asignar el nombre del archivo que deseas descargar
+      link.download = "Informe de Inasistencias.pdf";
       link.click();
-      window.URL.revokeObjectURL(url); // Limpiar la URL del objeto después de la descarga
+      window.URL.revokeObjectURL(url);
     })
     .catch((error) => {
       Swal.fire({
@@ -125,7 +97,7 @@ btnPdf.addEventListener("click", () => {
         text: error.message,
         icon: "error"
       });
-    }); */
+    });
 });
 
 btnAsistencia.addEventListener("click", () => {

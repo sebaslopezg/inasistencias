@@ -87,13 +87,13 @@ class Informes extends Controllers
     }
     public function generarPdfAsi()
     {
-        $nombre = $_POST['nombre'];
+        /* $nombre = $_POST['nombre'];
         $numero = $_POST['numero'];
         $nombre_completo = $_SESSION['userData']['nombre'] . " " . $_SESSION['userData']['apellido'];
         // serializamos el JSON que nos llega desde el request y utlizamos json_decode() y le indicamos que lo covierta en un array assoc
-        $infoFicha = json_decode($_POST['infoGeneral'], true);
+        $infoFicha = json_decode($_POST['infoGeneral'], true); */
 
-        $arrData = $this->controller->generarPdfAsistencia($nombre, $nombre_completo, $numero, $infoFicha);
+        $arrData = $this->controller->generarPdfAsistencia(/* $nombre, $nombre_completo, $numero, $infoFicha */);
         echo $arrData;
     }
 

@@ -51,13 +51,13 @@ btnPdf.addEventListener("click", () => {
     let td = tr.querySelectorAll("td");
     let trInfoData = {
       aprendiz: td[1].innerText.trim(),
-      asistencias: []
+      asistencias: [],
     };
 
     for (let i = 2; i < td.length; i++) {
       trInfoData.asistencias.push({
         fecha: fechas[i - 2],
-        estado: td[i].innerText.trim()
+        estado: td[i].innerText.trim(),
       });
     }
 
@@ -72,12 +72,13 @@ btnPdf.addEventListener("click", () => {
   fetch(" " + base_url + "/informes/generarPdfAsi/", {
     body: formData,
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
+      "Content-Type": "application/x-www-form-urlencoded",
     },
-    method: "POST"
+    method: "POST",
   })
     .then((res) => {
       if (res) {
+        console.log(res);
         return res.blob();
       } else {
         throw new Error("No se pudo encontrar el archivo");
@@ -87,7 +88,7 @@ btnPdf.addEventListener("click", () => {
       const link = document.createElement("a");
       const url = window.URL.createObjectURL(blob);
       link.href = url;
-      link.download = "Informe de Inasistencias.pdf";
+      link.download = "Asistencia.pdf";
       link.click();
       window.URL.revokeObjectURL(url);
     })
@@ -95,7 +96,7 @@ btnPdf.addEventListener("click", () => {
       Swal.fire({
         title: "Error",
         text: error.message,
-        icon: "error"
+        icon: "error",
       });
     });
 });
@@ -117,7 +118,7 @@ btnFecha.addEventListener("click", function () {
     Swal.fire({
       icon: "warning",
       title: "Fecha no valida",
-      text: "Seleccione una fecha valida."
+      text: "Seleccione una fecha valida.",
     });
   }
 });
@@ -195,6 +196,7 @@ document.addEventListener("click", (e) => {
         .then((res) => {
           if (res) {
             // Si la respuesta es exitosa (archivo encontrado), procesar la descarga
+            console.log(res);
             return res.blob(); // Convertimos la respuesta en un Blob (archivo)
           } else {
             throw new Error("No se pudo encontrar el archivo");
@@ -213,7 +215,7 @@ document.addEventListener("click", (e) => {
           Swal.fire({
             title: "Error",
             text: error.message,
-            icon: "error"
+            icon: "error",
           });
         });
     }
@@ -272,7 +274,9 @@ function renderTablaAsistencia(fecha) {
     .then((data) => {
       let info = [];
       for (let i = 0; i < nombres.length; i++) {
-        info = data.filter((aprendiz) => aprendiz.nombre_completo === `${nombres[i]}`);
+        info = data.filter(
+          (aprendiz) => aprendiz.nombre_completo === `${nombres[i]}`
+        );
 
         let fila = `
         <tr id="aprendiz-tr${i}">
@@ -302,7 +306,7 @@ $(document).ready(function () {
           label: "" + data.nombre_ficha + " - " + data.numeroFicha,
           value: "" + data.id + "",
           numeroFicha: "" + data.numeroFicha + "",
-          nombreFicha: "" + data.nombre_ficha + ""
+          nombreFicha: "" + data.nombre_ficha + "",
         };
         availableFichas.push(fila);
       });
@@ -320,11 +324,16 @@ $(document).ready(function () {
     // Define la función que se ejecuta al seleccionar un producto de la lista de autocompletado
     select: function (event, ui) {
       // Pasa el idFicha (ui.item.value), el nombre(ui.item.label), el numeroFicha (ui.item.precio), como argumentos.
-      agregarFicha(ui.item.value, ui.item.label, ui.item.numeroFicha, ui.item.nombreFicha);
+      agregarFicha(
+        ui.item.value,
+        ui.item.label,
+        ui.item.numeroFicha,
+        ui.item.nombreFicha
+      );
       // Limpia el campo de entrada después de que se haya seleccionado un Ficha
       $("#ficha").val("");
       return false;
-    }
+    },
   });
 
   function agregarFicha(idFicha, label, numeroFicha, nombreFicha) {
@@ -352,7 +361,7 @@ $(document).ready(function () {
         Swal.fire({
           icon: "warning",
           title: "Ficha ya agregada ",
-          text: "La Ficha ya está selecionada en la tabla de Fichas."
+          text: "La Ficha ya está selecionada en la tabla de Fichas.",
         });
       } else {
         // traemos los APRENDICES disponibles para asignarlos a la ficha Seleccionada.
@@ -388,7 +397,7 @@ $(document).ready(function () {
       Swal.fire({
         icon: "warning",
         title: "¡ Ya hay una ficha selecionada !",
-        text: "Elimina la ficha anterior, para eligir una nueva ficha."
+        text: "Elimina la ficha anterior, para eligir una nueva ficha.",
       });
     }
   }

@@ -24,9 +24,9 @@ class Reportes extends Controllers
         return  $this->nPdf->tabla("Reporte de Inasistencias del Aprendiz.", ['Nombre del Aprendiz', 'Fecha - Inasistencia'], [80, 70], $info, 'D');
     }
 
-    public function generarPdfAsistencia($nombreFicha, $nombre_completo, $numeroFicha, $data)
+    public function generarPdfAsistencia(/* $nombreFicha, $nombre_completo, $numeroFicha, $data */)
     {
 
-        return $this->nPdf->formatoAsistencia($nombreFicha, $nombre_completo, $numeroFicha, $data, 'D');
+        return $this->nPdf->formatoAsistencia(/* $nombreFicha, $nombre_completo, $numeroFicha, $data, */'D');
     }
 }

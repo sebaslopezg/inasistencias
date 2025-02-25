@@ -61,42 +61,21 @@ class ReportPdf
         $tituloFormateado = str_replace(' ', '_', $titulo);
         $this->pdf->Output($dest = $outPut, $tituloFormateado . '.pdf', true);
     }
-    public function formatoAsistencia(/* string $nombreFicha, string $nombreInstru, string $numeroFicha, array $data */$outPut)
+    public function formatoAsistencia(string $nombreFicha, string $nombreInstru, string $numeroFicha, array $data, $outPut)
     {
+        $datos = array();
+        foreach ($data as $aprendiz) {
 
-        $data = [
-            [
-                "aprendiz" => "Andrés Morales",
-                "asistencias" => [
-                    ["fecha" => "2025-11-01", "estado" => "Asistio"],
-                    ["fecha" => "2025-11-06", "estado" => "Falto"],
-                    ["fecha" => "2025-11-15", "estado" => "Asistio"],
-                    ["fecha" => "2025-11-19", "estado" => "Asistio"]
-                ]
-            ],
-            [
-                "aprendiz" => "Felipe Yusti",
-                "asistencias" => [
-                    ["fecha" => "2025-11-01", "estado" => "Asistio"],
-                    ["fecha" => "2025-11-06", "estado" => "Falto"],
-                    ["fecha" => "2025-11-15", "estado" => "Asistio"],
-                    ["fecha" => "2025-11-19", "estado" => "Asistio"]
-                ]
-            ],
-            [
-                "aprendiz" => "Daniel Salazar",
-                "asistencias" => [
-                    ["fecha" => "2025-11-01", "estado" => "Asistio"],
-                    ["fecha" => "2025-11-06", "estado" => "Falto"],
-                    ["fecha" => "2025-11-15", "estado" => "Asistio"],
-                    ["fecha" => "2025-11-19", "estado" => "Asistio"]
-                ]
-            ]
-        ];
+            $asistencias = $aprendiz['asistencias'];
+            while (count($asistencias) < 5) {
+                $asistencias[] =  array_unique(array: ['fecha' => '']);
+            }
+            $datos = $asistencias;
+        }
 
         $this->pdf->AddPage("LANDSCAPE", "LETTER");
         $this->pdf->SetFont('Arial', 'B', 12);
-        $this->pdf->SetTitle(title: "Formato Asistencia - Ficha");
+        $this->pdf->SetTitle(title: "Formato Asistencia - $nombreFicha");
         // Título
 
         $this->pdf->Cell(210, 7, 'CENTRO DE TECNOLOGIAS AGROINDUSTRIALES', 1, 0, 'C');
@@ -114,40 +93,32 @@ class ReportPdf
 
         // Información de ficha
         $this->pdf->SetFont('Arial', '', 11);
-        $this->pdf->Cell(56, 6, 'CODIGO DE FICHA:', 1);
+        $this->pdf->Cell(52, 6, 'CODIGO DE FICHA:', 1);
         $this->pdf->SetFont('Arial', 'B', 11);
-        $this->pdf->Cell(45, 6, "2827725", 1, 0, "C");
-        $this->pdf->SetFont('Arial', '', 11);
-        $this->pdf->Cell(62, 6, 'PROGRAMA DE FORMACION:', 1);
+        $this->pdf->Cell(40, 6, $numeroFicha, 1, 0, "C");
+        $this->pdf->SetFont('Arial', '', 10);
+        $this->pdf->Cell(52, 6, 'PROGRAMA DE FORMACION:', 1);
         $this->pdf->SetFont('Arial', 'B', size: 10);
-        $this->pdf->Cell(97, 6, "ANALISIS Y DESARROLLO DE SOFTWARE", 1, 1, "C");
+        $this->pdf->Cell(101, 6,  strtoupper($nombreFicha), 1, 1, "C");
         $this->pdf->Ln(0);
 
         // Nombre del instructor
         $this->pdf->SetFont('Arial', '', 10);
-        $this->pdf->Cell(56, 6, 'NOMBRE DEL INSTRUCTOR:', 1);
+        $this->pdf->Cell(52, 6, 'NOMBRE DEL INSTRUCTOR:', 1);
         $this->pdf->SetFont('Arial', 'B', 10);
-        $this->pdf->Cell(204, 6, "JUAN CAMILO VANEGAS  GONZALEZ ", 1, 1, "C");
+        $this->pdf->Cell(193, 6, strtoupper($nombreInstru), 1, 1, "C");
         $this->pdf->Ln(0);
 
         // Encabezado de la tabla
-        $this->pdf->SetFont('Arial', 'B', 10);
+        $this->pdf->SetFont('Arial', 'B', 9);
         $this->pdf->Cell(10, 7, '#', 1, 0, 'C');
-        $this->pdf->Cell(70, 7, 'NOMBRES APELLIDOS (APRENDIZ)', 1, 0, 'C');
-        //$this->pdf->Cell(20, 7, 'Fecha', 1, 0, 'C');
+        $this->pdf->Cell(60, 7, 'NOMBRES APELLIDOS (APRENDIZ)', 1, 0, 'C');
 
-        $datos = [
-            ["fecha" => "2025-11-01"],
-            ["fecha" => "2025-11-06"],
-            ["fecha" => "2025-11-15"],
-            ["fecha" => "2025-11-19"]
-        ];
         foreach ($datos as $info) {
 
-            $this->pdf->Cell(30, 7, $info['fecha'], 1, 0, 'C');
+            $this->pdf->Cell(25, 7, $info['fecha'], 1, 0, 'C');
         }
-        $this->pdf->Cell(30, 7, "", 1, 0, 'C');
-        $this->pdf->Cell(30, 7, "", 1, 0, 'C');
+        $this->pdf->Cell(25, 7, "", 1, 0, 'C');
         $this->pdf->Ln();
 
         // Contenido de la tabla
@@ -156,16 +127,16 @@ class ReportPdf
 
         foreach ($data as $aprendiz) {
             $this->pdf->Cell(10, 7, $i, 1, 0, 'C');
-            $this->pdf->Cell(70, 7, $aprendiz['aprendiz'], 1, 0, 'L');
+            $this->pdf->Cell(60, 7, utf8_decode($aprendiz['aprendiz']), 1, 0, 'L');
 
-            // Asegurar que haya 5 valores de asistencia
+
             $asistencias = $aprendiz['asistencias'];
             while (count($asistencias) < 5) {
-                $asistencias[] = ['estado' => ''];  // Rellenar con valores vacíos
+                $asistencias[] = ['estado' => ''];
             }
 
             foreach ($asistencias as $asistencia) {
-                $this->pdf->Cell(30, 7, $asistencia['estado'], 1, 0, 'C');
+                $this->pdf->Cell(25, 7, $asistencia['estado'], 1, 0, 'C');
             }
 
             $this->pdf->Ln();
@@ -180,15 +151,6 @@ class ReportPdf
         $this->pdf->Cell(50, 6, 'FIRMA DEL INSTRUCTOR', 0, 1, 'C');
 
         // Salida del PDF
-        $this->pdf->Output($outPut, "Asistencia" . "ADSO" . ".pdf", true);
-
-
-        // $this->pdf = new FPDF();
-        /*  $this->pdf->AddPage();
-        $this->pdf->SetFont('Arial', 'B', 16);
-        $this->pdf->Cell(40, 10, '¡Hola, Mundo!');
-        $this->pdf->Output($dest = $outPut, "ejemlo" . '.pdf', true); */
-
-        // $this->pdf->Output($dest = $outPut, $tituloFormateado . '.pdf', true);
+        $this->pdf->Output($dest = $outPut, "Asistencia " . ".pdf", true);
     }
 }

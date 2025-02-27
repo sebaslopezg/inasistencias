@@ -1,17 +1,20 @@
 let infoAprendiz = document.querySelector("#infoAprendiz");
 let tableVisibility = document.querySelector("#tabla-informe");
+let tablaAsistencias = document.querySelector("#tabla-asistencia");
 let mostrarInfo = document.querySelector("#mostrar-info");
+let mostrarBtn = document.querySelector("#mostrar-btn");
 let btnCerrarModal = document.querySelector("#btnCerrarModal");
 let btnAsistencia = document.querySelector("#btnAsistencia");
 let btnInasistencia = document.querySelector("#btnInasistencia");
+let btnLimpiar = document.querySelector("#btnLimpiar");
+let lblTitulo = document.querySelector("#titulo");
 let btnFecha = document.querySelector("#btnFecha");
-let mostrarBtn = document.querySelector("#mostrar-btn");
+let search_ficha = document.querySelector("#buscador");
 let btnPdf = document.querySelector("#btnPdf");
 let btnPdfM = document.querySelector("#btnPdfmodal");
 let cardInforme = document.querySelector(".class-informes");
 let cardAsistencias = document.querySelector("#cardAsistencias");
 let informeAsistencia = document.querySelector("#informe-asistencia");
-let tablaAsistencias = document.querySelector("#tabla-asistencia");
 let fechaTr = document.querySelector("#fecha-tr");
 let columAprendiz = document.querySelector("#colum-aprendiz");
 let GB_codigoFicha = 0;
@@ -27,86 +30,97 @@ btnCerrarModal.addEventListener("click", () => {
   mostrarInfo.innerHTML = "";
 });
 
-//let reqData = { GB_idFicha };
 btnPdf.addEventListener("click", () => {
-  /* let infoGeneral = {
-    idFicha: GB_idFicha,
-    fecha: GB_fechaFiltro,
-    infoFicha: {
-      nombreFicha: GB_nombreFicha,
-      numeroFicha: GB_codigoFicha
-    }
-  }; */
-  const tabla = document.querySelector("#tabla-asistencia");
-  const trAprendiz = tabla.querySelectorAll("tbody tr");
-  const thFecha = tabla.querySelectorAll("thead th");
+  // validamos que la tabla tenga contenido
+  let th = fechaTr.querySelectorAll("th");
+  console.log(th.length);
+  if (th.length > 3) {
+    if ($(`#tabla-asistencia tbody tr`).length > 0) {
+      btnPdf.style.display = "block";
+      const tabla = document.querySelector("#tabla-asistencia");
+      const trAprendiz = tabla.querySelectorAll("tbody tr");
+      const thFecha = tabla.querySelectorAll("thead th");
 
-  let InfoTabla = [];
-  let fechas = [];
-  for (let i = 5; i < thFecha.length; i++) {
-    fechas.push(thFecha[i].innerText.trim());
-  }
-
-  trAprendiz.forEach((tr) => {
-    let td = tr.querySelectorAll("td");
-    let trInfoData = {
-      aprendiz: td[1].innerText.trim(),
-      asistencias: []
-    };
-
-    for (let i = 2; i < td.length; i++) {
-      trInfoData.asistencias.push({
-        fecha: fechas[i - 2],
-        estado: td[i].innerText.trim()
-      });
-    }
-
-    InfoTabla.push(trInfoData);
-  });
-
-  let formData = new FormData();
-  formData.append("numero", GB_codigoFicha);
-  formData.append("nombre", GB_nombreFicha);
-  formData.append("infoGeneral", JSON.stringify(InfoTabla));
-
-  const params = new URLSearchParams(formData).toString();
-  fetch(base_url + `/informes/generarPdfAsi/?${params}`, {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    method: "GET"
-  })
-    .then((res) => {
-      if (res) {
-        return res.blob();
-      } else {
-        throw new Error("No se pudo encontrar el archivo");
+      let InfoTabla = [];
+      let fechas = [];
+      for (let i = 5; i < thFecha.length; i++) {
+        fechas.push(thFecha[i].innerText.trim());
       }
-    })
-    .then((blob) => {
-      const link = document.createElement("a");
-      const url = window.URL.createObjectURL(blob);
-      link.href = url;
-      link.download = "Asistencia.pdf";
-      link.click();
-      window.URL.revokeObjectURL(url);
-    })
-    .catch((error) => {
-      Swal.fire({
-        title: "Error",
-        text: error.message,
-        icon: "error"
+
+      trAprendiz.forEach((tr) => {
+        let td = tr.querySelectorAll("td");
+        let trInfoData = {
+          aprendiz: td[1].innerText.trim(),
+          asistencias: [],
+        };
+
+        for (let i = 2; i < td.length; i++) {
+          trInfoData.asistencias.push({
+            fecha: fechas[i - 2],
+            estado: td[i].innerText.trim(),
+          });
+        }
+
+        InfoTabla.push(trInfoData);
       });
+
+      let formData = new FormData();
+      formData.append("numero", GB_codigoFicha);
+      formData.append("nombre", GB_nombreFicha);
+      formData.append("infoGeneral", JSON.stringify(InfoTabla));
+
+      const params = new URLSearchParams(formData).toString();
+      fetch(base_url + `/informes/generarPdfAsi/?${params}`, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        method: "GET",
+      })
+        .then((res) => {
+          if (res) {
+            return res.blob();
+          } else {
+            throw new Error("No se pudo encontrar el archivo");
+          }
+        })
+        .then((blob) => {
+          const link = document.createElement("a");
+          const url = window.URL.createObjectURL(blob);
+          link.href = url;
+          link.download = "Asistencia.pdf";
+          link.click();
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+          Swal.fire({
+            title: "Error",
+            text: error.message,
+            icon: "error",
+          });
+        });
+    } else {
+      console.log("no renderizo");
+    }
+  } else {
+    Swal.fire({
+      title: "¡ Accion no valida !",
+      icon: "error",
+      text: "Esta accion no esá permitida.",
+      showConfirmButton: false,
+      timer: 1700,
     });
+  }
 });
 
 btnAsistencia.addEventListener("click", () => {
   cardInforme.style.display = "none";
   cardAsistencias.style.display = "block";
+  search_ficha.style.display = "none";
   informeAsistencia.style.display = "block";
   btnAsistencia.style.display = "none";
   btnInasistencia.style.display = "block";
-  btnPdf.style.display = "block";
+  btnLimpiar.style.display = "none";
+  lblTitulo.style.display = "none";
 });
 
 btnFecha.addEventListener("click", function () {
@@ -116,23 +130,25 @@ btnFecha.addEventListener("click", function () {
   } else {
     Swal.fire({
       icon: "warning",
-      title: "Fecha no valida",
-      text: "Seleccione una fecha valida."
+      title: "¡ Accion no valida !",
+      text: "Seleccione una fecha valida, para obtener la informacion.  ",
     });
   }
 });
 
 btnInasistencia.addEventListener("click", () => {
   // -----------------------------------
-  //    DESHABILITAMOS LOS ELEMENTOS (BTN AND TABLE)
+  //    DESHABILITAMOS LOS ELEMENTOS (BTN AND TABLE).
   //  -----------------------------------
   cardInforme.style.display = "block";
   cardAsistencias.style.display = "none";
   informeAsistencia.style.display = "none";
+  search_ficha.style.display = "block";
   btnAsistencia.style.display = "block";
   btnInasistencia.style.display = "none";
   btnPdf.style.display = "none";
-
+  btnLimpiar.style.display = "block";
+  lblTitulo.style.display = "block";
   // -----------------------------------
   //    LIMPIAMOS LAS TABLAS
   //  -----------------------------------
@@ -159,8 +175,7 @@ document.addEventListener("click", (e) => {
             </i></button>
             `;
           mostrarBtn.innerHTML = btnModalPdf;
-          /*     let btnModalPdf = creartBtn("btnPDFmodal", `${idAprendiz}`);
-          mostrarBtn.appendChild(btnModalPdf); */
+
           data.forEach((data) => {
             let row = `
             <div class="row">
@@ -214,22 +229,12 @@ document.addEventListener("click", (e) => {
           Swal.fire({
             title: "Error",
             text: error.message,
-            icon: "error"
+            icon: "error",
           });
         });
     }
   } catch {}
 });
-/* function creartBtn(id, dataId) {
-  let btnPdfMod = document.createElement("button");
-  btnPdfMod.setAttribute("class", "btn btn-outline-danger rounded-pill mb-3");
-  btnPdfMod.setAttribute("style", "float:right; margin-right:5px;");
-  btnPdfMod.setAttribute("id", `${id}`);
-  btnPdfMod.setAttribute("data-action", "pdf");
-  btnPdfMod.setAttribute("data-id", `${dataId}`);
-  btnPdfMod.innerHTML = `<i class="bi bi-filetype-pdf" style="font-size:larger;"></i>`;
-  return btnPdfMod;
-} */
 function renderTablaAsistencia(fecha) {
   // -----------------------------------
   //   TRAEMOS LAS FECHAS DEL HORARIO DEL INSTRUCTOR
@@ -273,7 +278,9 @@ function renderTablaAsistencia(fecha) {
     .then((data) => {
       let info = [];
       for (let i = 0; i < nombres.length; i++) {
-        info = data.filter((aprendiz) => aprendiz.nombre_completo === `${nombres[i]}`);
+        info = data.filter(
+          (aprendiz) => aprendiz.nombre_completo === `${nombres[i]}`
+        );
 
         let fila = `
         <tr id="aprendiz-tr${i}">
@@ -303,7 +310,7 @@ $(document).ready(function () {
           label: "" + data.nombre_ficha + " - " + data.numeroFicha,
           value: "" + data.id + "",
           numeroFicha: "" + data.numeroFicha + "",
-          nombreFicha: "" + data.nombre_ficha + ""
+          nombreFicha: "" + data.nombre_ficha + "",
         };
         availableFichas.push(fila);
       });
@@ -321,11 +328,16 @@ $(document).ready(function () {
     // Define la función que se ejecuta al seleccionar un producto de la lista de autocompletado
     select: function (event, ui) {
       // Pasa el idFicha (ui.item.value), el nombre(ui.item.label), el numeroFicha (ui.item.precio), como argumentos.
-      agregarFicha(ui.item.value, ui.item.label, ui.item.numeroFicha, ui.item.nombreFicha);
+      agregarFicha(
+        ui.item.value,
+        ui.item.label,
+        ui.item.numeroFicha,
+        ui.item.nombreFicha
+      );
       // Limpia el campo de entrada después de que se haya seleccionado un Ficha
       $("#ficha").val("");
       return false;
-    }
+    },
   });
 
   function agregarFicha(idFicha, label, numeroFicha, nombreFicha) {
@@ -353,7 +365,7 @@ $(document).ready(function () {
         Swal.fire({
           icon: "warning",
           title: "Ficha ya agregada ",
-          text: "La Ficha ya está selecionada en la tabla de Fichas."
+          text: "La Ficha ya está selecionada en la tabla de Fichas.",
         });
       } else {
         // traemos los APRENDICES disponibles para asignarlos a la ficha Seleccionada.
@@ -389,7 +401,7 @@ $(document).ready(function () {
       Swal.fire({
         icon: "warning",
         title: "¡ Ya hay una ficha selecionada !",
-        text: "Elimina la ficha anterior, para eligir una nueva ficha."
+        text: "Elimina la ficha anterior, para eligir una nueva ficha.",
       });
     }
   }

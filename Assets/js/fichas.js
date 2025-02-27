@@ -30,21 +30,21 @@ document.addEventListener("click", (e) => {
         icon: "warning",
         showDenyButton: true,
         confirmButtonText: "Sí",
-        denyButtonText: `Cancelar`
+        denyButtonText: `Cancelar`,
       }).then((result) => {
         if (result.isConfirmed) {
           let frmData = new FormData();
           frmData.append("idFicha", id);
           fetch(base_url + "/fichas/deleteFicha", {
             method: "POST",
-            body: frmData
+            body: frmData,
           })
             .then((res) => res.json())
             .then((data) => {
               Swal.fire({
                 title: data.status ? "Correcto" : "Error",
                 text: data.msg,
-                icon: data.status ? "success" : "error"
+                icon: data.status ? "success" : "error",
               });
               tablaFicha.api().ajax.reload(function () {});
             });
@@ -72,7 +72,7 @@ document.addEventListener("click", (e) => {
             Swal.fire({
               title: "Error",
               text: data.msg,
-              icon: "error"
+              icon: "error",
             });
             tablaFicha.api().ajax.reload(function () {});
           }
@@ -124,7 +124,7 @@ frmCrearFicha.addEventListener("submit", (e) => {
   let frmFicha = new FormData(frmCrearFicha);
   fetch(base_url + "/fichas/setFicha", {
     method: "POST",
-    body: frmFicha
+    body: frmFicha,
   })
     .then((res) => res.json())
     .then((data) => {
@@ -132,7 +132,7 @@ frmCrearFicha.addEventListener("submit", (e) => {
         Swal.fire({
           title: "Registro Ficha",
           text: data.msg,
-          icon: "success"
+          icon: "success",
         });
         $("#crearFichaModal").modal("hide");
         tablaFicha.api().ajax.reload(function () {});
@@ -141,7 +141,7 @@ frmCrearFicha.addEventListener("submit", (e) => {
         Swal.fire({
           title: "Error",
           text: data.msg,
-          icon: "error"
+          icon: "error",
         });
       }
     });
@@ -151,31 +151,41 @@ function loadTableView() {
   // Cargamos las fichas solamente para mostar informacion de cada Una.
   tablaFichasView = $("#tablaFichasView").dataTable({
     language: {
-      url: `${base_url}/Assets/vendor/datatables/dataTables_es.json`
+      url: `${base_url}/Assets/vendor/datatables/dataTables_es.json`,
     },
     ajax: {
       url: " " + base_url + "/fichas/getFichasPreview",
-      dataSrc: ""
+      dataSrc: "",
     },
-    columns: [{ data: "nombre" }, { data: "numeroFicha" }, { data: "status" }, { data: "accion" }],
+    columns: [
+      { data: "nombre" },
+      { data: "numeroFicha" },
+      { data: "status" },
+      { data: "accion" },
+    ],
     responsive: "true",
     iDisplayLength: 6,
-    order: [[0, "asc"]]
+    order: [[0, "asc"]],
   });
 
   // Cargamos las fichas en la tabla con las acciones
   tablaFicha = $("#tablaFichas").dataTable({
     language: {
-      url: `${base_url}/Assets/vendor/datatables/dataTables_es.json`
+      url: `${base_url}/Assets/vendor/datatables/dataTables_es.json`,
     },
     ajax: {
       url: " " + base_url + "/fichas/getFichas",
-      dataSrc: ""
+      dataSrc: "",
     },
-    columns: [{ data: "nombre" }, { data: "numeroFicha" }, { data: "status" }, { data: "accion" }],
+    columns: [
+      { data: "nombre" },
+      { data: "numeroFicha" },
+      { data: "status" },
+      { data: "accion" },
+    ],
     responsive: "true",
     iDisplayLength: 6,
-    order: [[0, "asc"]]
+    order: [[0, "asc"]],
   });
 }
 
@@ -243,7 +253,7 @@ $(document).ready(function () {
           label: "" + data.nombre + " - " + data.numeroFicha,
           value: "" + data.id + "",
           numeroFicha: "" + data.numeroFicha + "",
-          nombreFicha: "" + data.nombre + ""
+          nombreFicha: "" + data.nombre + "",
         };
         availableFichas.push(fila);
       });
@@ -261,11 +271,16 @@ $(document).ready(function () {
     // Define la función que se ejecuta al seleccionar un producto de la lista de autocompletado
     select: function (event, ui) {
       // Pasa el idFicha (ui.item.value), el nombre(ui.item.label), el numeroFicha (ui.item.precio), como argumentos.
-      agregarFicha(ui.item.value, ui.item.label, ui.item.numeroFicha, ui.item.nombreFicha);
+      agregarFicha(
+        ui.item.value,
+        ui.item.label,
+        ui.item.numeroFicha,
+        ui.item.nombreFicha
+      );
       // Limpia el campo de entrada después de que se haya seleccionado un Ficha
       $("#ficha").val("");
       return false;
-    }
+    },
   });
 
   // -----------------------------------
@@ -292,7 +307,7 @@ $(document).ready(function () {
         Swal.fire({
           icon: "warning",
           title: "Ficha ya agregada ",
-          text: "La Ficha ya está selecionada en la tabla de Fichas."
+          text: "La Ficha ya está selecionada en la tabla de Fichas.",
         });
       } else {
         // traemos los instructores disponibles para asignarlos a la ficha Seleccionada.
@@ -356,7 +371,7 @@ $(document).ready(function () {
       Swal.fire({
         icon: "warning",
         title: "¡ Ya hay una ficha selecionada !",
-        text: "Elimina la ficha anterior, para eligir una nueva ficha."
+        text: "Elimina la ficha anterior, para eligir una nueva ficha.",
       });
     }
   }
@@ -365,7 +380,9 @@ $(document).ready(function () {
       .then((res) => res.json())
       .then((data) => {
         data.forEach((data) => {
-          let tablaInstructoresMod = document.getElementById("tabla-instructores-Mod");
+          let tablaInstructoresMod = document.getElementById(
+            "tabla-instructores-Mod"
+          );
           let filaIntructores = `
       <tr id="instru-tr">
        <td>${data.nombre_completo}</td>
@@ -396,7 +413,7 @@ $(document).ready(function () {
       Swal.fire({
         icon: "warning",
         title: "Sin ficha",
-        text: "Por favor, agregue al menos una ficha."
+        text: "Por favor, agregue al menos una ficha.",
       });
       return false;
     }
@@ -427,7 +444,7 @@ $(document).ready(function () {
           // Duración de la alerta en milisegundos
           timer: 2000,
           // No mostrar botón de confirmación
-          showConfirmButton: false
+          showConfirmButton: false,
         }).then(() => {
           let data = JSON.parse(response);
           $("#tabla-instructores-Mod tr").each(function () {
@@ -440,7 +457,7 @@ $(document).ready(function () {
       error: function (xhr, status, error) {
         // Manejar errores en la solicitud AJAX
         console.error("Error en la solicitud AJAX:", error);
-      }
+      },
     });
 
     // Evita el comportamiento por defecto del formulario
@@ -502,7 +519,7 @@ $(document).ready(function () {
         success: function (respuesta) {},
         error: function (xhr, status, error) {
           console.error("Error en la solicitud AJAX:", error);
-        }
+        },
       });
     } else {
       e.target.setAttribute("aria-checked", "true");
@@ -529,7 +546,7 @@ $(document).ready(function () {
         success: function (respuesta) {},
         error: function (xhr, status, error) {
           console.error("Error en la solicitud AJAX:", error);
-        }
+        },
       });
     }
   });

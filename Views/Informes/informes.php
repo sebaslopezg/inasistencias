@@ -15,9 +15,9 @@ getModal('informesModal', $data);
         </div>
         <div class="card-body">
             <div class="card-body" id="card-informe">
-                <h5 class="card-title">Busqueda</h5>
+                <h5 class="card-title" id="titulo">Busqueda</h5>
                 <div class="form-group">
-                    <div class="row mt-2">
+                    <div class="row mt-2" id="buscador">
                         <div class="col-8">
                             <div class="input-group mb-3">
                                 <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
@@ -33,12 +33,12 @@ getModal('informesModal', $data);
                             </div>
                         </div>
                         <div class="col-2">
-                            <button type="button" class="btn btn-danger btn-sm eliminar-fila"><i class="bi bi-x-circle-fill"></i></button>
+                            <button type="button" id="btnLimpiar" class="btn btn-danger btn-sm eliminar-fila"><i class="bi bi-x-circle-fill"></i></button>
                         </div>
                     </div>
                     <button type="button" style="float: right; display: none;" id="btnAsistencia" class="btn btn-outline-success mb-3"> Asistencia <i class="bi bi-calendar-check"></i></button>
-                    <button type="button" style="float: right; display: none; font-size:larger;" id="btnInasistencia" class="btn btn-outline-info mb-3"> Inasistencias <i class="bi bi-calendar-check"></i></button>
-                    <button type="button" style="float: right; display: none; margin-right:5px;" id="btnPdf" class="btn btn-outline-danger mb-3"> <i class="bi bi-filetype-pdf" style="font-size:larger;"></i></button>
+                    <button type="button" style="float: right; display: none; font-size:larger;" id="btnInasistencia" class="btn btn-outline-info mb-3 mt-3"> Inasistencias <i class="bi bi-calendar-check"></i></button>
+                    <button type="button" style="float: right; display: none; margin-right:5px;" id="btnPdf" class="btn btn-outline-danger rounded-pill mb-3 mt-3"> <i class="bi bi-filetype-pdf" style="font-size:larger;"></i></button>
                 </div>
                 <div class="class-informes" id="tabla-informe" style="display: none;">
 
@@ -69,10 +69,12 @@ getModal('informesModal', $data);
                 </div>
             </div>
             <div class="card-body" id="cardAsistencias" style="display: none;">
+                <h5 class="card-title" id="titulo" style="display: flex; flex-direction: column;">Fecha</h5>
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-4 mb-3">
+                        <div class="col-3 mb-3">
                             <div class="input-group">
+                                <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
                                 <label for="Filtro"></label>
                                 <input type="month" class="form-control" name="filtroFecha" id="filtroFecha">
                             </div>
@@ -101,6 +103,7 @@ getModal('informesModal', $data);
                         </tbody>
                     </table>
                 </div>
+
             </div>
         </div>
     </div>

@@ -70,7 +70,7 @@ class Fichas extends Controllers
             ';
             }
             if ($arrData[$i]['status'] == 2) {
-                $arrData[$i]['accion'] = ' <input class="switchStatus form-check-input" type="checkbox"  aria-checked="false" name="switch_status[]" role="switch" data-id="' . $arrData[$i]['idUsuarios'] . '" id="switch_status" checked>
+                $arrData[$i]['accion'] = ' <input class="switchStatus form-check-input" type="checkbox"  aria-checked="false" name="switch_status[]" role="switch" data-id="' . $arrData[$i]['idUsuarios'] . '" id="switch_status">
             ';
             }
         }

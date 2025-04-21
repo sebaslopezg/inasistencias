@@ -65,18 +65,25 @@ class Informes extends Controllers
 
         $arrData = $this->model->selectInfoAprendiz($idInstructor, $info[0], $info[1]);
 
-        for ($i = 0; $i < count($arrData); $i++) {
-
-
-            if ($arrData[$i]['status'] == 0 || $arrData[$i]['status'] == 2) {
-                $arrData[$i]['status'] = '<span class="badge rounded-pill bg-success">Asistio</span>';
+        $infoGeneral = [];
+        foreach ($arrData as $row) {
+            $nombre = $row['nombre_completo'];
+            if (!isset($infoGeneral[$nombre])) {
+                $infoGeneral[$nombre] = [
+                    'aprendiz' => $nombre,
+                    'asistencias' => []
+                ];
             }
-            if ($arrData[$i]['status'] == 1 || $arrData[$i]['status'] == 3) {
-                $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Falto</span>';
-            }
+            $estado = $row['status'] == 1 ? 'Asistio' : 'Falto';
+            $infoGeneral[$nombre]['asistencias'][] = [
+                'fecha' => $row['fecha'],
+                'estado' => $estado
+            ];
         }
 
-        echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
+        $infoGeneral = array_values($infoGeneral);
+
+        echo json_encode($infoGeneral, JSON_UNESCAPED_UNICODE);
     }
 
     public function generarPdf(int $data)

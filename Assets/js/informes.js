@@ -51,13 +51,13 @@ btnPdf.addEventListener("click", () => {
         let td = tr.querySelectorAll("td");
         let trInfoData = {
           aprendiz: td[1].innerText.trim(),
-          asistencias: [],
+          asistencias: []
         };
 
         for (let i = 2; i < td.length; i++) {
           trInfoData.asistencias.push({
             fecha: fechas[i - 2],
-            estado: td[i].innerText.trim(),
+            estado: td[i].innerText.trim()
           });
         }
 
@@ -72,9 +72,9 @@ btnPdf.addEventListener("click", () => {
       const params = new URLSearchParams(formData).toString();
       fetch(base_url + `/informes/generarPdfAsi/?${params}`, {
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/x-www-form-urlencoded"
         },
-        method: "GET",
+        method: "GET"
       })
         .then((res) => {
           if (res) {
@@ -95,7 +95,7 @@ btnPdf.addEventListener("click", () => {
           Swal.fire({
             title: "Error",
             text: error.message,
-            icon: "error",
+            icon: "error"
           });
         });
     } else {
@@ -107,7 +107,7 @@ btnPdf.addEventListener("click", () => {
       icon: "error",
       text: "Esta accion no esá permitida.",
       showConfirmButton: false,
-      timer: 1700,
+      timer: 1700
     });
   }
 });
@@ -121,6 +121,7 @@ btnAsistencia.addEventListener("click", () => {
   btnInasistencia.style.display = "block";
   btnLimpiar.style.display = "none";
   lblTitulo.style.display = "none";
+  btnPdf.style.display = "block";
 });
 
 btnFecha.addEventListener("click", function () {
@@ -131,7 +132,7 @@ btnFecha.addEventListener("click", function () {
     Swal.fire({
       icon: "warning",
       title: "¡ Accion no valida !",
-      text: "Seleccione una fecha valida, para obtener la informacion.  ",
+      text: "Seleccione una fecha valida, para obtener la informacion.  "
     });
   }
 });
@@ -229,7 +230,7 @@ document.addEventListener("click", (e) => {
           Swal.fire({
             title: "Error",
             text: error.message,
-            icon: "error",
+            icon: "error"
           });
         });
     }
@@ -243,58 +244,98 @@ function renderTablaAsistencia(fecha) {
   GB_fechaFiltro = fecha; // capturamos la fecha seleccionada, para hacer el filtrado de la tabla asistencia.
   fetch(base_url + "/informes/getFechaInstructor/" + reqInfo)
     .then((res) => res.json())
-    .then((data) => {
-      data.forEach((data) => {
-        let th = document.createElement("th");
-        let text = document.createTextNode(`${data.fechaInicio}`);
-        th.appendChild(text);
-        th.setAttribute("scope", "col");
-        th.setAttribute("style", "text-align: center;");
-        th.setAttribute("id", "colum-fecha");
-        fechaTr.appendChild(th);
-      });
-    });
-
-  // -----------------------------------
-  //    TRAEMOS LOS NOMBRES DE LOS APRENDICES DE LA TABLA ASISTENCIAS
-  // -----------------------------------
-
-  let nombres = [];
-  fetch(base_url + "/informes/getAprendices/" + GB_idFicha)
-    .then((res) => res.json())
-    .then((data) => {
-      data.forEach((data) => {
-        nombres.push(data.nombre_completo);
-      });
-    });
+    .then((fechas) => {
+      fechaTr.innerHTML = "";
+      if (fechaTr.length == 2) {
+        fechas.forEach((fecha) => {
+          const th = document.createElement("th");
+          th.textContent = fecha.fechaInicio;
+          th.setAttribute("scope", "col");
+          th.style.textAlign = "center";
+          th.id = "colum-fecha";
+          fechaTr.appendChild(th);
+        });
+      }
+    })
+    .catch((error) => console.error("Error cargando fechas:", error));
 
   // -----------------------------------
   //  MOSTRAMOS LA CONTROL DE ASISTENCIAS DE LA FICHA
   // -----------------------------------
-  let reqData = `${GB_idFicha},${fecha}`;
 
-  fetch(base_url + "/informes/getAsistencia/" + reqData)
-    .then((res) => res.json())
-    .then((data) => {
-      let info = [];
-      for (let i = 0; i < nombres.length; i++) {
-        info = data.filter(
-          (aprendiz) => aprendiz.nombre_completo === `${nombres[i]}`
-        );
+  const reqData = `${GB_idFicha},${fecha}`;
+  const fragment = document.createDocumentFragment();
 
-        let fila = `
-        <tr id="aprendiz-tr${i}">
-        <td scope="col" style="text-align: center;">${i + 1} </td>
-        <td scope="col" style="text-align: center;">${nombres[i]}</td>
-        </tr>
-        `;
-        //console.log(info);
-        columAprendiz.innerHTML += fila;
-        for (let index = 0; index < info.length; index++) {
-          let celda = ` <td scope="col" name="col-fecha" style="text-align: center;">${info[index].status}</td>`;
-          $(`#aprendiz-tr${i}`).append(celda);
-        }
+  Promise.all([fetch(base_url + "/informes/getAsistencia/" + reqData).then((res) => res.json())])
+    .then(([asistencias]) => {
+      // Limpiar tabla existente
+      columAprendiz.innerHTML = "";
+      const fechasColumnas = [];
+      const datosOrganizados = asistencias.reduce((acc, asistencia) => {
+        acc[asistencia.aprendiz] = {
+          nombre: asistencia.aprendiz,
+          asistencias: {}
+        };
+        return acc;
+      }, {});
+
+      asistencias.forEach((asistencia) => {
+        asistencia.asistencias.forEach((itemAsistencia) => {
+          datosOrganizados[asistencia.aprendiz].asistencias[itemAsistencia.fecha] =
+            itemAsistencia.estado;
+          if (!fechasColumnas.includes(itemAsistencia.fecha)) {
+            fechasColumnas.push(itemAsistencia.fecha);
+          }
+        });
+      });
+
+      if (fechaTr.children.length === 2) {
+        fechasColumnas.forEach((fecha) => {
+          const th = document.createElement("th");
+          th.textContent = fecha;
+          th.setAttribute("scope", "col");
+          th.style.textAlign = "center";
+          th.id = "colum-fecha";
+          fechaTr.appendChild(th);
+        });
       }
+      Object.values(datosOrganizados).forEach((aprendiz, index) => {
+        const tr = document.createElement("tr");
+        tr.id = `aprendiz-tr${index}`;
+        tr.innerHTML = `
+                      <td style="text-align: center;">${index + 1}</td>
+                      <td style="text-align: center;">${aprendiz.nombre}</td>
+                  `;
+
+        fechasColumnas.forEach((fecha) => {
+          const td = document.createElement("td");
+          td.style.textAlign = "center";
+          td.name = "col-fecha";
+          const estado = aprendiz.asistencias[fecha] || "";
+          const badge = document.createElement("span");
+
+          if (estado) {
+            badge.className =
+              estado === "Asistio"
+                ? "badge rounded-pill bg-success"
+                : "badge rounded-pill bg-danger";
+            badge.textContent = estado;
+          }
+
+          td.appendChild(badge);
+          tr.appendChild(td);
+        });
+
+        fragment.appendChild(tr);
+      });
+
+      columAprendiz.appendChild(fragment);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      columAprendiz.innerHTML = `
+          <tr><td colspan="100%" class="text-center">Error al cargar los datos. Intente nuevamente.</td></tr>
+      `;
     });
 }
 $(document).ready(function () {
@@ -310,7 +351,7 @@ $(document).ready(function () {
           label: "" + data.nombre_ficha + " - " + data.numeroFicha,
           value: "" + data.id + "",
           numeroFicha: "" + data.numeroFicha + "",
-          nombreFicha: "" + data.nombre_ficha + "",
+          nombreFicha: "" + data.nombre_ficha + ""
         };
         availableFichas.push(fila);
       });
@@ -328,16 +369,11 @@ $(document).ready(function () {
     // Define la función que se ejecuta al seleccionar un producto de la lista de autocompletado
     select: function (event, ui) {
       // Pasa el idFicha (ui.item.value), el nombre(ui.item.label), el numeroFicha (ui.item.precio), como argumentos.
-      agregarFicha(
-        ui.item.value,
-        ui.item.label,
-        ui.item.numeroFicha,
-        ui.item.nombreFicha
-      );
+      agregarFicha(ui.item.value, ui.item.label, ui.item.numeroFicha, ui.item.nombreFicha);
       // Limpia el campo de entrada después de que se haya seleccionado un Ficha
       $("#ficha").val("");
       return false;
-    },
+    }
   });
 
   function agregarFicha(idFicha, label, numeroFicha, nombreFicha) {
@@ -365,7 +401,7 @@ $(document).ready(function () {
         Swal.fire({
           icon: "warning",
           title: "Ficha ya agregada ",
-          text: "La Ficha ya está selecionada en la tabla de Fichas.",
+          text: "La Ficha ya está selecionada en la tabla de Fichas."
         });
       } else {
         // traemos los APRENDICES disponibles para asignarlos a la ficha Seleccionada.
@@ -401,7 +437,7 @@ $(document).ready(function () {
       Swal.fire({
         icon: "warning",
         title: "¡ Ya hay una ficha selecionada !",
-        text: "Elimina la ficha anterior, para eligir una nueva ficha.",
+        text: "Elimina la ficha anterior, para eligir una nueva ficha."
       });
     }
   }

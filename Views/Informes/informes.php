@@ -6,12 +6,11 @@ getModal('informesModal', $data);
     <div class="pagetitle">
         <h1>
             <?= $data['page_title'] ?>
-
         </h1>
     </div>
     <div class="card" style="display: block">
         <div class="card-header  bg bg-dark text-white">
-
+            Informe
         </div>
         <div class="card-body">
             <div class="card-body" id="card-informe">
@@ -95,7 +94,7 @@ getModal('informesModal', $data);
                             </tr>
                             <tr id="fecha-tr">
                                 <th scope="col" id="thVacio" style="text-align: center;"> </th>
-                                <th scope="col" id="thVacio" style="text-align: center;"> </th>
+                                <th scope="col" id="thVacio" style="text-align: center;"></th>
                             </tr>
                         </thead>
                         <tbody id="colum-aprendiz">

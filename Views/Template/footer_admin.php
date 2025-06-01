@@ -30,7 +30,9 @@
   <script src="/vendor/simple-datatables/simple-datatables.js"></script>
   
   <script src="assets/vendor/php-email-form/validate.js"></script> -->
-
+  <!-- Flatpickr JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
   <!-- Template Main JS File -->
   <script src="<?= media() ?>/js/main.js"></script>
   <?php if (isset($data['script'])): ?>

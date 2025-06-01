@@ -5,13 +5,12 @@ let slcts = document.querySelector("#slcts");
 let divFicha = document.querySelector("#divFicha");
 let divAprendiz = document.querySelector("#divAprendiz");
 let AprendizOpciones = document.querySelector(".aprendiz");
+let AprendizCheckboxContainer = document.getElementById("checkboxAprendices");
 
 let frmCrearExcepcion = document.querySelector("#frmCrearExcepcion");
 let selectExepcion = document.querySelector("#selectExepcion");
 let Aprendiz = document.querySelector("#aprendiz");
 let txtFicha = document.querySelector("#ficha");
-let txtFechaInicio = document.querySelector("#txtFechaInicio");
-let txtFechaFin = document.querySelector("#txtFechaFin");
 let txtMotivo = document.querySelector("#txtMotivo");
 let txtExcepcionId = document.querySelector("#txtExcepcionId");
 
@@ -22,29 +21,45 @@ function cargarTabla() {
       url: `${base_url}/Assets/vendor/datatables/dataTables_es.json`
     },
     ajax: {
-      url: " " + base_url + "/excepciones/getExcepciones",
+      url: `${base_url}/excepciones/getExcepciones`,
       dataSrc: ""
     },
     columns: [
-      { data: "descripcion" },
+      { data: "motivo" }, // Antes: descripcion
       { data: "fechaInicio" },
       { data: "fechaFin" },
-      { data: "nombreUsu" },
+      { data: "aprendices" }, // Antes: nombreUsu
       { data: "nombreFicha" },
       { data: "tipoExcepcion" },
       { data: "status" },
       { data: "action" }
     ],
-    responsive: "true",
+    responsive: true,
     iDisplayLength: 10,
     order: [[0, "asc"]]
   });
 }
 
-btnCrearExcepcion.addEventListener("click", () => {
-  clearForm();
-  mostrarInputs();
+flatpickr.localize(flatpickr.l10ns.es);
 
+const opcionesFlat = {
+  enableTime: true,
+  time_24hr: false,
+  altInput: true,
+  altFormat: "d-m-Y h:i K",
+  dateFormat: "Y-m-d H:i:S",
+  minDate: "today", // minDate: new Date()
+  locale: "es"
+};
+
+const fpInicio = flatpickr("#txtFechaInicio", opcionesFlat);
+const fpFin = flatpickr("#txtFechaFin", opcionesFlat);
+
+btnCrearExcepcion.addEventListener("click", async () => {
+  clearForm();
+  await cargarFicha();
+
+  mostrarInputs();
   $("#crearExcepcionModal").modal("show");
 });
 
@@ -55,9 +70,7 @@ function MostrarNoti() {
   fetch(base_url + "/excusas/getNotificaciones")
     .then((res) => res.json())
     .then((data) => {
-      document
-        .querySelectorAll(".notification-item, .dropdown-divider")
-        .forEach((el) => el.remove());
+      document.querySelectorAll(".notification-item, .dropdown-divider").forEach((el) => el.remove());
       if (!headerLi) {
         headerLi = document.createElement("li");
         headerLi.id = "headerLi";
@@ -159,8 +172,11 @@ document.addEventListener("click", (e) => {
               Swal.fire({
                 title: data.status ? "Correcto" : "Error",
                 text: data.msg,
-                icon: data.status ? "success" : "error"
+                icon: data.status ? "success" : "error",
+                timer: 2000,
+                showConfirmButton: false
               });
+
               tablaExcepciones.api().ajax.reload(function () {});
             });
         }
@@ -174,29 +190,38 @@ document.addEventListener("click", (e) => {
           if (data.status) {
             data = data.data;
             clearForm();
+
             txtExcepcionId.value = data.idExcepciones;
             selectExepcion.value = data.tipoExcepcion;
-            txtFechaFin.value = data.fechaFin;
-            txtFechaInicio.value = data.fechaInicio;
-            txtMotivo.value = data.descripcion;
+            fpInicio.setDate(data.fechaInicio, true, "Y-m-d H:i:S");
+            fpFin.setDate(data.fechaFin, true, "Y-m-d H:i:S");
+            txtMotivo.value = data.motivo;
 
             if (data.tipoExcepcion === 1) {
               await cargarFicha();
               txtFicha.value = data.fichaId;
-              await mostrarAprendices();
-              $("#crearExcepcionModal").modal("show");
+
               slcts.style.display = "flex";
               mostrarInputs();
-              Aprendiz.value = data.usuarioId;
+
+              await mostrarAprendices();
+              data.aprendices.forEach((idApr) => {
+                const chk = document.querySelector(`input[name="aprendices[]"][value="${idApr}"]`);
+                if (chk) chk.checked = true;
+              });
+
+              $("#crearExcepcionModal").modal("show");
             } else if (data.tipoExcepcion === 2) {
               await cargarFicha();
               txtFicha.value = data.fichaId;
-              $("#crearExcepcionModal").modal("show");
+
               slcts.style.display = "flex";
               mostrarInputs();
-            } else if (data.tipoExcepcion === 3) {
               $("#crearExcepcionModal").modal("show");
+            } else if (data.tipoExcepcion === 3) {
+              slcts.style.display = "none";
               mostrarInputs();
+              $("#crearExcepcionModal").modal("show");
             }
           } else {
             Swal.fire({
@@ -204,51 +229,108 @@ document.addEventListener("click", (e) => {
               text: data.msg,
               icon: "error"
             });
-            tablaExcepciones.api().ajax.reload(function () {});
+            tablaExcepciones.api().ajax.reload();
           }
         });
     }
   } catch {}
-
-  function clearForm() {
-    selectExepcion.value = "";
-    /*   Aprendiz.value = '<option value="null" disabled selected="">Seleccione el Aprendiz</option>';
-    ficha.value = '<option value="null" disabled selected="">Seleccione la Ficha</option>'; */
-    txtFechaInicio.value = "";
-    txtFechaFin.value = "";
-    txtMotivo.value = "";
-    txtExcepcionId.value = 0;
-    divFicha.classList.remove("col-12", "mb-2");
-    divFicha.classList.add("col-6", "mb-2");
-  }
 });
 
+function clearForm() {
+  selectExepcion.value = "";
+  mostrarInputs();
+
+  fichaOpciones.innerHTML = '<option value="" disabled selected>Seleccione la Ficha</option>';
+  txtFicha.setAttribute("disabled", "disabled");
+  txtFicha.removeAttribute("required");
+
+  AprendizCheckboxContainer.innerHTML = "";
+  divAprendiz.style.display = "none";
+
+  fpInicio.value = "";
+  fpFin.value = "";
+  txtMotivo.value = "";
+
+  txtExcepcionId.value = 0;
+}
+
 async function cargarFicha() {
-  fichaOpciones.innerHTML =
-    '<option value="null" disabled selected="">Seleccione la Ficha</option>';
+  fichaOpciones.innerHTML = "";
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.disabled = true;
+  placeholder.selected = true;
+  placeholder.textContent = "Seleccione la Ficha";
+  fichaOpciones.appendChild(placeholder);
+
   let response = await fetch(base_url + "/excepciones/getFicha");
   let data = await response.json();
 
-  data.map((ficha) => {
-    let opciones = `<option value="${ficha.idFicha}">${ficha.nombre} - ${ficha.numeroFicha}</option>`;
-    fichaOpciones.innerHTML += opciones;
+  data.forEach((ficha) => {
+    const opt = document.createElement("option");
+    opt.value = ficha.idFicha;
+    opt.textContent = `${ficha.nombre} - ${ficha.numeroFicha}`;
+    fichaOpciones.appendChild(opt);
   });
 }
-cargarFicha();
 
 async function mostrarAprendices() {
-  AprendizOpciones.innerHTML =
-    '<option value="null" disabled selected="">Seleccione el Aprendiz</option>';
+  if (selectExepcion.value !== "1") {
+    divAprendiz.style.display = "none";
+    return;
+  }
 
-  let response = await fetch(base_url + "/excepciones/selectAprendisById/" + txtFicha.value);
-  let data = await response.json();
+  AprendizCheckboxContainer.innerHTML = "";
 
-  data = data.data;
-  data.map((Aprendiz) => {
-    let opcionesApre = `<option value="${Aprendiz.usuario_idUsuarios}">${Aprendiz.nombre} - ${Aprendiz.documento}</option>`;
-    AprendizOpciones.innerHTML += opcionesApre;
-  });
+  if (!txtFicha.value) {
+    AprendizCheckboxContainer.innerHTML = "<p>Debe seleccionar una ficha primero.</p>";
+    return;
+  }
+
+  try {
+    let response = await fetch(base_url + "/excepciones/selectAprendisById/" + txtFicha.value);
+    if (!response.ok) throw new Error("Error en la petición al servidor");
+    let data = await response.json();
+
+    if (!data || !data.data || data.data.length === 0) {
+      AprendizCheckboxContainer.innerHTML = "<p>No se encontraron aprendices.</p>";
+      return;
+    }
+
+    data.data.forEach((aprendiz) => {
+      const colDiv = document.createElement("div");
+      colDiv.className = "col-4 mb-2";
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "form-check";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.className = "form-check-input";
+      checkbox.name = "aprendices[]";
+      checkbox.value = aprendiz.usuario_idUsuarios;
+      checkbox.id = `aprendiz_${aprendiz.usuario_idUsuarios}`;
+
+      const label = document.createElement("label");
+      label.className = "form-check-label";
+      label.htmlFor = checkbox.id;
+      label.textContent = `${aprendiz.nombre} - ${aprendiz.documento}`;
+
+      wrapper.appendChild(checkbox);
+      wrapper.appendChild(label);
+      colDiv.appendChild(wrapper);
+
+      AprendizCheckboxContainer.appendChild(colDiv);
+    });
+
+    divAprendiz.style.display = "block";
+  } catch (error) {
+    AprendizCheckboxContainer.innerHTML = "<p>Error cargando aprendices.</p>";
+    console.error(error);
+  }
 }
+
 txtFicha.addEventListener("change", mostrarAprendices);
 
 function mostrarInputs() {
@@ -256,50 +338,64 @@ function mostrarInputs() {
   divFicha.style.display = "none";
   divAprendiz.style.display = "none";
 
-  if (selectExepcion.value == 1) {
+  txtFicha.removeAttribute("required");
+
+  AprendizCheckboxContainer.innerHTML = "";
+
+  if (selectExepcion.value == "1") {
     slcts.style.display = "flex";
     divFicha.style.display = "block";
-    Aprendiz.setAttribute("required", "true");
-    ficha.setAttribute("required", "true");
     divAprendiz.style.display = "block";
-    divFicha.classList.remove("col-12", "mb-2");
-    divFicha.classList.add("col-6", "mb-2");
-  } else if (selectExepcion.value == 2) {
+
+    txtFicha.removeAttribute("disabled");
+    txtFicha.setAttribute("required", "true");
+  } else if (selectExepcion.value == "2") {
     slcts.style.display = "flex";
     divFicha.style.display = "block";
-    ficha.setAttribute("required", "true");
-    divFicha.classList.remove("col-6", "mb-2");
-    divFicha.classList.add("col-12", "mb-2");
+
+    txtFicha.removeAttribute("disabled");
+    txtFicha.setAttribute("required", "true");
+
+    divFicha.classList.remove("col-6");
+    divFicha.classList.add("col-12");
+  } else {
+    txtFicha.setAttribute("disabled", "disabled");
   }
 }
-selectExepcion.addEventListener("change", mostrarInputs);
 
-function clearForm() {
-  selectExepcion.value = "";
-  /*   Aprendiz.value = '<option value="null" disabled selected="">Seleccione el Aprendiz</option>';
-  ficha.value = '<option value="null" disabled selected="">Seleccione la Ficha</option>'; */
-  txtFechaInicio.value = "";
-  txtFechaFin.value = "";
-  txtMotivo.value = "";
-  txtExcepcionId.value = 0;
-}
+selectExepcion.addEventListener("change", mostrarInputs);
 
 frmCrearExcepcion.addEventListener("submit", (e) => {
   e.preventDefault();
   let frmExcepcion = new FormData(frmCrearExcepcion);
+
   fetch(base_url + "/excepciones/setExcepciones", {
     method: "POST",
     body: frmExcepcion
   })
-    .then((res) => res.json())
-    .then((data) => {
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      return res.text();
+    })
+    .then((text) => {
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        console.error("Respuesta no es JSON válido:", text);
+        throw new Error("La respuesta del servidor no es JSON.");
+      }
+
       if (data.status) {
         Swal.fire({
-          title: "Registro Excepcion",
+          title: "Registro Excepción",
           text: data.msg,
           icon: "success"
         });
-        tablaExcepciones.api().ajax.reload(function () {});
+        tablaExcepciones.api().ajax.reload();
         $("#crearExcepcionModal").modal("hide");
         clearForm();
       } else {
@@ -309,5 +405,13 @@ frmCrearExcepcion.addEventListener("submit", (e) => {
           icon: "error"
         });
       }
+    })
+    .catch((error) => {
+      console.error("Error en fetch o JSON.parse:", error);
+      Swal.fire({
+        title: "Error inesperado",
+        text: "Ocurrió un problema al procesar la respuesta del servidor.",
+        icon: "error"
+      });
     });
 });

@@ -5,7 +5,7 @@ require_once __DIR__ . '/../Models/NotificacionesModel.php';
 class Informes extends Controllers
 {
 
-    private $idInstru;
+    private $nombreInstructor;
     public function __construct()
     {
         $this->controller = new Reportes();
@@ -98,7 +98,7 @@ class Informes extends Controllers
 
         for ($i = 0; $i < count($arrData); $i++) {
             $arrData[$i]['accion'] = '
-            <button type="button" data-action="info" data-id="' . $arrData[$i]['id'] . '" class="btn btn-primary"><i class="bi bi-info-circle-fill"></i></button>
+            <button type="button"  data-action="info" data-id="' . $arrData[$i]['id'] . '" class="btn btn-primary rounded-pill"><i class="bi bi-info-circle-fill"></i></button>
             ';
         }
 
@@ -126,32 +126,43 @@ class Informes extends Controllers
 
         $arrData = $this->model->selectInfoAprendiz($idInstructor, $info[0], $info[1]);
 
-        for ($i = 0; $i < count($arrData); $i++) {
-
-
-            if ($arrData[$i]['status'] == 0 || $arrData[$i]['status'] == 2) {
-                $arrData[$i]['status'] = '<span class="badge rounded-pill bg-success">Asistio</span>';
+        $infoGeneral = [];
+        foreach ($arrData as $row) {
+            $nombre = $row['nombre_completo'];
+            if (!isset($infoGeneral[$nombre])) {
+                $infoGeneral[$nombre] = [
+                    'aprendiz' => $nombre,
+                    'asistencias' => []
+                ];
             }
-            if ($arrData[$i]['status'] == 1 || $arrData[$i]['status'] == 3) {
-                $arrData[$i]['status'] = '<span class="badge rounded-pill bg-danger">Falto</span>';
-            }
+            $estado = $row['status'] == 1 ? 'Asistio' : 'Falto';
+            $infoGeneral[$nombre]['asistencias'][] = [
+                'fecha' => $row['fecha'],
+                'estado' => $estado
+            ];
         }
 
-        echo json_encode($arrData, JSON_UNESCAPED_UNICODE);
+        $infoGeneral = array_values($infoGeneral);
+
+        echo json_encode($infoGeneral, JSON_UNESCAPED_UNICODE);
     }
 
-    /* public function generarPdf(int $data)
+    public function generarPdf(int $data)
     {
 
         $arrData = $this->controller->generarPdfAprendiz($data);
         echo $arrData;
     }
-    public function generarPdfAsi(int $data)
+    public function generarPdfAsi()
     {
-
-        $arrData = $this->controller->generarPdfAsistencia($data);
+        $nombre = $_GET['nombre'];
+        $numero = $_GET['numero'];
+        $nombre_completo = $_SESSION['userData']['nombre'] . " " . $_SESSION['userData']['apellido'];
+        // serializamos el JSON que nos llega desde el request y utlizamos json_decode() y le indicamos que lo covierta en un array assoc
+        $infoFicha = json_decode($_GET['infoGeneral'], true);
+        $arrData = $this->controller->generarPdfAsistencia($nombre, $nombre_completo, $numero, $infoFicha);
         echo $arrData;
-    } */
+    }
 
     public function getAprendices(int $idFicha)
     {

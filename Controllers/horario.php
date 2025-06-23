@@ -19,9 +19,17 @@ class Horario extends Controllers{
 
     public function gestionar(){
 
-        $data['page_title'] = "Página de dashboard";
+        $data['page_title'] = "Gestionar horario";
         $data['page_name'] = "horario";
         $data['script'] = "gestionarHorarios";
+        $this->views->getView($this,"gestionar", $data);
+    }
+
+    public function verhorario(){
+
+        $data['page_title'] = "Gestionar horario";
+        $data['page_name'] = "horario";
+        $data['script'] = "horario";
         $this->views->getView($this,"gestionar", $data);
     }
 

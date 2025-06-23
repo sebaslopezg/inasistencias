@@ -31,7 +31,7 @@
           </a>
         </li>
         <li>
-          <a href="<?= base_url() ?>/verhorario">
+          <a href="<?= base_url() ?>/horario/verhorario">
             <i class="bi bi-circle"></i><span>Ver horarios</span>
           </a>
         </li>

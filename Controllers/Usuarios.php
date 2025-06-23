@@ -6,9 +6,9 @@ class Usuarios extends Controllers
     {
         parent::__construct();
         session_start();
-/*         if(empty($_SESSION['login'])){
-           header('Location: ' . base_url().'/login' );
-       }  */
+        if (empty($_SESSION['login'])) {
+            header('Location: ' . base_url() . '/login');
+        }
     }
     public function usuarios()
     {
@@ -102,19 +102,19 @@ class Usuarios extends Controllers
             try {
                 if ($intIdUsuario == 0 || $intIdUsuario == "" || $intIdUsuario == "0") {
                     $insert = $this->model->insertUsuario(
-                        $strNombre, 
-                        $strApellido, 
-                        $intDocumento, 
-                        $intTelefono, 
-                        $intGenero, 
-                        $strEmail, 
-                        $strCodigo, 
+                        $strNombre,
+                        $strApellido,
+                        $intDocumento,
+                        $intTelefono,
+                        $intGenero,
+                        $strEmail,
+                        $strCodigo,
                         $strRol,
                         $strPassword,
                         $strFirma
                     );
                     $option = 1;
-                }else{
+                } else {
                     if ($intStatus == 0) {
                         $intStatus = 1;
                     }

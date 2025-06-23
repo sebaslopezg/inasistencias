@@ -31,7 +31,7 @@ class Inasistencias extends Controllers
             $registro = $this->model->insertInasistencia($usuarioEncontrado['idUsuarios']);
             if ($registro) {
                 $arrResponse = array('status' => true, 'msg' => 'Se registró la asistencia de ' . $usuarioEncontrado['nombre'] . ' ' . $usuarioEncontrado['apellido']);
-            } else {
+            }else{
                 $arrResponse = array('status' => false, 'msg' => 'Error al intentar insertar la asistencia de ' . $usuarioEncontrado['nombre'] . ' ' . $usuarioEncontrado['apellido']);
             }
         } else {

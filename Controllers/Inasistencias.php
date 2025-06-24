@@ -13,8 +13,6 @@ class Inasistencias extends Controllers
     }
     public function inasistencias()
     {
-
-
         $data['page_title'] = "Página de inasistencias";
         $data['page_name'] = "inasistencias";
         $data['script'] = "inasistencias";

@@ -21,11 +21,12 @@
   <script src="<?= media() ?>/vendor/sweetalert/sweetalert2.all.min.js"></script>
   <script src="<?= media() ?>/vendor/datatables/datatables.min.js"></script>
   <script src="<?= media() ?>/vendor/jquery/jquery-ui.js"></script>
+  <script src="assets/vendor/quill/quill.js"></script> 
   <!--
   <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
   <script src="assets/vendor/chart.js/chart.umd.js"></script>
   <script src="assets/vendor/echarts/echarts.min.js"></script>
-  <script src="assets/vendor/quill/quill.js"></script> 
+  
   
   <script src="/vendor/simple-datatables/simple-datatables.js"></script>
   

@@ -256,14 +256,6 @@ document.addEventListener("click", (e) => {
       fetch(base_url + "/informes/getFaltas/" + idAprendiz)
         .then((res) => res.json())
         .then((data) => {
-<<<<<<< HEAD
-          let btnPdfModal = `
-           <a type="button" style="float:right; margin-right:5px;" id="btnPDFmodal" data-action="pdf" data-id="${id_Ficha}" 
-            class="btn btn-outline-danger mb-3"> <i class="bi bi-filetype-pdf" style="font-size:larger;"></i></a>
-          `;
-
-          mostrarBtn.innerHTML = btnPdfModal;
-=======
           let btnModalPdf = `
             <button type="button" style="float:right; margin-right:5px;" id="btnPDFmodal" data-action="pdf" data-id="${idAprendiz}" 
             class="btn btn-outline-danger rounded-pill mb-3"> <i class="bi bi-filetype-pdf" style="font-size:larger;">
@@ -271,7 +263,6 @@ document.addEventListener("click", (e) => {
             `;
           mostrarBtn.innerHTML = btnModalPdf;
 
->>>>>>> 5367ce573f28af84a85ca77ed6bee562d1280dbd
           data.forEach((data) => {
             let row = `
             <div class="row">

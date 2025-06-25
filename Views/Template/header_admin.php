@@ -27,6 +27,7 @@
 
   <!-- Template Main CSS File -->
   <link href="<?= media() ?>/css/style.css" rel="stylesheet">
+  <link href="<?= media() ?>/css/cards.css" rel="stylesheet">
 
   <!-- Flatpickr -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -95,20 +96,13 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+              <a class="dropdown-item d-flex align-items-center" href="<?= base_url() ?>/usuarios/cuenta">
                 <i class="bi bi-person"></i>
                 <span>Mi cuenta</span>
               </a>
             </li>
             <li>
               <hr class="dropdown-divider">
-            </li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                <i class="bi bi-gear"></i>
-                <span>Ajustes</span>
-              </a>
             </li>
             <li>
               <hr class="dropdown-divider">

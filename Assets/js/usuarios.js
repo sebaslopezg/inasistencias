@@ -11,6 +11,7 @@ const frmEmail = document.querySelector('#txtEmail')
 const frmCodigo = document.querySelector('#txtCodigo')
 const frmIdUsuario = document.querySelector('#idUsuario')
 const frmUserStatus = document.querySelector('#userStatus')
+const frmUserRol = document.querySelector('#userRol')
 
 let tablaUsuarios = document.querySelector('#tablaUsuarios')
 
@@ -56,7 +57,8 @@ document.addEventListener('click', (e)=>{
             .then((data) => {
                 if (data.status) {
                     data = data.data
-                    //console.log(data)
+                    console.log(data.genero);
+                    
                     frmNombre.value = data.nombre
                     frmApellido.value = data.apellido
                     frmDocumento.value = data.documento
@@ -66,6 +68,7 @@ document.addEventListener('click', (e)=>{
                     frmCodigo.value = data.codigo
                     frmIdUsuario.value = data.id
                     frmUserStatus.value = data.status
+                    frmUserRol.value = data.rol
 
                     frmDocumento.setAttribute('readonly','')
                     $('#crearUsuarioModal').modal('show')
@@ -81,7 +84,6 @@ document.addEventListener('click', (e)=>{
             })
         }
     }catch{}
-    
 })
 
 btnCrearUsuario.addEventListener('click', ()=>{
@@ -193,6 +195,7 @@ function clearForm(){
     frmEmail.value= ""
     frmCodigo.value= ""
     frmIdUsuario.value = "0"
+    frmUserRol.value = ""
     frmDocumento.removeAttribute('readonly')
 }
 

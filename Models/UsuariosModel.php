@@ -14,7 +14,7 @@ class UsuariosModel extends Mysql{
 
     public function selectUsuariosById(int $idUsuario){
         $this->idUsuario = $idUsuario;
-        $sql = "SELECT idUsuarios AS id, u.nombre, u.apellido, u.documento, u.telefono, u.genero, u.correo, u.codigo, u.rol, u.status FROM usuario u WHERE u.status > 0 AND idUsuarios = {$this->idUsuario}";
+        $sql = "SELECT idUsuarios AS id, u.nombre, u.apellido, u.documento, u.telefono, u.genero, u.correo, u.codigo, u.rol, u.firma, u.status FROM usuario u WHERE u.status > 0 AND idUsuarios = {$this->idUsuario}";
         $request = $this->select($sql);
         return $request;
     }
@@ -93,6 +93,51 @@ class UsuariosModel extends Mysql{
         $arrData = array(0);
         $request = $this->update($sql, $arrData);
         return $request;
+    }
+
+    public function editProfile(string $nombre, string $apellido, string $genero, string $telefono, string $email, int $id){
+        $this->nombre = $nombre;
+        $this->apellido = $apellido;
+        $this->genero = $genero;
+        $this->telefono = $telefono;
+        $this->email = $email;
+        $this->id = $id;
+
+        $arrData = [
+            $this->nombre,
+            $this->apellido,
+            $this->genero,
+            $this->telefono,
+            $this->email
+        ];
+
+        $sql = "UPDATE usuario SET nombre = ?, apellido = ?, genero = ?, telefono = ?, correo = ? WHERE idUsuarios = {$this->id}";
+
+        $requestUpdate = $this->update($sql, $arrData);
+        $respuesta = $requestUpdate;
+
+        return $respuesta;
+    }
+
+    public function getPass(int $id){
+        $this->id = $id;
+        $sql = "SELECT password FROM usuario WHERE status > 0 AND idUsuarios = {$this->id}";
+        $request = $this->select($sql);
+        return $request;
+    }
+
+    public function updatePass(string $nuevaPass, int $id){
+        $this->nuevaPass = $nuevaPass;
+        $this->id = $id;
+
+        $arrData = [$this->nuevaPass];
+
+        $sql = "UPDATE usuario SET password = ? WHERE idUsuarios = {$this->id}";
+
+        $requestUpdate = $this->update($sql, $arrData);
+        $respuesta = $requestUpdate;
+
+        return $respuesta;
     }
 
 }

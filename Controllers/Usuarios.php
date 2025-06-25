@@ -12,11 +12,19 @@ class Usuarios extends Controllers
     }
     public function usuarios()
     {
-
         $data['page_title'] = "Página de usuarios";
         $data['page_name'] = "usuarios";
         $data['script'] = "usuarios";
         $this->views->getView($this, "usuarios", $data);
+    }
+
+    public function cuenta()
+    {
+
+        $data['page_title'] = "Página de usuarios";
+        $data['page_name'] = "Cuenta";
+        $data['script'] = "cuenta";
+        $this->views->getView($this, "cuenta", $data);
     }
 
     public function getUsarios()
@@ -81,8 +89,11 @@ class Usuarios extends Controllers
             'genero',
             'txtEmail',
             'txtCodigo',
+            'userRol',
             'userStatus'
         ];
+
+        $firma = ['userFirma'];
 
         if (check_post($arrPosts)) {
 
@@ -94,10 +105,15 @@ class Usuarios extends Controllers
             $strEmail = strtolower(strClean($_POST['txtEmail']));
             $strCodigo = strClean($_POST['txtCodigo']);
             $intStatus = intval(strClean($_POST['userStatus']));
-            $strFirma = "";
-            $strRol = "APRENDIZ";
+            $strRol = strClean($_POST['userRol']);
             $intIdUsuario = intval(strClean($_POST['idUsuario']));
             $strPassword =  hash("SHA256", strClean($_POST['txtDocumento']));
+
+            if (check_file($firma)) {
+                $strFirma = save_image('userFirma');
+            }else{
+                $strFirma = '';
+            }
 
             try {
                 if ($intIdUsuario == 0 || $intIdUsuario == "" || $intIdUsuario == "0") {
@@ -158,7 +174,90 @@ class Usuarios extends Controllers
         echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
     }
 
-    function deleteUsuario()
+    public function editprofile($id){
+
+        $intId = intval(strClean($id));
+
+        $arrPosts = [
+            'userName',
+            'userApellido',
+            'userGenero',
+            'userTelefono',
+            'userEmail'
+        ];
+
+        if (check_post($arrPosts)) {
+            $strUserName = strClean($_POST['userName']);
+            $strUserApellido = strClean($_POST['userApellido']);
+            $strUserGenero = strClean($_POST['userGenero']);
+            $strUserTelefono = strClean($_POST['userTelefono']);
+            $strUserEmail = strClean($_POST['userEmail']);
+
+            $update = $this->model->editProfile(
+                $strUserName,
+                $strUserApellido,
+                $strUserGenero,
+                $strUserTelefono,
+                $strUserEmail,
+                $intId
+            );
+
+            if (intval($update) > 0) {
+                $arrResponse = array('status' => true, 'msg' => 'Usuario actualizado correctamente');
+            }else{
+                $arrResponse = array('status' => false, 'msg' => 'Error al intentar actualizar usuario');
+            }
+        }else{
+            $arrResponse = array('status' => false, 'msg' => 'Campos Vacíos');
+        }
+
+        echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function updatepass($id){
+
+        $intId = intval(strClean($id));
+
+        $arrPosts = [
+            'currentPassword',
+            'newPassword',
+            'renewPassword'
+        ];
+
+        if (check_post($arrPosts)) {
+            $strPassActual = hash("SHA256", strClean($_POST['currentPassword']));
+            $strPassNueva = hash("SHA256", strClean($_POST['newPassword']));
+            $strPassNuevaRepetir = hash("SHA256", strClean($_POST['renewPassword']));
+
+            $courrentPass = $this->model->getPass($intId);
+
+            if ($strPassActual == $courrentPass['password']) {
+
+                if ($strPassNueva == $strPassNuevaRepetir) {
+                    $update = $this->model->updatePass($strPassNueva, $intId);
+
+                    if (intval($update) > 0) {
+                        $arrResponse = array('status' => true, 'msg' => 'Contraseña actualizada correctamente');
+                    }else{
+                        $arrResponse = array('status' => false, 'msg' => 'Error al intentar actualizar la contraseña');
+                    }
+
+                }else{
+                    $arrResponse = array('status' => false, 'msg' => 'La contraseña nueva no coincide con la repetida');
+                }
+
+            }else{
+                $arrResponse = array('status' => false, 'msg' => 'La contraseña actual no coincide');
+            }
+
+        }else{
+            $arrResponse = array('status' => false, 'msg' => 'Todos los campos son obligatorios');
+        }
+
+        echo json_encode($arrResponse, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function deleteUsuario()
     {
         if ($_POST) {
             $intIdUsuario = intval($_POST['idUsuario']);

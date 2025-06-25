@@ -31,7 +31,7 @@
           </a>
         </li>
         <li>
-          <a href="<?= base_url() ?>/horario/verhorario">
+          <a href="<?= base_url() ?>/horario/gestionar">
             <i class="bi bi-circle"></i><span>Ver horarios</span>
           </a>
         </li>
@@ -76,15 +76,7 @@
         </a>
       </li>
     <?php endif; ?>
-
-
-    <!-- Pagina de ingresos -->
-    <li class="nav-item">
-      <a class="nav-link <?= $data['page_name'] != 'ingresos' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/ingresos">
-        <i class="bi bi-journal-plus"></i>
-        <span>Ingresos</span>
-      </a>
-    </li>
+    
     <!-- Pagina de ingresos -->
     <li class="nav-item">
       <a class="nav-link <?= $data['page_name'] != 'informes' ? 'collapsed' : ''  ?>" href="<?= base_url() ?>/informes">

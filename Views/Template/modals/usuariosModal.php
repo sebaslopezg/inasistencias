@@ -37,13 +37,12 @@
                     <label for="genero" class="form-label">Genero</label>
                     <select class="form-control" name="genero" id="genero">
                         <option value="0">Seleccione el Genero</option>
-                        <option value="1">Masculino</option>
-                        <option value="2">Femenino</option>
-                        <option value="3">Otro</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                        <option value="O">Otro</option>
                     </select>
                 </div>
             </div>
-
 
             <div class="mb-3">
                 <label for="txtEmail" class="form-label">Correo electronico</label>
@@ -55,9 +54,21 @@
                 <label for="txtCodigo" class="form-label">Codigo</label>
                 <input type="text" class="form-control" id="txtCodigo" name="txtCodigo">
             </div>
+
+            <div class="row">
+                <div class="mb-3 col-12">
+                    <label for="userRol" class="form-label">Rol</label>
+                    <select class="form-control" name="userRol" id="userRol">
+                        <option value="APRENDIZ">Aprendiz</option>
+                        <option value="INSTRUCTOR">Instructor</option>
+                        <option value="COORDINADOR">Coordinador</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="mb-3">
                 <label for="txtNombre" class="form-label">Firma</label>
-                <input class="form-control" type="file" id="firma">
+                <input class="form-control" type="file" name="userFirma" id="userFirma">
             </div>
             <div id="userStatusZone" class="mb-3">
                 <label for="genero" class="form-label">Estado</label>
@@ -66,7 +77,6 @@
                     <option value="1">Activo</option>
                 </select>
             </div>
-            
         
       </div>
       <div class="modal-footer">

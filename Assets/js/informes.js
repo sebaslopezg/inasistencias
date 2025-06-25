@@ -13,6 +13,7 @@ let search_ficha = document.querySelector("#buscador");
 let btnPdf = document.querySelector("#btnPdf");
 let btnPdfM = document.querySelector("#btnPdfmodal");
 let cardInforme = document.querySelector(".class-informes");
+let cardInfo = document.querySelector("#card-informe");
 let cardAsistencias = document.querySelector("#cardAsistencias");
 let informeAsistencia = document.querySelector("#informe-asistencia");
 let fechaTr = document.querySelector("#fecha-tr");
@@ -199,9 +200,11 @@ btnPdf.addEventListener("click", () => {
 });
 
 btnAsistencia.addEventListener("click", () => {
+  cardInfo.style.display = "none";
   cardInforme.style.display = "none";
   cardAsistencias.style.display = "block";
-  search_ficha.style.display = "none";
+  document.getElementById("colBuscador").classList.add("d-none");
+  document.getElementById("colLimpiar").classList.add("d-none");
   informeAsistencia.style.display = "block";
   btnAsistencia.style.display = "none";
   btnInasistencia.style.display = "block";
@@ -227,24 +230,17 @@ btnInasistencia.addEventListener("click", () => {
   // -----------------------------------
   //    DESHABILITAMOS LOS ELEMENTOS (BTN AND TABLE).
   //  -----------------------------------
+  cardInfo.style.display = "block";
   cardInforme.style.display = "block";
   cardAsistencias.style.display = "none";
   informeAsistencia.style.display = "none";
-  search_ficha.style.display = "block";
   btnAsistencia.style.display = "block";
   btnInasistencia.style.display = "none";
   btnPdf.style.display = "none";
   btnLimpiar.style.display = "block";
   lblTitulo.style.display = "block";
-  // -----------------------------------
-  //    LIMPIAMOS LAS TABLAS
-  //  -----------------------------------
-  let i = 0;
-  $(`#tabla-asistencia tr${i + 1}`).each(function () {
-    $(`#aprendiz-tr`).remove();
-    $("#colum-fecha").remove();
-    $("#colum-info-ficha").remove();
-  });
+  document.getElementById("colBuscador").classList.remove("d-none");
+  document.getElementById("colLimpiar").classList.remove("d-none");
 });
 
 document.addEventListener("click", (e) => {
@@ -326,7 +322,7 @@ document.addEventListener("click", (e) => {
       frmData.append("idNoti", id);
       fetch(base_url + "/informes/eliminarNoti", {
         method: "POST",
-        body: frmData,
+        body: frmData
       })
         .then((res) => res.json())
         .then((data) => {
@@ -339,89 +335,98 @@ function renderTablaAsistencia(fecha) {
   // -----------------------------------
   //   TRAEMOS LAS FECHAS DEL HORARIO DEL INSTRUCTOR
   // -----------------------------------
-  let reqInfo = `${GB_codigoFicha},${fecha}`;
-  GB_fechaFiltro = fecha; // capturamos la fecha seleccionada, para hacer el filtrado de la tabla asistencia.
-  fetch(base_url + "/informes/getFechaInstructor/" + reqInfo)
+  GB_fechaFiltro = fecha;
+  const reqInfo = `${GB_codigoFicha},${fecha}`;
+
+  // Función auxiliar para crear un TH de fecha
+  function crearColumnaFecha(fechaTexto) {
+    const th = document.createElement("th");
+    th.textContent = fechaTexto;
+    th.setAttribute("scope", "col");
+    th.style.textAlign = "center";
+    th.classList.add("colum-fecha");
+    return th;
+  }
+
+  // 1) Traer las fechas del horario del instructor (opcionalmente puedes prescindir de esto
+  //    si luego reconstruyes las columnas solo desde la respuesta de asistencias)
+  const fechasPromise = fetch(`${base_url}/informes/getFechaInstructor/${reqInfo}`)
     .then((res) => res.json())
-    .then((fechas) => {
-      fechaTr.innerHTML = "";
-      if (fechaTr.length == 2) {
-        fechas.forEach((fecha) => {
-          const th = document.createElement("th");
-          th.textContent = fecha.fechaInicio;
-          th.setAttribute("scope", "col");
-          th.style.textAlign = "center";
-          th.id = "colum-fecha";
-          fechaTr.appendChild(th);
-        });
+    .catch((err) => {
+      console.error("Error cargando fechas de instructor:", err);
+      return []; // para que siga el flujo
+    });
+
+  // 2) Traer las asistencias
+  const asistenciaPromise = fetch(`${base_url}/informes/getAsistencia/${GB_idFicha},${fecha}`)
+    .then((res) => res.json())
+    .catch((err) => {
+      console.error("Error cargando asistencias:", err);
+      return null;
+    });
+
+  Promise.all([fechasPromise, asistenciaPromise])
+    .then(([fechasInstructor, asistencias]) => {
+      // Validación básica
+      if (!Array.isArray(asistencias)) {
+        console.error("Formato de asistencias no válido:", asistencias);
+        return;
       }
-    })
-    .catch((error) => console.error("Error cargando fechas:", error));
 
-  // -----------------------------------
-  //  MOSTRAMOS LA CONTROL DE ASISTENCIAS DE LA FICHA
-  // -----------------------------------
-
-  const reqData = `${GB_idFicha},${fecha}`;
-  const fragment = document.createDocumentFragment();
-
-  Promise.all([fetch(base_url + "/informes/getAsistencia/" + reqData).then((res) => res.json())])
-    .then(([asistencias]) => {
-      // Limpiar tabla existente
-      columAprendiz.innerHTML = "";
+      // Organizar datos y recopilar fechas únicas
+      const datosOrganizados = {};
       const fechasColumnas = [];
-      const datosOrganizados = asistencias.reduce((acc, asistencia) => {
-        acc[asistencia.aprendiz] = {
-          nombre: asistencia.aprendiz,
-          asistencias: {}
-        };
-        return acc;
-      }, {});
 
-      asistencias.forEach((asistencia) => {
-        asistencia.asistencias.forEach((itemAsistencia) => {
-          datosOrganizados[asistencia.aprendiz].asistencias[itemAsistencia.fecha] =
-            itemAsistencia.estado;
-          if (!fechasColumnas.includes(itemAsistencia.fecha)) {
-            fechasColumnas.push(itemAsistencia.fecha);
+      asistencias.forEach((item) => {
+        if (!datosOrganizados[item.aprendiz]) {
+          datosOrganizados[item.aprendiz] = { nombre: item.aprendiz, asistencias: {} };
+        }
+        item.asistencias.forEach((a) => {
+          datosOrganizados[item.aprendiz].asistencias[a.fecha] = a.estado;
+          if (!fechasColumnas.includes(a.fecha)) {
+            fechasColumnas.push(a.fecha);
           }
         });
       });
 
-      if (fechaTr.children.length === 2) {
-        fechasColumnas.forEach((fecha) => {
-          const th = document.createElement("th");
-          th.textContent = fecha;
-          th.setAttribute("scope", "col");
-          th.style.textAlign = "center";
-          th.id = "colum-fecha";
-          fechaTr.appendChild(th);
-        });
-      }
-      Object.values(datosOrganizados).forEach((aprendiz, index) => {
-        const tr = document.createElement("tr");
-        tr.id = `aprendiz-tr${index}`;
-        tr.innerHTML = `
-                      <td style="text-align: center;">${index + 1}</td>
-                      <td style="text-align: center;">${aprendiz.nombre}</td>
-                  `;
+      // 3) Renderizar encabezados de fecha
+      //    Primero, elimina cualquier TH previa
+      document.querySelectorAll(".colum-fecha").forEach((el) => el.remove());
+      //    Luego, añade uno por cada fecha en orden
+      fechasColumnas.forEach((f) => {
+        fechaTr.appendChild(crearColumnaFecha(f));
+      });
 
-        fechasColumnas.forEach((fecha) => {
+      // 4) Renderizar cuerpo de asistencias
+      columAprendiz.innerHTML = "";
+      const fragment = document.createDocumentFragment();
+
+      Object.values(datosOrganizados).forEach((aprendiz, idx) => {
+        const tr = document.createElement("tr");
+        tr.id = `aprendiz-tr${idx}`;
+
+        // Celdas de índice y nombre
+        tr.innerHTML = `
+          <td style="text-align: center;">${idx + 1}</td>
+          <td style="text-align: center;">${aprendiz.nombre}</td>
+        `;
+
+        // Celdas de cada fecha
+        fechasColumnas.forEach((f) => {
           const td = document.createElement("td");
           td.style.textAlign = "center";
-          td.name = "col-fecha";
-          const estado = aprendiz.asistencias[fecha] || "";
-          const badge = document.createElement("span");
 
+          const estado = aprendiz.asistencias[f];
           if (estado) {
-            badge.className =
+            const span = document.createElement("span");
+            span.className =
               estado === "Asistio"
                 ? "badge rounded-pill bg-success"
                 : "badge rounded-pill bg-danger";
-            badge.textContent = estado;
+            span.textContent = estado;
+            td.appendChild(span);
           }
 
-          td.appendChild(badge);
           tr.appendChild(td);
         });
 
@@ -430,13 +435,41 @@ function renderTablaAsistencia(fecha) {
 
       columAprendiz.appendChild(fragment);
     })
-    .catch((error) => {
-      console.error("Error:", error);
+    .catch((err) => {
+      console.error("Error en renderTablaAsistencia:", err);
       columAprendiz.innerHTML = `
-          <tr><td colspan="100%" class="text-center">Error al cargar los datos. Intente nuevamente.</td></tr>
-      `;
+        <tr>
+          <td colspan="100%" class="text-center">
+            Error al cargar los datos. Intente nuevamente.
+          </td>
+        </tr>`;
     });
 }
+function limpiarTablaAsistencia() {
+  //Limpiar Filtro
+  let fecha = document.getElementById("filtroFecha");
+  if (fecha) {
+    fecha.value = "";
+  }
+  // Limpiar el tbody
+  const tbody = document.getElementById("colum-aprendiz");
+  if (tbody) {
+    tbody.innerHTML = "";
+  }
+
+  const filaEncabezado = document.getElementById("fecha-tr");
+  if (filaEncabezado) {
+    // Obtener todos los <th> dentro del encabezado
+    const ths = filaEncabezado.querySelectorAll("th");
+
+    ths.forEach((th) => {
+      if (th.id !== "thVacio") {
+        th.remove();
+      }
+    });
+  }
+}
+
 $(document).ready(function () {
   // -----------------------------------
   //    VERIFICAR Fichas DISPONIBLES
@@ -565,17 +598,7 @@ $(document).ready(function () {
       $("#instru-tr").remove();
       $(`#aprendiz-tr`).remove();
     });
-    // -----------------------------------
-    //    LIMIPIAMOS LA TABLA ASISTENCIA
-    // -----------------------------------
-    let i = 0;
-    let indice = 0;
-    $(`#tabla-asistencia tr${i + 1}`).each(function () {
-      $(`#aprendiz-tr${indice + 1}`).remove();
-      $("#colum-fecha").remove();
-    });
-    $(`#tabla-asistencia thead tr`).each(function () {
-      $("#colum-info-ficha").remove();
-    });
+
+    limpiarTablaAsistencia();
   });
 });
